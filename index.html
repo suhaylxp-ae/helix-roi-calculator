@@ -219,14 +219,67 @@
     .tab-panel.active { display: block; }
     .tab-panel h3 { margin: 0 0 0.35rem; font-size: 1.05rem; }
     .tab-panel .blurb { margin: 0 0 1rem; color: var(--muted); font-size: 0.88rem; }
-    .coming {
-      border: 1px dashed #c5d0de;
-      border-radius: 10px;
-      padding: 1rem;
-      background: #fbfcfe;
-      color: var(--muted);
-      font-size: 0.9rem;
+    .assump {
+      display: inline-block;
+      font-size: 0.56rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: #eef3fa;
+      color: #5b6b80;
+      border-radius: 999px;
+      padding: 0.1rem 0.38rem;
+      white-space: nowrap;
     }
+    .tag {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-radius: 4px;
+      padding: 0.08rem 0.35rem;
+    }
+    .tag-cash { background: #e7eefc; color: #1f4fb8; }
+    .tag-cap { background: #e7f5ee; color: #1f7a4d; }
+    .tag-up { background: #f8eedd; color: #9a5b12; }
+    .agent-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.75rem;
+      margin-bottom: 0.55rem;
+    }
+    .agent-card.dim { opacity: 0.55; }
+    .agent-head { display: flex; justify-content: space-between; gap: 0.6rem; align-items: flex-start; }
+    .agent-head strong { font-size: 0.9rem; }
+    .agent-val { font-family: var(--mono); font-size: 0.82rem; white-space: nowrap; }
+    .cash-callout {
+      background: #eef6ff;
+      border: 1px solid #c9d9f5;
+      border-radius: 10px;
+      padding: 0.7rem 0.8rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+    }
+    .ref-note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      background: #f3f6fb;
+      padding: 0.55rem 0.7rem;
+      border-radius: 8px;
+      margin-top: 0.8rem;
+    }
+    .agents-lock {
+      display: none;
+      margin-bottom: 0.8rem;
+      padding: 0.65rem 0.75rem;
+      background: #fff6e8;
+      border: 1px solid #efd2a8;
+      color: var(--warn);
+      border-radius: 8px;
+      font-size: 0.82rem;
+    }
+    .agents-lock.show { display: block; }
+    .chart-box.mod { height: 240px; }
     .note {
       font-size: 0.8rem;
       color: var(--muted);
@@ -367,10 +420,12 @@
         <label class="field">
           <span class="label-row">Annual licence <span class="tip" tabindex="0" data-tip="All-in annual Helix subscription for the selected footprint. Displayed in the chosen currency; stored as USD so switching never drifts.">i</span></span>
           <input id="licence" data-money type="number" min="0" step="1000" value="420000" />
+          <span class="assump">illustrative assumption</span>
         </label>
         <label class="field">
           <span class="label-row">One-time services <span class="tip" tabindex="0" data-tip="Implementation and change-management. Counted in month 0 for payback.">i</span></span>
           <input id="services" data-money type="number" min="0" step="1000" value="175000" />
+          <span class="assump">illustrative assumption</span>
         </label>
         <label class="field">
           <span class="label-row">Time horizon <span class="tip" tabindex="0" data-tip="Benefits follow 25% / 60% / 90% in years 1 / 2 / 3+. Licence is paid every year.">i</span></span>
@@ -396,11 +451,11 @@
       </div>
       <h2 style="margin-top:1rem;">Loaded hourly rates</h2>
       <div class="grid-5 roles">
-        <label class="field">Service desk <input id="rateDesk" data-money data-role="desk" type="number" min="0" step="1" value="55" /></label>
-        <label class="field">Engineer <input id="rateEng" data-money data-role="eng" type="number" min="0" step="1" value="95" /></label>
-        <label class="field">Network <input id="rateNet" data-money data-role="net" type="number" min="0" step="1" value="90" /></label>
-        <label class="field">Admin <input id="rateAdmin" data-money data-role="admin" type="number" min="0" step="1" value="80" /></label>
-        <label class="field">Case agent <input id="rateCase" data-money data-role="case" type="number" min="0" step="1" value="50" /></label>
+        <label class="field">Service desk <input id="rateDesk" data-money data-role="desk" type="number" min="0" step="1" value="55" /><span class="assump">illustrative assumption</span></label>
+        <label class="field">Engineer <input id="rateEng" data-money data-role="eng" type="number" min="0" step="1" value="95" /><span class="assump">illustrative assumption</span></label>
+        <label class="field">Network <input id="rateNet" data-money data-role="net" type="number" min="0" step="1" value="90" /><span class="assump">illustrative assumption</span></label>
+        <label class="field">Admin <input id="rateAdmin" data-money data-role="admin" type="number" min="0" step="1" value="80" /><span class="assump">illustrative assumption</span></label>
+        <label class="field">Case agent <input id="rateCase" data-money data-role="case" type="number" min="0" step="1" value="50" /><span class="assump">illustrative assumption</span></label>
       </div>
     </section>
 
@@ -410,180 +465,187 @@
         <div id="warnings" class="warn-list"></div>
 
         <div id="panel-itsm" class="tab-panel" data-module="itsm" role="tabpanel">
-          <h3>ITSM Service Desk</h3>
-          <p class="blurb">Deflection is applied first. Reassignment savings run only on tickets that still reach an agent. Hours cannot exceed the desk baseline.</p>
+          <h3>ITSM Service Desk <span class="tag tag-cap">capacity</span></h3>
+          <p class="blurb">Extra deflection is applied first to tickets that still reach an agent. Handle-time reduction then applies only to remaining tickets. L1/L2 mix is used for both.</p>
           <div class="grid-3">
-            <label class="field">
-              <span class="label-row">Tickets per year <span class="tip" tabindex="0" data-tip="All service-desk tickets before self-service / deflection.">i</span></span>
-              <input id="tickets" type="number" min="0" step="100" value="48000" />
-            </label>
-            <label class="field">
-              <span class="label-row">Current self-service % <span class="tip" tabindex="0" data-tip="Share already resolved without an agent. Extra deflection is only the gap to target.">i</span></span>
-              <input id="ssNowPct" type="number" min="0" max="100" step="1" value="18" />
-            </label>
-            <label class="field">
-              <span class="label-row">Target deflection % <span class="tip" tabindex="0" data-tip="End-state share resolved without an agent.">i</span></span>
-              <input id="ssTargetPct" type="number" min="0" max="100" step="1" value="36" />
-            </label>
-            <label class="field">
-              <span class="label-row">Minutes per ticket <span class="tip" tabindex="0" data-tip="Average handle time for a human-touched ticket.">i</span></span>
-              <input id="minPerTicket" type="number" min="0" step="0.5" value="12" />
-            </label>
-            <label class="field">
-              <span class="label-row">Reassignment rate % <span class="tip" tabindex="0" data-tip="Share of remaining tickets that bounce today.">i</span></span>
-              <input id="reassignPct" type="number" min="0" max="100" step="1" value="24" />
-            </label>
-            <label class="field">
-              <span class="label-row">Reassignment reduction % <span class="tip" tabindex="0" data-tip="How much that bounce rate falls.">i</span></span>
-              <input id="reassignCutPct" type="number" min="0" max="100" step="1" value="35" />
-            </label>
-            <label class="field">
-              <span class="label-row">Headcount growth avoided (FTE) <span class="tip" tabindex="0" data-tip="Roles you would otherwise hire. Cash, not freed time.">i</span></span>
-              <input id="fteAvoided" type="number" min="0" step="0.1" value="2" />
-            </label>
-            <label class="field">
-              <span class="label-row">Fully loaded salary / FTE <span class="tip" tabindex="0" data-tip="Annual cost of one avoided hire.">i</span></span>
-              <input id="fteSalary" data-money type="number" min="0" step="1000" value="125000" />
-            </label>
-            <label class="field">
-              <span class="label-row">Legacy ITSM tools retired (annual) <span class="tip" tabindex="0" data-tip="Run-cost of tools you can actually switch off. Do not include the Helix licence.">i</span></span>
-              <input id="legacyTools" data-money type="number" min="0" step="1000" value="180000" />
-            </label>
+            <label class="field"><span class="label-row">Tickets / year <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="IT tickets before extra Helix deflection. Current self-service is already excluded from agent work.">i</span></span><input id="tickets" type="number" min="0" step="100" value="48000" /></label>
+            <label class="field"><span class="label-row">Current self-service % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Share already resolved without an agent today.">i</span></span><input id="ssNowPct" type="number" min="0" max="100" step="1" value="18" /></label>
+            <label class="field"><span class="label-row">Target extra deflection % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Extra share of remaining (human) tickets deflected. Default 10%. Combined with Employee Navigator using 1-(1-d1)(1-d2), capped at 40%.">i</span></span><input id="itsmDeflectPct" type="number" min="0" max="100" step="1" value="10" /></label>
+            <label class="field"><span class="label-row">L1 minutes / ticket <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Handle time for tickets that stay at L1.">i</span></span><input id="l1Min" type="number" min="0" step="0.5" value="12" /></label>
+            <label class="field"><span class="label-row">L2 tickets % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Share of human-handled tickets that escalate to L2.">i</span></span><input id="l2Pct" type="number" min="0" max="100" step="1" value="20" /></label>
+            <label class="field"><span class="label-row">L2 minutes / ticket <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Handle time for L2 tickets.">i</span></span><input id="l2Min" type="number" min="0" step="0.5" value="25" /></label>
+            <label class="field"><span class="label-row">Handle-time reduction % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Applied only after deflection, on remaining tickets. Default 10%.">i</span></span><input id="itsmHtCutPct" type="number" min="0" max="100" step="1" value="10" /></label>
           </div>
         </div>
 
         <div id="panel-aiops" class="tab-panel" data-module="aiops" role="tabpanel">
-          <h3>AIOps</h3>
-          <p class="blurb">Noise is removed first, then remaining alerts are triaged. MTTR is engineer hands-on time only — never elapsed outage clock.</p>
+          <h3>AIOps <span class="tag tag-cap">capacity</span> <span class="tag tag-up">optional upside</span></h3>
+          <p class="blurb">Noise is suppressed first. Triage applies only to alerts that remain. MTTR is engineer hands-on hours, never elapsed outage clock.</p>
           <div class="grid-3">
-            <label class="field">
-              <span class="label-row">Alerts per year <span class="tip" tabindex="0" data-tip="Events presented to operators before noise reduction.">i</span></span>
-              <input id="alerts" type="number" min="0" step="100" value="140000" />
-            </label>
-            <label class="field">
-              <span class="label-row">% noise today <span class="tip" tabindex="0" data-tip="False, duplicate, or non-actionable share.">i</span></span>
-              <input id="noisePct" type="number" min="0" max="100" step="1" value="82" />
-            </label>
-            <label class="field">
-              <span class="label-row">% of noise reduced <span class="tip" tabindex="0" data-tip="How much of that noisy slice is removed.">i</span></span>
-              <input id="noiseReducedPct" type="number" min="0" max="100" step="1" value="55" />
-            </label>
-            <label class="field">
-              <span class="label-row">Triage minutes / alert <span class="tip" tabindex="0" data-tip="Operator time to look at one alert and decide.">i</span></span>
-              <input id="triageMin" type="number" min="0" step="0.1" value="3.5" />
-            </label>
-            <label class="field">
-              <span class="label-row">P1 incidents / year <span class="tip" tabindex="0" data-tip="Major incidents that pull a response team.">i</span></span>
-              <input id="p1Count" type="number" min="0" step="1" value="72" />
-            </label>
-            <label class="field">
-              <span class="label-row">Engineers per P1 <span class="tip" tabindex="0" data-tip="People actually working the incident.">i</span></span>
-              <input id="p1Engineers" type="number" min="0" step="0.5" value="4" />
-            </label>
-            <label class="field">
-              <span class="label-row">Hands-on hours / P1 <span class="tip" tabindex="0" data-tip="Labour hours per engineer, not wall-clock outage.">i</span></span>
-              <input id="p1Hours" type="number" min="0" step="0.1" value="3.0" />
-            </label>
-            <label class="field">
-              <span class="label-row">% MTTR labour reduction <span class="tip" tabindex="0" data-tip="Reduction in hands-on engineer hours.">i</span></span>
-              <input id="mttrPct" type="number" min="0" max="100" step="1" value="22" />
-            </label>
-            <label class="field">
-              <span class="label-row">War rooms / year <span class="tip" tabindex="0" data-tip="Major coordination calls today.">i</span></span>
-              <input id="warRooms" type="number" min="0" step="1" value="20" />
-            </label>
-            <label class="field">
-              <span class="label-row">People per war room <span class="tip" tabindex="0" data-tip="Average attendees whose time is tied up.">i</span></span>
-              <input id="warPeople" type="number" min="0" step="0.5" value="8" />
-            </label>
-            <label class="field">
-              <span class="label-row">Hours per war room <span class="tip" tabindex="0" data-tip="Length of the working session.">i</span></span>
-              <input id="warHours" type="number" min="0" step="0.25" value="2.5" />
-            </label>
-            <label class="field">
-              <span class="label-row">% war rooms avoided <span class="tip" tabindex="0" data-tip="Share made unnecessary by correlation and swarming.">i</span></span>
-              <input id="warAvoidPct" type="number" min="0" max="100" step="1" value="40" />
-            </label>
-            <label class="field">
-              <span class="label-row">Reporting FTEs <span class="tip" tabindex="0" data-tip="People compiling ops reports today.">i</span></span>
-              <input id="reportFte" type="number" min="0" step="0.1" value="1.2" />
-            </label>
-            <label class="field">
-              <span class="label-row">% reporting automated <span class="tip" tabindex="0" data-tip="Share of reporting load dashboards replace.">i</span></span>
-              <input id="reportAutoPct" type="number" min="0" max="100" step="1" value="55" />
-            </label>
-            <label class="field">
-              <span class="label-row">Monitored servers <span class="tip" tabindex="0" data-tip="Estate size for per-server monitoring cost.">i</span></span>
-              <input id="servers" type="number" min="0" step="1" value="1800" />
-            </label>
-            <label class="field">
-              <span class="label-row">Cost / server today <span class="tip" tabindex="0" data-tip="Tooling cost per server today, excluding Helix licence.">i</span></span>
-              <input id="costServerNow" data-money type="number" min="0" step="0.5" value="42" />
-            </label>
-            <label class="field">
-              <span class="label-row">Cost / server with Helix <span class="tip" tabindex="0" data-tip="Same per-server cost after consolidation. Do not add the licence here.">i</span></span>
-              <input id="costServerHelix" data-money type="number" min="0" step="0.5" value="16" />
-            </label>
+            <label class="field"><span class="label-row">Alerts / year <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Do not include network alerts if the Network module is also on.">i</span></span><input id="alerts" type="number" min="0" step="100" value="140000" /></label>
+            <label class="field"><span class="label-row">% noise today <span class="assump">illustrative assumption</span></span><input id="noisePct" type="number" min="0" max="100" step="1" value="82" /></label>
+            <label class="field"><span class="label-row">% of noise suppressed <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 30%. Removed from the noisy slice only.">i</span></span><input id="noiseSuppressedPct" type="number" min="0" max="100" step="1" value="30" /></label>
+            <label class="field"><span class="label-row">Triage minutes / remaining alert <span class="assump">illustrative assumption</span></span><input id="triageMin" type="number" min="0" step="0.1" value="3.5" /></label>
+            <label class="field"><span class="label-row">Auto-remediable events / year <span class="assump">illustrative assumption</span></span><input id="autoEvents" type="number" min="0" step="10" value="8000" /></label>
+            <label class="field"><span class="label-row">Minutes each auto-remediated <span class="assump">illustrative assumption</span></span><input id="autoMin" type="number" min="0" step="0.5" value="8" /></label>
+            <label class="field"><span class="label-row">P1s / year <span class="assump">illustrative assumption</span></span><input id="p1Count" type="number" min="0" step="1" value="72" /></label>
+            <label class="field"><span class="label-row">Engineers per P1 <span class="assump">illustrative assumption</span></span><input id="p1Engineers" type="number" min="0" step="0.5" value="4" /></label>
+            <label class="field"><span class="label-row">Hands-on hours / P1 <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Labour hours per engineer, not wall-clock outage.">i</span></span><input id="p1Hours" type="number" min="0" step="0.1" value="3" /></label>
+            <label class="field"><span class="label-row">P1 labour cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 15% of hands-on hours.">i</span></span><input id="mttrPct" type="number" min="0" max="100" step="1" value="15" /></label>
+            <label class="field"><span class="label-row">War rooms / year <span class="assump">illustrative assumption</span></span><input id="warRooms" type="number" min="0" step="1" value="20" /></label>
+            <label class="field"><span class="label-row">People per war room <span class="assump">illustrative assumption</span></span><input id="warPeople" type="number" min="0" step="0.5" value="8" /></label>
+            <label class="field"><span class="label-row">Hours per war room <span class="assump">illustrative assumption</span></span><input id="warHours" type="number" min="0" step="0.25" value="2.5" /></label>
+            <label class="field"><span class="label-row">War-room cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 15%.">i</span></span><input id="warCutPct" type="number" min="0" max="100" step="1" value="15" /></label>
+            <label class="field"><span class="label-row">Service models <span class="assump">illustrative assumption</span></span><input id="svcModels" type="number" min="0" step="1" value="40" /></label>
+            <label class="field"><span class="label-row">Hours to maintain / model / year <span class="assump">illustrative assumption</span></span><input id="svcModelHrs" type="number" min="0" step="0.5" value="12" /></label>
+            <label class="field"><span class="label-row">Service-model cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20%.">i</span></span><input id="svcModelCutPct" type="number" min="0" max="100" step="1" value="20" /></label>
           </div>
           <div class="downtime">
-            <h3>Optional downtime upside (never in ROI)</h3>
-            <p>Business-outage value is tagged as upside only.</p>
+            <h3>Optional downtime <span class="tag tag-up">upside only</span></h3>
+            <p>P1 elapsed minutes × cost per minute. Never in net ROI or payback.</p>
             <div class="grid-2">
-              <label class="field">
-                <span class="label-row">Cost / minute of P1 outage <span class="tip" tabindex="0" data-tip="Leave blank to hide. Business-loss figure, not IT labour.">i</span></span>
-                <input id="downCost" data-money type="number" min="0" step="100" placeholder="Leave blank" />
-              </label>
-              <label class="field">
-                <span class="label-row">Avg elapsed P1 minutes <span class="tip" tabindex="0" data-tip="Wall-clock duration for this upside only.">i</span></span>
-                <input id="downMins" type="number" min="0" step="1" placeholder="Leave blank" />
-              </label>
+              <label class="field"><span class="label-row">Avg elapsed P1 minutes <span class="assump">illustrative assumption</span></span><input id="downMins" type="number" min="0" step="1" placeholder="Leave blank" /></label>
+              <label class="field"><span class="label-row">Cost / minute of P1 outage <span class="tip" tabindex="0" data-tip="Leave blank to omit. Business-loss figure.">i</span></span><input id="downCost" data-money type="number" min="0" step="100" placeholder="Leave blank" /></label>
             </div>
           </div>
+          <p class="ref-note">Reference (not a default in this model): BMC reports 75% faster MTTR in its own AIOps deployment (helixops.ai).</p>
         </div>
 
         <div id="panel-agents" class="tab-panel" data-module="agents" role="tabpanel">
-          <h3>Helix AI Agents</h3>
-          <p class="blurb">Placeholder module using the existing agent table. Full agent catalogue arrives next. Turn an agent off if that work is already counted on another tab.</p>
-          <div style="overflow-x:auto;">
-            <table class="agent-table">
-              <thead>
-                <tr>
-                  <th>On</th>
-                  <th>Agent</th>
-                  <th>Annual volume</th>
-                  <th>Minutes saved each</th>
-                  <th>Annual value</th>
-                </tr>
-              </thead>
-              <tbody id="agentRows"></tbody>
-            </table>
+          <h3>Helix AI Agents <span class="tag tag-cap">capacity add-on</span></h3>
+          <p class="blurb">Add-on layer. Only counted if ITSM and/or Change is selected. Combined extra deflection with ITSM is 1−(1−d1)(1−d2), capped at 40%. Each agent’s value is shown after labour realisation.</p>
+          <div id="agentsLock" class="agents-lock">Select ITSM and/or Change to activate AI Agents. This layer does not run on its own.</div>
+          <div class="agent-card" id="card-en">
+            <div class="agent-head"><label><input id="agEN" type="checkbox" checked /> <strong>Employee Navigator</strong></label><span class="agent-val" id="val-en">—</span></div>
+            <p class="blurb" style="margin:0.35rem 0 0.5rem;">Extra deflection on remaining ITSM tickets. Combined with ITSM extra deflection.</p>
+            <label class="field"><span class="label-row">Extra deflection % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 5%.">i</span></span><input id="enDeflectPct" type="number" min="0" max="100" step="1" value="5" /></label>
           </div>
-          <p class="note">Agent minutes and volumes are example assumptions. Validate against BMC’s published figures and your telemetry.</p>
+          <div class="agent-card" id="card-sc">
+            <div class="agent-head"><label><input id="agSC" type="checkbox" checked /> <strong>Service Collaborator</strong></label><span class="agent-val" id="val-sc">—</span></div>
+            <p class="blurb" style="margin:0.35rem 0 0.5rem;">Classification/routing cut on tickets that still remain after deflection and ITSM handle-time reduction.</p>
+            <label class="field"><span class="label-row">Cut on remaining handle time % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 15%.">i</span></span><input id="scCutPct" type="number" min="0" max="100" step="1" value="15" /></label>
+          </div>
+          <div class="agent-card" id="card-kc">
+            <div class="agent-head"><label><input id="agKC" type="checkbox" checked /> <strong>Knowledge Curator</strong></label><span class="agent-val" id="val-kc">—</span></div>
+            <div class="grid-3" style="margin-top:0.5rem;">
+              <label class="field"><span class="label-row">Articles / year <span class="assump">illustrative assumption</span></span><input id="kcArticles" type="number" min="0" step="1" value="400" /></label>
+              <label class="field"><span class="label-row">Hours per article <span class="assump">illustrative assumption</span></span><input id="kcHours" type="number" min="0" step="0.1" value="2" /></label>
+              <label class="field"><span class="label-row">Effort cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 15%.">i</span></span><input id="kcCutPct" type="number" min="0" max="100" step="1" value="15" /></label>
+            </div>
+          </div>
+          <div class="agent-card" id="card-cra">
+            <div class="agent-head"><label><input id="agCRA" type="checkbox" checked /> <strong>Change Risk Advisor</strong></label><span class="agent-val" id="val-cra">—</span></div>
+            <p class="blurb" style="margin:0.35rem 0 0.5rem;">Further cut on Change-module effort that remains after the Change effort cut. Requires Change.</p>
+            <label class="field"><span class="label-row">Cut on remaining change hours % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 15%.">i</span></span><input id="craCutPct" type="number" min="0" max="100" step="1" value="15" /></label>
+          </div>
+          <div class="agent-card" id="card-if">
+            <div class="agent-head"><label><input id="agIF" type="checkbox" checked /> <strong>Insight Finder</strong></label><span class="agent-val" id="val-if">—</span></div>
+            <div class="grid-2" style="margin-top:0.5rem;">
+              <label class="field"><span class="label-row">Reporting hours / year <span class="assump">illustrative assumption</span></span><input id="ifHours" type="number" min="0" step="1" value="400" /></label>
+              <label class="field"><span class="label-row">Effort cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 15%.">i</span></span><input id="ifCutPct" type="number" min="0" max="100" step="1" value="15" /></label>
+            </div>
+          </div>
+          <p class="note">Agent values are example assumptions. Validate against BMC’s published figures and your telemetry. Combined deflection cannot exceed 40% of remaining human tickets.</p>
         </div>
 
         <div id="panel-change" class="tab-panel" data-module="change" role="tabpanel">
-          <h3>Change &amp; Problem</h3>
-          <div class="coming">Inputs for this product land in the next step. Selecting it now reserves a tab; it does not add benefit lines yet.</div>
+          <h3>Change &amp; Problem <span class="tag tag-cap">capacity</span> <span class="tag tag-cash">cash if cost filled</span></h3>
+          <p class="blurb">Effort cut first. Failed-change reduction is cash if you enter a cost per failure; otherwise it is upside. Problem hours are separate.</p>
+          <div class="grid-3">
+            <label class="field"><span class="label-row">Changes / year <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Exclude patch changes if TSSA is also selected.">i</span></span><input id="changes" type="number" min="0" step="1" value="2400" /></label>
+            <label class="field"><span class="label-row">Hours per change <span class="assump">illustrative assumption</span></span><input id="chgHours" type="number" min="0" step="0.1" value="4" /></label>
+            <label class="field"><span class="label-row">Change effort cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 10%.">i</span></span><input id="chgCutPct" type="number" min="0" max="100" step="1" value="10" /></label>
+            <label class="field"><span class="label-row">Failure rate % <span class="assump">illustrative assumption</span></span><input id="failRatePct" type="number" min="0" max="100" step="0.5" value="8" /></label>
+            <label class="field"><span class="label-row">Relative failure reduction % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 10% of today’s failures avoided.">i</span></span><input id="failCutPct" type="number" min="0" max="100" step="1" value="10" /></label>
+            <label class="field"><span class="label-row">Cost per failed change <span class="tip" tabindex="0" data-tip="Blank = upside only. Filled = cash.">i</span></span><input id="failCost" data-money type="number" min="0" step="100" placeholder="Leave blank" /></label>
+            <label class="field"><span class="label-row">Problem tickets / year <span class="assump">illustrative assumption</span></span><input id="problems" type="number" min="0" step="1" value="180" /></label>
+            <label class="field"><span class="label-row">Hours per problem <span class="assump">illustrative assumption</span></span><input id="probHours" type="number" min="0" step="0.1" value="6" /></label>
+            <label class="field"><span class="label-row">Problem effort cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 10%.">i</span></span><input id="probCutPct" type="number" min="0" max="100" step="1" value="10" /></label>
+          </div>
         </div>
+
         <div id="panel-network" class="tab-panel" data-module="network" role="tabpanel">
-          <h3>Network Management</h3>
-          <div class="coming">Inputs for this product land in the next step. Selecting it now reserves a tab; it does not add benefit lines yet.</div>
+          <h3>Network Management <span class="tag tag-cap">capacity</span></h3>
+          <p class="blurb">Onboarding hours and false-alert suppression. If AIOps is also selected, exclude these alerts from the AIOps count.</p>
+          <div class="grid-3">
+            <label class="field"><span class="label-row">Devices <span class="assump">illustrative assumption</span></span><input id="netDevices" type="number" min="0" step="1" value="2500" /></label>
+            <label class="field"><span class="label-row">New devices / year <span class="assump">illustrative assumption</span></span><input id="netNew" type="number" min="0" step="1" value="400" /></label>
+            <label class="field"><span class="label-row">Onboarding hours / device <span class="assump">illustrative assumption</span></span><input id="netOnboardHrs" type="number" min="0" step="0.1" value="2.5" /></label>
+            <label class="field"><span class="label-row">Onboarding cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 30%.">i</span></span><input id="netOnboardCutPct" type="number" min="0" max="100" step="1" value="30" /></label>
+            <label class="field"><span class="label-row">Network alerts / year <span class="assump">illustrative assumption</span></span><input id="netAlerts" type="number" min="0" step="100" value="60000" /></label>
+            <label class="field"><span class="label-row">% false <span class="assump">illustrative assumption</span></span><input id="netFalsePct" type="number" min="0" max="100" step="1" value="40" /></label>
+            <label class="field"><span class="label-row">% of false suppressed <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 25% of the false slice.">i</span></span><input id="netSuppPct" type="number" min="0" max="100" step="1" value="25" /></label>
+            <label class="field"><span class="label-row">Minutes / alert <span class="assump">illustrative assumption</span></span><input id="netAlertMin" type="number" min="0" step="0.1" value="4" /></label>
+          </div>
         </div>
+
         <div id="panel-cmdb" class="tab-panel" data-module="cmdb" role="tabpanel">
-          <h3>Discovery / CMDB / Asset Management</h3>
-          <div class="coming">Inputs for this product land in the next step. Selecting it now reserves a tab; it does not add benefit lines yet.</div>
+          <h3>Discovery / CMDB / Asset Management <span class="tag tag-cap">capacity</span> <span class="tag tag-cash">cash if filled</span></h3>
+          <p class="blurb">Record-update and audit hours. Reclaimed unused assets are cash only if you enter a count and unit cost. Breach risk is qualitative upside — not valued.</p>
+          <div class="grid-3">
+            <label class="field"><span class="label-row">Assets <span class="assump">illustrative assumption</span></span><input id="assets" type="number" min="0" step="1" value="25000" /></label>
+            <label class="field"><span class="label-row">Asset-record updates / year <span class="assump">illustrative assumption</span></span><input id="assetUpdates" type="number" min="0" step="100" value="80000" /></label>
+            <label class="field"><span class="label-row">Minutes per update <span class="assump">illustrative assumption</span></span><input id="assetUpdMin" type="number" min="0" step="0.5" value="8" /></label>
+            <label class="field"><span class="label-row">Update cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20%.">i</span></span><input id="assetUpdCutPct" type="number" min="0" max="100" step="1" value="20" /></label>
+            <label class="field"><span class="label-row">Audits / year <span class="assump">illustrative assumption</span></span><input id="audits" type="number" min="0" step="1" value="4" /></label>
+            <label class="field"><span class="label-row">Hours per audit <span class="assump">illustrative assumption</span></span><input id="auditHrs" type="number" min="0" step="1" value="80" /></label>
+            <label class="field"><span class="label-row">Audit cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20%.">i</span></span><input id="auditCutPct" type="number" min="0" max="100" step="1" value="20" /></label>
+            <label class="field"><span class="label-row">Reclaimable unused assets <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 0. Cash only if count and unit cost are both filled.">i</span></span><input id="reclaimCount" type="number" min="0" step="1" value="0" /></label>
+            <label class="field"><span class="label-row">Unit cost of unused asset <span class="tip" tabindex="0" data-tip="Leave blank unless reclaiming cash.">i</span></span><input id="reclaimCost" data-money type="number" min="0" step="10" placeholder="Leave blank" /></label>
+          </div>
+          <p class="ref-note">Breach-risk reduction is upside text only and is not converted to money in this model.</p>
         </div>
+
         <div id="panel-tssa" class="tab-panel" data-module="tssa" role="tabpanel">
-          <h3>Server Automation (TSSA)</h3>
-          <div class="coming">Inputs for this product land in the next step. Selecting it now reserves a tab; it does not add benefit lines yet.</div>
+          <h3>Server Automation (TSSA) <span class="tag tag-cap">capacity</span></h3>
+          <p class="blurb">Patch, vulnerability, and compliance labour. If Change is also selected, exclude patch changes from the Change volume.</p>
+          <div class="grid-3">
+            <label class="field"><span class="label-row">Servers <span class="assump">illustrative assumption</span></span><input id="tssaServers" type="number" min="0" step="1" value="1800" /></label>
+            <label class="field"><span class="label-row">Patch cycles / year <span class="assump">illustrative assumption</span></span><input id="patchCycles" type="number" min="0" step="1" value="12" /></label>
+            <label class="field"><span class="label-row">Hours / server / cycle <span class="assump">illustrative assumption</span></span><input id="patchHrs" type="number" min="0" step="0.05" value="0.4" /></label>
+            <label class="field"><span class="label-row">Patch cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 30%.">i</span></span><input id="patchCutPct" type="number" min="0" max="100" step="1" value="30" /></label>
+            <label class="field"><span class="label-row">Vulnerabilities fixed / month <span class="assump">illustrative assumption</span></span><input id="vulnMonth" type="number" min="0" step="1" value="40" /></label>
+            <label class="field"><span class="label-row">Hours per vulnerability <span class="assump">illustrative assumption</span></span><input id="vulnHrs" type="number" min="0" step="0.1" value="1.5" /></label>
+            <label class="field"><span class="label-row">Vulnerability cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 30%.">i</span></span><input id="vulnCutPct" type="number" min="0" max="100" step="1" value="30" /></label>
+            <label class="field"><span class="label-row">Compliance checks / year <span class="assump">illustrative assumption</span></span><input id="compChecks" type="number" min="0" step="1" value="4" /></label>
+            <label class="field"><span class="label-row">Hours per compliance check <span class="assump">illustrative assumption</span></span><input id="compHrs" type="number" min="0" step="1" value="60" /></label>
+            <label class="field"><span class="label-row">Compliance cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 30%.">i</span></span><input id="compCutPct" type="number" min="0" max="100" step="1" value="30" /></label>
+          </div>
         </div>
+
         <div id="panel-bhco" class="tab-panel" data-module="bhco" role="tabpanel">
-          <h3>Continuous Optimization (BHCO)</h3>
-          <div class="coming">Inputs for this product land in the next step. Selecting it now reserves a tab; it does not add benefit lines yet.</div>
+          <h3>Continuous Optimization (BHCO) <span class="tag tag-cash">true cash</span></h3>
+          <div class="cash-callout">This module is one of the few that produces <strong>true cash</strong> (cloud, hardware, storage) rather than only released time. Capacity-planning hours stay in the capacity ledger. Capacity outages are upside only.</div>
+          <div class="grid-3">
+            <label class="field"><span class="label-row">Monthly cloud spend <span class="assump">illustrative assumption</span></span><input id="cloudMonth" data-money type="number" min="0" step="1000" value="180000" /></label>
+            <label class="field"><span class="label-row">Right-sizing % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 5% of annualised cloud spend.">i</span></span><input id="cloudCutPct" type="number" min="0" max="100" step="0.5" value="5" /></label>
+            <label class="field"><span class="label-row">Annual hardware refresh spend <span class="assump">illustrative assumption</span></span><input id="hwSpend" data-money type="number" min="0" step="1000" value="400000" /></label>
+            <label class="field"><span class="label-row">Avoided refresh % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 5%.">i</span></span><input id="hwCutPct" type="number" min="0" max="100" step="0.5" value="5" /></label>
+            <label class="field"><span class="label-row">Annual storage spend <span class="assump">illustrative assumption</span></span><input id="storSpend" data-money type="number" min="0" step="1000" value="90000" /></label>
+            <label class="field"><span class="label-row">Avoided storage % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 5%.">i</span></span><input id="storCutPct" type="number" min="0" max="100" step="0.5" value="5" /></label>
+            <label class="field"><span class="label-row">Capacity planning + reporting hours / year <span class="assump">illustrative assumption</span></span><input id="bhcoHours" type="number" min="0" step="1" value="600" /></label>
+            <label class="field"><span class="label-row">Planning-hours cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20%.">i</span></span><input id="bhcoHrsCutPct" type="number" min="0" max="100" step="1" value="20" /></label>
+            <label class="field"><span class="label-row">Capacity-outage events / year <span class="assump">illustrative assumption</span></span><input id="capOutages" type="number" min="0" step="1" value="6" /></label>
+            <label class="field"><span class="label-row">Elapsed minutes / outage <span class="assump">illustrative assumption</span></span><input id="capOutageMin" type="number" min="0" step="1" value="45" /></label>
+            <label class="field"><span class="label-row">Cost / minute of capacity outage <span class="tip" tabindex="0" data-tip="Blank = qualitative upside only. Filled = valued upside, still excluded from ROI.">i</span></span><input id="capOutageCost" data-money type="number" min="0" step="100" placeholder="Leave blank" /></label>
+          </div>
         </div>
+
         <div id="panel-esm" class="tab-panel" data-module="esm" role="tabpanel">
-          <h3>ESM / Business Workflows</h3>
-          <div class="coming">Inputs for this product land in the next step. Selecting it now reserves a tab; it does not add benefit lines yet.</div>
+          <h3>ESM / Business Workflows <span class="tag tag-cap">capacity</span></h3>
+          <p class="blurb">HR, finance, and facilities cases — not IT tickets. Deflection first, then rework and status-enquiry cuts on remaining cases.</p>
+          <div class="grid-3">
+            <label class="field"><span class="label-row">Cases / year <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Do not include ITSM tickets.">i</span></span><input id="esmCases" type="number" min="0" step="100" value="12000" /></label>
+            <label class="field"><span class="label-row">Handle minutes / case <span class="assump">illustrative assumption</span></span><input id="esmMin" type="number" min="0" step="0.5" value="25" /></label>
+            <label class="field"><span class="label-row">Deflection % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 8%.">i</span></span><input id="esmDeflectPct" type="number" min="0" max="100" step="1" value="8" /></label>
+            <label class="field"><span class="label-row">% of remaining cases with rework <span class="assump">illustrative assumption</span></span><input id="esmReworkPct" type="number" min="0" max="100" step="1" value="22" /></label>
+            <label class="field"><span class="label-row">Rework minutes / those cases <span class="assump">illustrative assumption</span></span><input id="esmReworkMin" type="number" min="0" step="0.5" value="15" /></label>
+            <label class="field"><span class="label-row">Rework cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20%.">i</span></span><input id="esmReworkCutPct" type="number" min="0" max="100" step="1" value="20" /></label>
+            <label class="field"><span class="label-row">% of remaining cases with status enquiries <span class="assump">illustrative assumption</span></span><input id="esmStatusPct" type="number" min="0" max="100" step="1" value="30" /></label>
+            <label class="field"><span class="label-row">Enquiries per those cases <span class="assump">illustrative assumption</span></span><input id="esmEnquiries" type="number" min="0" step="0.5" value="2" /></label>
+            <label class="field"><span class="label-row">Minutes per enquiry <span class="assump">illustrative assumption</span></span><input id="esmEnqMin" type="number" min="0" step="0.5" value="6" /></label>
+            <label class="field"><span class="label-row">Status-enquiry cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20%.">i</span></span><input id="esmStatusCutPct" type="number" min="0" max="100" step="1" value="20" /></label>
+          </div>
         </div>
         <div id="emptyMods" class="empty-mods" hidden>Select at least one product to see module inputs.</div>
       </section>
@@ -594,6 +656,8 @@
         <div id="credWarn" class="cred">Credibility warning: modelled net ROI is above 5×. Check double-counted labour, aggressive ramps, and whether licence matches the selected footprint.</div>
         <p class="chart-title">Benefit by type, per year</p>
         <div class="chart-box"><canvas id="barChart"></canvas></div>
+        <p class="chart-title">Benefit by module (ROI benefit, ramped)</p>
+        <div class="chart-box mod"><canvas id="modChart"></canvas></div>
         <p class="chart-title">Cumulative cost vs cumulative ROI benefit</p>
         <div class="chart-box"><canvas id="lineChart"></canvas></div>
         <div class="actions">
@@ -610,11 +674,9 @@
 
   <script>
     (function () {
-      const FTE_HOURS = 1880;
       const RAMP = [0.25, 0.6, 0.9, 0.9, 0.9];
       const REAL = { conservative: 0.5, expected: 0.7 };
       const FX_DEFAULT = { USD: 1, AED: 3.6725, GBP: 0.78, EUR: 0.92 };
-      const FX_LABEL = { USD: "$", AED: "AED ", GBP: "£", EUR: "€" };
 
       const CATALOG = [
         { id: "itsm", name: "ITSM Service Desk", short: "ITSM", on: true },
@@ -628,16 +690,9 @@
         { id: "esm", name: "ESM/Business Workflows", short: "ESM", on: false }
       ];
 
-      const AGENTS = [
-        { id: "va", name: "Virtual Agent / Employee Navigator", volume: 7500, minutes: 8, on: true, role: "desk", tip: "Turn off if already in ticket deflection." },
-        { id: "kc", name: "Knowledge Curator", volume: 350, minutes: 40, on: true, role: "admin", tip: "Articles created or refreshed with less specialist time." },
-        { id: "rca", name: "Root Cause Analyzer", volume: 110, minutes: 75, on: true, role: "eng", tip: "Turn off if fully counted in MTTR hours." },
-        { id: "os", name: "Ops Swarmer", volume: 36, minutes: 150, on: true, role: "eng", tip: "Turn off if fully counted in war rooms." },
-        { id: "cra", name: "Change Risk Advisor", volume: 180, minutes: 25, on: true, role: "eng", tip: "Change review minutes on each assessed request." }
-      ];
-
       const MODULES = {};
-      let barChart, lineChart, lastCopy = "";
+      const RUN_ORDER = ["itsm", "change", "agents", "aiops", "network", "cmdb", "tssa", "bhco", "esm"];
+      let barChart, lineChart, modChart, lastCopy = "";
       let activeTab = "itsm";
 
       const $ = (id) => document.getElementById(id);
@@ -752,7 +807,9 @@
             admin: moneyUsd("rateAdmin"),
             case: moneyUsd("rateCase")
           },
-          warnings: []
+          warnings: [],
+          shared: {},
+          on: Object.fromEntries(CATALOG.map((m) => [m.id, m.on]))
         };
       }
 
@@ -766,72 +823,264 @@
         return { name: name, type: "upside", annualUsd: annualUsd || 0, hours: 0 };
       }
 
+      function mixHours() {
+        const l2 = pct("l2Pct");
+        return ((1 - l2) * num("l1Min") + l2 * num("l2Min")) / 60;
+      }
+      function cutHrs(base, cut, label, w) {
+        return capHours(Math.max(0, base) * cut, Math.max(0, base), label, w);
+      }
+      function showAgent(id, usdAfterReal, on) {
+        const el = $(id);
+        if (!el) return;
+        el.textContent = on ? fmtMoney(usdAfterReal) + " / yr after realisation" : "Off";
+      }
+
       MODULES.itsm = function (c) {
         const w = c.warnings;
+        const s = c.shared;
         const tickets = num("tickets");
         const ssNow = pct("ssNowPct", "Current self-service %", w);
-        const ssTarget = pct("ssTargetPct", "Target deflection %", w);
-        const tMin = num("minPerTicket") / 60;
-        if (ssTarget < ssNow) w.push("Target deflection is below current self-service, so extra deflection is treated as zero.");
-        const extraDeflect = Math.max(0, ssTarget - ssNow) * tickets;
-        const humanNow = tickets * (1 - ssNow);
-        const deskBase = humanNow * tMin;
-        const deflectSaved = capHours(extraDeflect * tMin, deskBase, "Ticket deflection", w);
-        const remaining = tickets * (1 - Math.max(ssNow, ssTarget));
-        const reassignBase = remaining * pct("reassignPct", "Reassignment rate %", w) * tMin;
-        const reassignSaved = capHours(reassignBase * pct("reassignCutPct", "Reassignment reduction %", w), reassignBase, "Reassignment", w);
+        const d1 = pct("itsmDeflectPct", "ITSM extra deflection %", w);
+        const human = tickets * (1 - ssNow);
+        const mix = mixHours();
+        const deflected = human * d1;
+        const remaining = Math.max(0, human - deflected);
+        const baseHumanHrs = human * mix;
+        const deflectHrs = cutHrs(deflected * mix, 1, "ITSM deflection", w);
+        const remainBase = remaining * mix;
+        const htCut = pct("itsmHtCutPct", "ITSM handle-time cut", w);
+        const htSaved = cutHrs(remainBase, htCut, "ITSM handle-time", w);
+        s.humanTickets = human;
+        s.d1 = d1;
+        s.mixHrs = mix;
+        s.remainingTickets = remaining;
+        s.remainHandleAfterHt = Math.max(0, remainBase - htSaved);
+        s.htCut = htCut;
         return [
-          capacity("Ticket deflection", deflectSaved, "desk", c.rates),
-          capacity("Fewer reassignments", reassignSaved, "desk", c.rates),
-          cash("Headcount growth avoided", num("fteAvoided") * moneyUsd("fteSalary")),
-          cash("Legacy ITSM tools retired", moneyUsd("legacyTools"))
+          capacity("ITSM extra deflection", deflectHrs, "desk", c.rates),
+          capacity("ITSM handle-time on remaining tickets", htSaved, "desk", c.rates)
         ];
+      };
+
+      MODULES.change = function (c) {
+        const w = c.warnings;
+        const s = c.shared;
+        const chgBase = num("changes") * num("chgHours");
+        const chgCut = pct("chgCutPct", "Change effort cut", w);
+        const chgSaved = cutHrs(chgBase, chgCut, "Change effort", w);
+        s.changeHoursAfterCut = Math.max(0, chgBase - chgSaved);
+        const failBase = num("changes") * pct("failRatePct", "Failure rate", w);
+        const avoided = failBase * pct("failCutPct", "Failure reduction", w);
+        const lines = [
+          capacity("Change effort", chgSaved, "eng", c.rates),
+          capacity("Problem effort", cutHrs(num("problems") * num("probHours"), pct("probCutPct", "Problem cut", w), "Problem effort", w), "eng", c.rates)
+        ];
+        if (avoided > 0) {
+          if (!blank("failCost") && moneyUsd("failCost") > 0) {
+            lines.push(cash("Failed changes avoided", avoided * moneyUsd("failCost")));
+          } else {
+            lines.push(upside("Failed changes avoided (no unit cost entered)", avoided * num("chgHours") * (c.rates.eng || 0)));
+          }
+        }
+        if (c.on.tssa) w.push("TSSA is also selected: exclude patch changes from the Change volume so they are not counted twice.");
+        return lines;
+      };
+
+      MODULES.agents = function (c) {
+        const w = c.warnings;
+        const s = c.shared;
+        const lock = $("agentsLock");
+        const active = c.on.itsm || c.on.change;
+        if (lock) lock.classList.toggle("show", !active);
+        ["val-en", "val-sc", "val-kc", "val-cra", "val-if"].forEach((id) => { const el = $(id); if (el) el.textContent = "—"; });
+        if (!active) {
+          w.push("Helix AI Agents is an add-on: select ITSM and/or Change to count agent value.");
+          return [];
+        }
+        const real = c.realisation;
+        const lines = [];
+        const enOn = $("agEN") && $("agEN").checked;
+        const scOn = $("agSC") && $("agSC").checked;
+        const kcOn = $("agKC") && $("agKC").checked;
+        const craOn = $("agCRA") && $("agCRA").checked;
+        const ifOn = $("agIF") && $("agIF").checked;
+
+        if (enOn && c.on.itsm) {
+          const d2 = pct("enDeflectPct", "Employee Navigator deflection", w);
+          let comb = 1 - (1 - (s.d1 || 0)) * (1 - d2);
+          if (comb > 0.4) {
+            w.push("Combined extra deflection was capped at 40% of remaining human tickets.");
+            comb = 0.4;
+          }
+          const extraTickets = Math.max(0, (s.humanTickets || 0) * comb - (s.humanTickets || 0) * (s.d1 || 0));
+          const mix = s.mixHrs || mixHours();
+          const htCut = s.htCut || 0;
+          const hrs = extraTickets * mix * (1 - htCut);
+          const saved = capHours(hrs, extraTickets * mix, "Employee Navigator", w);
+          s.remainHandleAfterHt = Math.max(0, (s.remainHandleAfterHt || 0) - saved);
+          s.remainingTickets = Math.max(0, (s.remainingTickets || 0) - extraTickets);
+          const line = capacity("Employee Navigator extra deflection", saved, "desk", c.rates);
+          lines.push(line);
+          showAgent("val-en", line.annualUsd * real, true);
+        } else {
+          showAgent("val-en", 0, false);
+          if (enOn && !c.on.itsm) w.push("Employee Navigator needs ITSM ticket volume; it was skipped.");
+        }
+
+        if (scOn && c.on.itsm) {
+          const base = s.remainHandleAfterHt || 0;
+          const saved = cutHrs(base, pct("scCutPct", "Service Collaborator cut", w), "Service Collaborator", w);
+          s.remainHandleAfterHt = Math.max(0, base - saved);
+          const line = capacity("Service Collaborator routing", saved, "desk", c.rates);
+          lines.push(line);
+          showAgent("val-sc", line.annualUsd * real, true);
+        } else {
+          showAgent("val-sc", 0, false);
+          if (scOn && !c.on.itsm) w.push("Service Collaborator needs remaining ITSM tickets; it was skipped.");
+        }
+
+        if (kcOn) {
+          const base = num("kcArticles") * num("kcHours");
+          const saved = cutHrs(base, pct("kcCutPct", "Knowledge Curator cut", w), "Knowledge Curator", w);
+          const line = capacity("Knowledge Curator", saved, "admin", c.rates);
+          lines.push(line);
+          showAgent("val-kc", line.annualUsd * real, true);
+        } else showAgent("val-kc", 0, false);
+
+        if (craOn && c.on.change) {
+          const base = s.changeHoursAfterCut || 0;
+          const saved = cutHrs(base, pct("craCutPct", "Change Risk Advisor cut", w), "Change Risk Advisor", w);
+          s.changeHoursAfterCut = Math.max(0, base - saved);
+          const line = capacity("Change Risk Advisor", saved, "eng", c.rates);
+          lines.push(line);
+          showAgent("val-cra", line.annualUsd * real, true);
+        } else {
+          showAgent("val-cra", 0, false);
+          if (craOn && !c.on.change) w.push("Change Risk Advisor needs the Change module; it was skipped.");
+        }
+
+        if (ifOn) {
+          const base = num("ifHours");
+          const saved = cutHrs(base, pct("ifCutPct", "Insight Finder cut", w), "Insight Finder", w);
+          const line = capacity("Insight Finder reporting", saved, "admin", c.rates);
+          lines.push(line);
+          showAgent("val-if", line.annualUsd * real, true);
+        } else showAgent("val-if", 0, false);
+
+        return lines;
       };
 
       MODULES.aiops = function (c) {
         const w = c.warnings;
         const alerts = num("alerts");
         const noise = pct("noisePct", "% noise today", w);
-        const noiseCut = pct("noiseReducedPct", "% of noise reduced", w);
-        const triageHrs = num("triageMin") / 60;
-        const noiseRemoved = alerts * noise * noiseCut;
-        const alertsAfter = Math.max(0, alerts - noiseRemoved);
-        const alertBase = alerts * triageHrs;
-        const alertSaved = capHours(alertBase - alertsAfter * triageHrs, alertBase, "Alert triage", w);
+        const supp = pct("noiseSuppressedPct", "% noise suppressed", w);
+        const removed = alerts * noise * supp;
+        const remain = Math.max(0, alerts - removed);
+        const triageMin = num("triageMin") / 60;
+        const triageBase = alerts * triageMin;
+        const triageSaved = capHours(removed * triageMin, triageBase, "AIOps alert suppression", w);
+        const autoBase = num("autoEvents") * num("autoMin") / 60;
+        const autoSaved = cutHrs(autoBase, 1, "Auto-remediation", w);
         const p1Base = num("p1Count") * num("p1Engineers") * num("p1Hours");
-        const mttrSaved = capHours(p1Base * pct("mttrPct", "% MTTR labour reduction", w), p1Base, "MTTR labour", w);
+        const mttrSaved = cutHrs(p1Base, pct("mttrPct", "P1 labour cut", w), "P1 labour", w);
         const warBase = num("warRooms") * num("warPeople") * num("warHours");
-        const warSaved = capHours(warBase * pct("warAvoidPct", "% war rooms avoided", w), warBase, "War rooms", w);
-        const reportBase = num("reportFte") * FTE_HOURS;
-        const reportSaved = capHours(reportBase * pct("reportAutoPct", "% reporting automated", w), reportBase, "Reporting", w);
-        const monitor = num("servers") * (moneyUsd("costServerNow") - moneyUsd("costServerHelix"));
-        if (monitor < 0) w.push("Monitoring cost with Helix is higher than today; consolidation shows a cost increase.");
+        const warSaved = cutHrs(warBase, pct("warCutPct", "War-room cut", w), "War rooms", w);
+        const modelBase = num("svcModels") * num("svcModelHrs");
+        const modelSaved = cutHrs(modelBase, pct("svcModelCutPct", "Service-model cut", w), "Service models", w);
+        if (c.on.network) w.push("Network Management is also selected: exclude network alerts from the AIOps alert count.");
         const lines = [
-          capacity("Alert noise / triage", alertSaved, "eng", c.rates),
-          capacity("MTTR labour", mttrSaved, "eng", c.rates),
-          capacity("War rooms avoided", warSaved, "eng", c.rates),
-          capacity("Reporting automated", reportSaved, "admin", c.rates),
-          cash("Per-server monitoring delta", monitor)
+          capacity("AIOps noise suppression / triage", triageSaved, "eng", c.rates),
+          capacity("Auto-remediation", autoSaved, "eng", c.rates),
+          capacity("P1 hands-on labour", mttrSaved, "eng", c.rates),
+          capacity("War rooms", warSaved, "eng", c.rates),
+          capacity("Service-model maintenance", modelSaved, "eng", c.rates)
         ];
         if (!blank("downCost") && !blank("downMins") && moneyUsd("downCost") > 0 && num("downMins") > 0) {
-          lines.push(upside("P1 downtime (business loss)", num("p1Count") * num("downMins") * pct("mttrPct") * moneyUsd("downCost")));
+          lines.push(upside("P1 downtime (business loss)", num("p1Count") * num("downMins") * moneyUsd("downCost") * pct("mttrPct")));
         }
         return lines;
       };
 
-      MODULES.agents = function (c) {
-        readAgents();
-        return AGENTS.filter((a) => a.on).map((a) => {
-          const hrs = a.volume * a.minutes / 60;
-          const el = $("agentVal-" + a.id);
-          if (el) el.textContent = fmtMoney(hrs * (c.rates[a.role] || 0)) + " / yr";
-          return capacity(a.name, hrs, a.role, c.rates);
-        });
+      MODULES.network = function (c) {
+        const w = c.warnings;
+        const onboardBase = num("netNew") * num("netOnboardHrs");
+        const onboardSaved = cutHrs(onboardBase, pct("netOnboardCutPct", "Onboarding cut", w), "Network onboarding", w);
+        const alerts = num("netAlerts");
+        const falseAl = alerts * pct("netFalsePct", "Network false %", w);
+        const removed = falseAl * pct("netSuppPct", "Network suppression", w);
+        const minH = num("netAlertMin") / 60;
+        const saved = capHours(removed * minH, alerts * minH, "Network alert suppression", w);
+        if (c.on.aiops) w.push("AIOps is also selected: keep network alerts out of the AIOps alert count.");
+        return [
+          capacity("Network onboarding", onboardSaved, "net", c.rates),
+          capacity("Network false-alert suppression", saved, "net", c.rates)
+        ];
       };
 
-      ["change", "network", "cmdb", "tssa", "bhco", "esm"].forEach((id) => {
-        MODULES[id] = function () { return []; };
-      });
+      MODULES.cmdb = function (c) {
+        const w = c.warnings;
+        const updBase = num("assetUpdates") * num("assetUpdMin") / 60;
+        const updSaved = cutHrs(updBase, pct("assetUpdCutPct", "Asset update cut", w), "Asset updates", w);
+        const audBase = num("audits") * num("auditHrs");
+        const audSaved = cutHrs(audBase, pct("auditCutPct", "Audit cut", w), "CMDB audits", w);
+        const lines = [
+          capacity("Asset-record updates", updSaved, "admin", c.rates),
+          capacity("CMDB / asset audits", audSaved, "admin", c.rates)
+        ];
+        if (num("reclaimCount") > 0 && !blank("reclaimCost") && moneyUsd("reclaimCost") > 0) {
+          lines.push(cash("Reclaimed unused assets", num("reclaimCount") * moneyUsd("reclaimCost")));
+        }
+        return lines;
+      };
+
+      MODULES.tssa = function (c) {
+        const w = c.warnings;
+        const patchBase = num("tssaServers") * num("patchCycles") * num("patchHrs");
+        const vulnBase = num("vulnMonth") * 12 * num("vulnHrs");
+        const compBase = num("compChecks") * num("compHrs");
+        if (c.on.change) w.push("Change is also selected: exclude patch changes from the Change volume.");
+        return [
+          capacity("Patch automation", cutHrs(patchBase, pct("patchCutPct", "Patch cut", w), "Patch cycles", w), "eng", c.rates),
+          capacity("Vulnerability remediation", cutHrs(vulnBase, pct("vulnCutPct", "Vuln cut", w), "Vulnerabilities", w), "eng", c.rates),
+          capacity("Compliance checks", cutHrs(compBase, pct("compCutPct", "Compliance cut", w), "Compliance", w), "admin", c.rates)
+        ];
+      };
+
+      MODULES.bhco = function (c) {
+        const w = c.warnings;
+        const planBase = num("bhcoHours");
+        const lines = [
+          cash("Cloud right-sizing", moneyUsd("cloudMonth") * 12 * pct("cloudCutPct", "Cloud right-sizing", w)),
+          cash("Avoided hardware refresh", moneyUsd("hwSpend") * pct("hwCutPct", "Hardware avoided", w)),
+          cash("Avoided storage spend", moneyUsd("storSpend") * pct("storCutPct", "Storage avoided", w)),
+          capacity("Capacity planning / reporting", cutHrs(planBase, pct("bhcoHrsCutPct", "BHCO hours cut", w), "BHCO planning hours", w), "eng", c.rates)
+        ];
+        if (!blank("capOutageCost") && moneyUsd("capOutageCost") > 0) {
+          lines.push(upside("Capacity outages", num("capOutages") * num("capOutageMin") * moneyUsd("capOutageCost")));
+        }
+        return lines;
+      };
+
+      MODULES.esm = function (c) {
+        const w = c.warnings;
+        const cases = num("esmCases");
+        const handleH = num("esmMin") / 60;
+        const d = pct("esmDeflectPct", "ESM deflection", w);
+        const deflected = cases * d;
+        const remaining = Math.max(0, cases - deflected);
+        const defHrs = cutHrs(deflected * handleH, 1, "ESM deflection", w);
+        const reworkBase = remaining * pct("esmReworkPct", "ESM rework %", w) * num("esmReworkMin") / 60;
+        const reworkSaved = cutHrs(reworkBase, pct("esmReworkCutPct", "ESM rework cut", w), "ESM rework", w);
+        const statusBase = remaining * pct("esmStatusPct", "ESM status %", w) * num("esmEnquiries") * num("esmEnqMin") / 60;
+        const statusSaved = cutHrs(statusBase, pct("esmStatusCutPct", "ESM status cut", w), "ESM status enquiries", w);
+        return [
+          capacity("ESM case deflection", defHrs, "case", c.rates),
+          capacity("ESM rework", reworkSaved, "case", c.rates),
+          capacity("ESM status enquiries", statusSaved, "case", c.rates)
+        ];
+      };
 
       function selected() {
         return CATALOG.filter((m) => m.on);
@@ -840,18 +1089,13 @@
       function engine() {
         const c = ctx();
         const lines = [];
-        selected().forEach((m) => {
-          const fn = MODULES[m.id];
+        RUN_ORDER.filter((id) => c.on[id]).forEach((id) => {
+          const fn = MODULES[id];
           const out = fn ? fn(c) : [];
           out.forEach((line) => {
-            line.module = m.id;
+            line.module = id;
             lines.push(line);
           });
-        });
-        AGENTS.forEach((a) => {
-          const el = $("agentVal-" + a.id);
-          if (el && !CATALOG.find((x) => x.id === "agents").on) el.textContent = "Off (module)";
-          else if (el && !a.on) el.textContent = "Off";
         });
 
         const years = c.years;
@@ -862,14 +1106,22 @@
         let cashAnnual = 0;
         let capGross = 0;
         let upsideAnnual = 0;
+        const byMod = {};
+        CATALOG.forEach((m) => { byMod[m.id] = { cash: 0, cap: 0, up: 0, name: m.short }; });
         lines.forEach((ln) => {
-          if (ln.type === "cash") cashAnnual += ln.annualUsd;
-          if (ln.type === "capacity") capGross += ln.annualUsd;
-          if (ln.type === "upside") upsideAnnual += ln.annualUsd;
+          const b = byMod[ln.module] || (byMod[ln.module] = { cash: 0, cap: 0, up: 0, name: ln.module });
+          if (ln.type === "cash") { cashAnnual += ln.annualUsd; b.cash += ln.annualUsd; }
+          if (ln.type === "capacity") { capGross += ln.annualUsd; b.cap += ln.annualUsd; }
+          if (ln.type === "upside") { upsideAnnual += ln.annualUsd; b.up += ln.annualUsd; }
         });
         const capRealised = capGross * c.realisation;
         const capRoi = capRealised * c.redeploy;
         const roiAnnual = cashAnnual + capRoi;
+        const moduleBars = selected().map((m) => {
+          const b = byMod[m.id];
+          const annual = b.cash + b.cap * c.realisation * c.redeploy;
+          return { id: m.id, name: m.short, total: yearly(annual, years).total };
+        });
 
         const cashH = yearly(cashAnnual, years);
         const capH = yearly(capRealised, years);
@@ -881,8 +1133,14 @@
         const roi = totalCost > 0 ? net / totalCost : null;
         const pay = paybackMonth(roiAnnual, years, services, licence);
 
+        ["card-en", "card-sc", "card-kc", "card-cra", "card-if"].forEach((id) => {
+          const card = $(id);
+          const cb = card && card.querySelector("input[type=checkbox]");
+          if (card && cb) card.classList.toggle("dim", !cb.checked);
+        });
+
         return {
-          c, years, lines, warnings: c.warnings,
+          c, years, lines, warnings: c.warnings, moduleBars,
           cashAnnual, capGross, capRealised, capRoi, upsideAnnual, roiAnnual,
           cashH, capH, capRoiH, upH, roiH,
           totalCost, totalBenefit, net, roi, pay, licence, services
@@ -913,25 +1171,6 @@
         document.querySelectorAll(".tab-panel").forEach((p) => {
           const id = p.getAttribute("data-module");
           p.classList.toggle("active", id === activeTab);
-        });
-      }
-
-      function renderAgents() {
-        $("agentRows").innerHTML = AGENTS.map((a) =>
-          "<tr><td><label class='onoff'><input type='checkbox' data-agent='" + a.id + "' data-field='on' " + (a.on ? "checked" : "") + " /></label></td>" +
-          "<td><span class='agent-name'>" + a.name + "</span> <span class='tip' tabindex='0' data-tip='" + a.tip + "'>i</span></td>" +
-          "<td><input type='number' min='0' step='1' value='" + a.volume + "' data-agent='" + a.id + "' data-field='volume' /></td>" +
-          "<td><input type='number' min='0' step='1' value='" + a.minutes + "' data-agent='" + a.id + "' data-field='minutes' /></td>" +
-          "<td class='value-cell' id='agentVal-" + a.id + "'>—</td></tr>"
-        ).join("");
-      }
-      function readAgents() {
-        document.querySelectorAll("[data-agent]").forEach((el) => {
-          const a = AGENTS.find((x) => x.id === el.dataset.agent);
-          if (!a) return;
-          if (el.dataset.field === "on") a.on = el.checked;
-          if (el.dataset.field === "volume") a.volume = Math.max(0, parseFloat(el.value) || 0);
-          if (el.dataset.field === "minutes") a.minutes = Math.max(0, parseFloat(el.value) || 0);
         });
       }
 
@@ -970,6 +1209,7 @@
         const tick = (v) => fmtMoney(v);
         if (barChart) barChart.destroy();
         if (lineChart) lineChart.destroy();
+        if (modChart) modChart.destroy();
         if (!window.Chart) return;
         barChart = new Chart($("barChart"), {
           type: "bar",
@@ -979,6 +1219,21 @@
             maintainAspectRatio: false,
             plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 10 } } } },
             scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: tick, font: { size: 10 } } } }
+          }
+        });
+        const mods = m.moduleBars || [];
+        modChart = new Chart($("modChart"), {
+          type: "bar",
+          data: {
+            labels: mods.map((x) => x.name),
+            datasets: [{ label: "ROI benefit", data: mods.map((x) => x.total), backgroundColor: "#1a3a63" }]
+          },
+          options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { ticks: { callback: tick, font: { size: 10 } } } }
           }
         });
         lineChart = new Chart($("lineChart"), {
@@ -1117,7 +1372,6 @@
       });
 
       initMoney();
-      renderAgents();
       renderPicker();
       renderTabs();
       render();
