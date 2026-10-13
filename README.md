@@ -1,8 +1,12 @@
 # Helix Value Calculator
 
-A single-page, public portfolio model for **BMC Helix** value in IT service management, AIOps, and agentic AI. It is built to be honest: ranges instead of a single heroic number, a slow adoption ramp, labour realisation haircuts, and **true net ROI** after licence and services.
+**Disclaimer.** Independent personal project by Suhayl Patel. Not a BMC or BMC Helix tool, not a quote, and not a customer result. Views are my own. All defaults are illustrative assumptions.
+
+A single-page, public portfolio model for **BMC Helix** value across ITSM, AIOps, agentic AI, and related operations products. It is built to be honest: cash vs released capacity vs optional upside as separate ledgers, a slow adoption ramp, labour realisation haircuts, and **true net ROI** after licence and services.
 
 Open `index.html` in a browser (or GitHub Pages). There is no build step. Chart.js is loaded from a CDN.
+
+Live: https://suhaylxp-ae.github.io/helix-roi-calculator/
 
 ## Open locally
 
@@ -20,57 +24,50 @@ python3 -m http.server 8080
 
 Then visit http://127.0.0.1:8080/
 
-To publish on GitHub Pages, push this repo and enable Pages from the `main` branch root.
+## How the page is structured
 
-This is **not** a BMC product, quote, or customer case study. All default inputs are generic examples. Do not put real customer names or data in a public fork.
+1. A sticky disclaimer at the top of every view.
+2. A **product picker**. Only selected modules appear as tabs. Default: **ITSM Service Desk** and **AIOps**. Other products (AI Agents, Change & Problem, Network, CMDB/Asset, TSSA, BHCO, ESM) can be toggled on; most are stubs until the next modelling step.
+3. **Global settings:** currency (USD / AED / GBP / EUR with a user-entered rate), stored internally in USD so switching never drifts; loaded hourly rates by role; annual licence; one-time services; 3 or 5 year horizon; Conservative (50%) or Expected (70%) labour realisation; 25 / 60 / 90% adoption ramp; % of released capacity redeployed into ROI (default 50%).
+4. A **shared engine**. Each module registers benefit lines tagged `cash`, `capacity`, or `upside`.
+5. An outputs panel that scrolls on its own.
 
-## What it models
-
-- **Cost and consolidation:** tools you can actually retire, per-server monitoring cost today vs with Helix, and headcount growth you do not hire.
-- **Operations:** alert noise (removed first), remaining triage, P1 labour, war rooms, reporting automation.
-- **Service desk:** extra deflection beyond today’s self-service, then fewer reassignments on tickets that still reach an agent.
-- **AI agents:** Virtual Agent / Employee Navigator, Knowledge Curator, Root Cause Analyzer, Ops Swarmer, Change Risk Advisor — each on/off with its own volume, minutes saved, and annual value.
-
-Currency is USD or AED (`AED = USD × 3.6725`). Horizon is 3 or 5 years.
+This is **not** a BMC product, quote, or customer case study. Do not put real customer names or data in a public fork.
 
 ## Method
 
 1. **Count each saving once, in sequence.**  
    Alert volume after noise reduction is what still gets triaged. Ticket volume after deflection is what still gets reassignment savings.
 
-2. **MTTR is labour, not the outage clock.**  
-   P1 value = engineers × hands-on hours × reduction %. Elapsed business downtime is never used in the ROI headline.
+2. **Three ledgers.**  
+   - **Cash** — budget items (retired tools, monitoring delta, avoided hires). Not haircut.  
+   - **Capacity** — labour hours × role rate × realisation (50% or 70%).  
+   - **Upside** — shown, **never** in net ROI or payback (for example P1 business downtime).
 
-3. **Hours cannot exceed the baseline in that area.**  
+3. **Redeployed capacity.**  
+   Only the entered % of realised capacity (default 50%) is converted into cash-equivalent ROI. The rest stays visible as capacity.
+
+4. **MTTR is labour, not the outage clock.**  
+   P1 labour = engineers × hands-on hours × reduction %. Elapsed business downtime is upside only.
+
+5. **Hours cannot exceed the baseline in that area.**  
    If an input implies more hours saved than exist, the model caps the saving and shows a warning.
 
-4. **Labour is not cash.**  
-   Freed time is multiplied by a realisation factor: **conservative 50%**, **expected 70%**. Cash items (retired tools, monitoring delta, avoided hires) are not haircut.
+6. **Adoption ramp** (benefits, not licence): Year 1 **25%**, Year 2 **60%**, Year 3+ **90%**.
 
-5. **Adoption ramp** (applied to benefits, not to licence):  
-   Year 1 **25%**, Year 2 **60%**, Year 3+ **90%**.
+7. **Cost** = one-time services (month 0) + annual licence × years.
 
-6. **Cost** = one-time services (month 0) + annual licence × years.
+8. **Net ROI** = (ROI benefit − total cost) / total cost, where ROI benefit = ramped cash + ramped redeployed capacity.  
+   **Payback month** is the first month where that cumulative benefit ≥ cumulative cost.
 
-7. **Net ROI** = (total benefit − total cost) / total cost.  
-   **Payback month** is the first month where cumulative benefit ≥ cumulative cost, using monthly licence and ramped monthly benefit.
+9. **Credibility warning** if modelled net ROI is above **5×**.
 
-Two scenarios are always shown side by side. They share your operational inputs; they differ on labour realisation.
+## Placeholder modules
 
-## Downtime upside (optional, excluded)
-
-If you enter cost per minute of a P1 outage **and** average elapsed P1 minutes, the page shows a separate range. That figure is **never** included in total benefit, net value, net ROI, or payback. Mixing IT labour with business-loss dollars is how ROI models stop being honest.
-
-## Guardrails worth knowing
-
-- Agent values are **example assumptions**. Validate minutes and volumes against BMC’s published figures and your own telemetry. Turn an agent off if that work is already counted on another tab (for example Virtual Agent vs ticket deflection, Root Cause Analyzer vs MTTR hours).
-- Monitoring “cost per server with Helix” is incremental estate cost. Do **not** put the Helix licence there; licence already sits in global inputs.
-- “What has to be true” lists the three largest modelled drivers so a reviewer can attack the result instead of the formatting.
+ITSM and AIOps currently carry the working service-desk and operations maths from the first version. Remaining product tabs are structure-only until the next step.
 
 ## Stack
 
 One `index.html` file: HTML, CSS, and JavaScript. [Chart.js](https://www.chartjs.org/) from jsDelivr. Suitable for GitHub Pages.
 
-## Disclaimer
-
-Portfolio demonstration. Not affiliated with or endorsed by BMC Software. Helix is a trademark of BMC Software.
+Helix is a trademark of BMC Software.
