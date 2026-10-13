@@ -28,7 +28,7 @@ Then visit http://127.0.0.1:8080/
 
 1. A sticky disclaimer at the top of every view.
 2. A **product picker**. Only selected modules appear as tabs. Default: **ITSM Service Desk** and **AIOps**. All nine products (ITSM, AI Agents, Change & Problem, AIOps, Network, CMDB/Asset, TSSA, BHCO, ESM) have working inputs. AI Agents is an add-on and only counts if ITSM and/or Change is selected.
-3. **Global settings:** currency (USD / AED / GBP / EUR with a user-entered rate), stored internally in USD so switching never drifts; loaded hourly rates by role; annual licence; one-time services; 3 or 5 year horizon; Conservative (50%) or Expected (70%) labour realisation; 25 / 60 / 90% adoption ramp; % of released capacity redeployed into ROI (default 50%).
+3. **Global settings:** currency (USD / AED / GBP / EUR with a user-entered rate), stored internally in USD so switching never drifts; loaded hourly rates by role; **per-module licence** (only selected modules are costed) plus one-time services (default 40% of that year-1 licence); 3 or 5 year horizon; Conservative (50%) **and** Expected (70%) labour realisation shown side by side; 25 / 60 / 90% adoption ramp; % of released capacity redeployed into ROI (default 50%).
 4. A **shared engine**. Each module registers benefit lines tagged `cash`, `capacity`, or `upside`.
 5. An outputs panel that scrolls on its own.
 
@@ -41,7 +41,7 @@ This is **not** a BMC product, quote, or customer case study. Do not put real cu
 
 2. **Three ledgers.**  
    - **Cash** — budget items (retired tools, monitoring delta, avoided hires). Not haircut.  
-   - **Capacity** — labour hours × role rate × realisation (50% or 70%).  
+   - **Capacity** — labour hours × role rate. Realisation (50% conservative / 70% expected) is applied when packing each scenario.  
    - **Upside** — shown, **never** in net ROI or payback (for example P1 business downtime).
 
 3. **Redeployed capacity.**  
@@ -55,12 +55,14 @@ This is **not** a BMC product, quote, or customer case study. Do not put real cu
 
 6. **Adoption ramp** (benefits, not licence): Year 1 **25%**, Year 2 **60%**, Year 3+ **90%**.
 
-7. **Cost** = one-time services (month 0) + annual licence × years.
+7. **Cost** = one-time services (month 0) + (sum of selected module licences) × years.
 
-8. **Net ROI** = (ROI benefit − total cost) / total cost, where ROI benefit = ramped cash + ramped redeployed capacity.  
+8. **Overlaps are subtracted, not only warned.** Patch cycles come out of the Change volume when TSSA is on; network alerts come out of the AIOps count; auto-remediated events come out of the post-suppression triage pool; ITSM extra deflection is capped at 40% even if Employee Navigator is off. Each deduction is listed once under **Overlaps handled**.
+
+9. **Net ROI** = (ROI benefit − total cost) / total cost, where ROI benefit = ramped cash + ramped (capacity × realisation × redeploy %). Conservative and Expected are both shown.  
    **Payback month** is the first month where that cumulative benefit ≥ cumulative cost.
 
-9. **Credibility warning** if modelled net ROI is above **5×**.
+10. **Credibility warning** if modelled net ROI is above **5×**.
 
 ## Modules
 
@@ -68,11 +70,11 @@ Every numeric default is labelled **illustrative assumption**. Hours saved on a 
 
 - **ITSM:** extra deflection first, then handle-time cut on remaining L1/L2 tickets (capacity).
 - **AI Agents:** extra combined deflection (capped at 40%), routing, knowledge, change-risk, and reporting (capacity, after realisation).
-- **Change & Problem:** effort and problem hours (capacity); avoided failures are cash if a unit cost is entered, otherwise upside.
-- **AIOps:** suppress noise first, then triage remaining alerts, auto-remediation, P1 labour, war rooms, service models (capacity). Downtime is upside only.
-- **Network:** onboarding and false-alert suppression (capacity). Warns if AIOps is also on.
+- **Change & Problem:** effort and problem hours (capacity); avoided failures are cash if a unit cost is entered, otherwise **capacity** (rework hours). Patch changes are subtracted when TSSA is also on.
+- **AIOps:** suppress noise first, then auto-remediation on the remaining pool, P1 labour, war rooms, service models (capacity). Downtime is upside only. Network alerts are subtracted when Network is also on.
+- **Network:** onboarding and false-alert suppression (capacity). Those alerts are removed from the AIOps count when both modules are on.
 - **CMDB/Asset:** update and audit hours (capacity); reclaim cash only if filled. Breach risk is unvalued upside text.
-- **TSSA:** patch, vulnerability, and compliance hours (capacity). Warns if Change is also on.
+- **TSSA:** patch, vulnerability, and compliance hours (capacity). Patch cycles are subtracted from Change volume when both modules are on.
 - **BHCO:** cloud / hardware / storage **cash**; planning hours capacity; capacity outages upside.
 - **ESM:** non-IT cases — deflection first, then rework and status-enquiry cuts (capacity).
 

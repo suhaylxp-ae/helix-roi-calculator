@@ -368,6 +368,42 @@
     }
     .copied { font-size: 0.78rem; color: var(--good); align-self: center; }
     .empty-mods { padding: 2rem 1rem; color: var(--muted); text-align: center; }
+    .cost-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin-top: 0.4rem; }
+    .cost-table th {
+      text-align: left;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.35rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .cost-table td { padding: 0.35rem; border-bottom: 1px solid #eef2f7; vertical-align: middle; }
+    .cost-table tr.off td { opacity: 0.4; }
+    .cost-table input { max-width: 9rem; }
+    .cost-sum { font-family: var(--mono); font-size: 0.85rem; margin-top: 0.55rem; }
+    .overlaps {
+      display: none;
+      margin: 0.55rem 0;
+      padding: 0.65rem 0.75rem;
+      background: #eef6ff;
+      border: 1px solid #c9d9f5;
+      color: var(--navy);
+      border-radius: 8px;
+      font-size: 0.82rem;
+    }
+    .overlaps.show { display: block; }
+    .overlaps ul { margin: 0.3rem 0 0; padding-left: 1.1rem; }
+    .scenario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem; }
+    .scen { border: 1px solid var(--line); border-radius: 10px; padding: 0.7rem; }
+    .scen.expected { border-color: #c9d9f5; background: #f4f8ff; }
+    .scen h3 {
+      margin: 0 0 0.45rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
     footer { color: var(--muted); font-size: 0.78rem; padding: 0 0 2rem; }
 
     @media (max-width: 980px) {
@@ -376,7 +412,7 @@
       .grid-6, .grid-5, .grid-4, .roles { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 640px) {
-      .grid-6, .grid-5, .grid-4, .grid-3, .grid-2, .roles { grid-template-columns: 1fr; }
+      .grid-6, .grid-5, .grid-4, .grid-3, .grid-2, .roles, .scenario-grid { grid-template-columns: 1fr; }
       .agent-table { display: block; overflow-x: auto; }
     }
   </style>
@@ -403,7 +439,7 @@
 
     <section class="card" aria-label="Global settings">
       <h2>Global settings</h2>
-      <div class="grid-5">
+      <div class="grid-4">
         <label class="field">
           <span class="label-row">Currency <span class="tip" tabindex="0" data-tip="Amounts are stored in USD. Changing currency only changes the display using the rate you enter.">i</span></span>
           <select id="currency">
@@ -418,36 +454,31 @@
           <input id="fxRate" type="number" min="0.0001" step="0.0001" value="1" />
         </label>
         <label class="field">
-          <span class="label-row">Annual licence <span class="tip" tabindex="0" data-tip="All-in annual Helix subscription for the selected footprint. Displayed in the chosen currency; stored as USD so switching never drifts.">i</span></span>
-          <input id="licence" data-money type="number" min="0" step="1000" value="420000" />
-          <span class="assump">illustrative assumption</span>
-        </label>
-        <label class="field">
-          <span class="label-row">One-time services <span class="tip" tabindex="0" data-tip="Implementation and change-management. Counted in month 0 for payback.">i</span></span>
-          <input id="services" data-money type="number" min="0" step="1000" value="175000" />
-          <span class="assump">illustrative assumption</span>
-        </label>
-        <label class="field">
-          <span class="label-row">Time horizon <span class="tip" tabindex="0" data-tip="Benefits follow 25% / 60% / 90% in years 1 / 2 / 3+. Licence is paid every year.">i</span></span>
+          <span class="label-row">Time horizon <span class="tip" tabindex="0" data-tip="Benefits follow 25% / 60% / 90% in years 1 / 2 / 3+. Licence is paid every year on selected modules only.">i</span></span>
           <select id="horizon">
             <option value="3" selected>3 years</option>
             <option value="5">5 years</option>
           </select>
         </label>
+        <label class="field">
+          <span class="label-row">% capacity redeployed <span class="tip" tabindex="0" data-tip="Share of realised labour value counted as cash-equivalent in ROI. Conservative and Expected are always shown side by side (50% / 70% labour realisation).">i</span></span>
+          <input id="redeployPct" type="number" min="0" step="1" value="50" />
+        </label>
       </div>
+      <p class="ramp-note">Adoption ramp (benefits only): year 1 <b>25%</b>, year 2 <b>60%</b>, year 3+ <b>90%</b>. Labour realisation is always shown as Conservative 50% and Expected 70%.</p>
+      <h2 style="margin-top:1rem;">Licence by module <span class="assump">illustrative assumption</span></h2>
+      <p class="ramp-note">Only <b>selected</b> modules are summed. One-time services default to 40% of that year-1 licence; edit the dollars or the %.</p>
+      <div style="overflow-x:auto;"><table class="cost-table" id="costTable"></table></div>
       <div class="grid-3" style="margin-top:0.75rem;">
         <label class="field">
-          <span class="label-row">Scenario <span class="tip" tabindex="0" data-tip="Labour realisation haircut. Conservative 50%, Expected 70%. Cash is never haircut.">i</span></span>
-          <select id="scenario">
-            <option value="conservative">Conservative · 50% labour</option>
-            <option value="expected" selected>Expected · 70% labour</option>
-          </select>
+          <span class="label-row">Services as % of year-1 licence <span class="assump">illustrative assumption</span></span>
+          <input id="svcPct" type="number" min="0" max="100" step="1" value="40" />
         </label>
         <label class="field">
-          <span class="label-row">% capacity redeployed <span class="tip" tabindex="0" data-tip="Share of realised labour value counted as cash-equivalent in ROI. The rest stays in the capacity ledger and is not in net ROI.">i</span></span>
-          <input id="redeployPct" type="number" min="0" max="100" step="1" value="50" />
+          <span class="label-row">One-time services <span class="tip" tabindex="0" data-tip="Counted in month 0. Defaults to the % of selected year-1 licence. Editing this amount stops auto-recalc; change the % to resume.">i</span></span>
+          <input id="services" data-money type="number" min="0" step="1000" value="60000" />
         </label>
-        <p class="ramp-note">Adoption ramp (benefits only): year 1 <b>25%</b>, year 2 <b>60%</b>, year 3+ <b>90%</b>.</p>
+        <p class="cost-sum" id="costSum"></p>
       </div>
       <h2 style="margin-top:1rem;">Loaded hourly rates</h2>
       <div class="grid-5 roles">
@@ -536,7 +567,7 @@
           <div class="agent-card" id="card-cra">
             <div class="agent-head"><label><input id="agCRA" type="checkbox" checked /> <strong>Change Risk Advisor</strong></label><span class="agent-val" id="val-cra">—</span></div>
             <p class="blurb" style="margin:0.35rem 0 0.5rem;">Further cut on Change-module effort that remains after the Change effort cut. Requires Change.</p>
-            <label class="field"><span class="label-row">Cut on remaining change hours % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 15%.">i</span></span><input id="craCutPct" type="number" min="0" max="100" step="1" value="15" /></label>
+            <label class="field"><span class="label-row">Cut on remaining change hours % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 8%, below the Change module’s own 10% cut.">i</span></span><input id="craCutPct" type="number" min="0" max="100" step="1" value="8" /></label>
           </div>
           <div class="agent-card" id="card-if">
             <div class="agent-head"><label><input id="agIF" type="checkbox" checked /> <strong>Insight Finder</strong></label><span class="agent-val" id="val-if">—</span></div>
@@ -550,14 +581,14 @@
 
         <div id="panel-change" class="tab-panel" data-module="change" role="tabpanel">
           <h3>Change &amp; Problem <span class="tag tag-cap">capacity</span> <span class="tag tag-cash">cash if cost filled</span></h3>
-          <p class="blurb">Effort cut first. Failed-change reduction is cash if you enter a cost per failure; otherwise it is upside. Problem hours are separate.</p>
+          <p class="blurb">Effort cut first. Failed-change reduction is cash if you enter a cost per failure; otherwise avoided rework hours are capacity. Problem hours are separate. Patch changes are subtracted when TSSA is also on.</p>
           <div class="grid-3">
             <label class="field"><span class="label-row">Changes / year <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Exclude patch changes if TSSA is also selected.">i</span></span><input id="changes" type="number" min="0" step="1" value="2400" /></label>
             <label class="field"><span class="label-row">Hours per change <span class="assump">illustrative assumption</span></span><input id="chgHours" type="number" min="0" step="0.1" value="4" /></label>
             <label class="field"><span class="label-row">Change effort cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 10%.">i</span></span><input id="chgCutPct" type="number" min="0" max="100" step="1" value="10" /></label>
             <label class="field"><span class="label-row">Failure rate % <span class="assump">illustrative assumption</span></span><input id="failRatePct" type="number" min="0" max="100" step="0.5" value="8" /></label>
             <label class="field"><span class="label-row">Relative failure reduction % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 10% of today’s failures avoided.">i</span></span><input id="failCutPct" type="number" min="0" max="100" step="1" value="10" /></label>
-            <label class="field"><span class="label-row">Cost per failed change <span class="tip" tabindex="0" data-tip="Blank = upside only. Filled = cash.">i</span></span><input id="failCost" data-money type="number" min="0" step="100" placeholder="Leave blank" /></label>
+            <label class="field"><span class="label-row">Cost per failed change <span class="tip" tabindex="0" data-tip="Blank = avoided rework hours as capacity. Filled = cash.">i</span></span><input id="failCost" data-money type="number" min="0" step="100" placeholder="Leave blank" /></label>
             <label class="field"><span class="label-row">Problem tickets / year <span class="assump">illustrative assumption</span></span><input id="problems" type="number" min="0" step="1" value="180" /></label>
             <label class="field"><span class="label-row">Hours per problem <span class="assump">illustrative assumption</span></span><input id="probHours" type="number" min="0" step="0.1" value="6" /></label>
             <label class="field"><span class="label-row">Problem effort cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 10%.">i</span></span><input id="probCutPct" type="number" min="0" max="100" step="1" value="10" /></label>
@@ -566,7 +597,7 @@
 
         <div id="panel-network" class="tab-panel" data-module="network" role="tabpanel">
           <h3>Network Management <span class="tag tag-cap">capacity</span></h3>
-          <p class="blurb">Onboarding hours and false-alert suppression. If AIOps is also selected, exclude these alerts from the AIOps count.</p>
+          <p class="blurb">Onboarding hours and false-alert suppression. If AIOps is also selected, these alerts are subtracted from the AIOps count.</p>
           <div class="grid-3">
             <label class="field"><span class="label-row">Devices <span class="assump">illustrative assumption</span></span><input id="netDevices" type="number" min="0" step="1" value="2500" /></label>
             <label class="field"><span class="label-row">New devices / year <span class="assump">illustrative assumption</span></span><input id="netNew" type="number" min="0" step="1" value="400" /></label>
@@ -584,7 +615,7 @@
           <p class="blurb">Record-update and audit hours. Reclaimed unused assets are cash only if you enter a count and unit cost. Breach risk is qualitative upside — not valued.</p>
           <div class="grid-3">
             <label class="field"><span class="label-row">Assets <span class="assump">illustrative assumption</span></span><input id="assets" type="number" min="0" step="1" value="25000" /></label>
-            <label class="field"><span class="label-row">Asset-record updates / year <span class="assump">illustrative assumption</span></span><input id="assetUpdates" type="number" min="0" step="100" value="80000" /></label>
+            <label class="field"><span class="label-row">Asset-record updates / year <span class="assump">illustrative assumption</span></span><input id="assetUpdates" type="number" min="0" step="100" value="20000" /></label>
             <label class="field"><span class="label-row">Minutes per update <span class="assump">illustrative assumption</span></span><input id="assetUpdMin" type="number" min="0" step="0.5" value="8" /></label>
             <label class="field"><span class="label-row">Update cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20%.">i</span></span><input id="assetUpdCutPct" type="number" min="0" max="100" step="1" value="20" /></label>
             <label class="field"><span class="label-row">Audits / year <span class="assump">illustrative assumption</span></span><input id="audits" type="number" min="0" step="1" value="4" /></label>
@@ -598,7 +629,7 @@
 
         <div id="panel-tssa" class="tab-panel" data-module="tssa" role="tabpanel">
           <h3>Server Automation (TSSA) <span class="tag tag-cap">capacity</span></h3>
-          <p class="blurb">Patch, vulnerability, and compliance labour. If Change is also selected, exclude patch changes from the Change volume.</p>
+          <p class="blurb">Patch, vulnerability, and compliance labour. If Change is also selected, patch cycles are subtracted from the Change volume.</p>
           <div class="grid-3">
             <label class="field"><span class="label-row">Servers <span class="assump">illustrative assumption</span></span><input id="tssaServers" type="number" min="0" step="1" value="1800" /></label>
             <label class="field"><span class="label-row">Patch cycles / year <span class="assump">illustrative assumption</span></span><input id="patchCycles" type="number" min="0" step="1" value="12" /></label>
@@ -653,8 +684,9 @@
       <aside class="panel outputs" aria-label="Results">
         <h2>Outputs</h2>
         <div id="kpis"></div>
+        <div id="overlaps" class="overlaps"></div>
         <div id="credWarn" class="cred">Credibility warning: modelled net ROI is above 5×. Check double-counted labour, aggressive ramps, and whether licence matches the selected footprint.</div>
-        <p class="chart-title">Benefit by type, per year</p>
+        <p class="chart-title">ROI benefit by type, per year <span class="subkpi" style="display:inline;margin:0;">(cash + capacity × realisation × redeploy %, expected scenario; upside excluded)</span></p>
         <div class="chart-box"><canvas id="barChart"></canvas></div>
         <p class="chart-title">Benefit by module (ROI benefit, ramped)</p>
         <div class="chart-box mod"><canvas id="modChart"></canvas></div>
@@ -679,15 +711,15 @@
       const FX_DEFAULT = { USD: 1, AED: 3.6725, GBP: 0.78, EUR: 0.92 };
 
       const CATALOG = [
-        { id: "itsm", name: "ITSM Service Desk", short: "ITSM", on: true },
-        { id: "agents", name: "Helix AI Agents", short: "AI Agents", on: false },
-        { id: "change", name: "Change & Problem", short: "Change", on: false },
-        { id: "aiops", name: "AIOps", short: "AIOps", on: true },
-        { id: "network", name: "Network Management", short: "Network", on: false },
-        { id: "cmdb", name: "Discovery/CMDB/Asset Mgmt", short: "CMDB", on: false },
-        { id: "tssa", name: "Server Automation (TSSA)", short: "TSSA", on: false },
-        { id: "bhco", name: "Continuous Optimization (BHCO)", short: "BHCO", on: false },
-        { id: "esm", name: "ESM/Business Workflows", short: "ESM", on: false }
+        { id: "itsm", name: "ITSM Service Desk", short: "ITSM", on: true, licence: 60000 },
+        { id: "agents", name: "Helix AI Agents", short: "AI Agents", on: false, licence: 40000 },
+        { id: "change", name: "Change & Problem", short: "Change", on: false, licence: 15000 },
+        { id: "aiops", name: "AIOps", short: "AIOps", on: true, licence: 90000 },
+        { id: "network", name: "Network Management", short: "Network", on: false, licence: 30000 },
+        { id: "cmdb", name: "Discovery/CMDB/Asset Mgmt", short: "CMDB", on: false, licence: 35000 },
+        { id: "tssa", name: "Server Automation (TSSA)", short: "TSSA", on: false, licence: 40000 },
+        { id: "bhco", name: "Continuous Optimization (BHCO)", short: "BHCO", on: false, licence: 45000 },
+        { id: "esm", name: "ESM/Business Workflows", short: "ESM", on: false, licence: 40000 }
       ];
 
       const MODULES = {};
@@ -796,9 +828,10 @@
       }
 
       function ctx() {
+        const warnings = [];
         return {
-          realisation: REAL[$("scenario").value] || 0.7,
-          redeploy: pct("redeployPct"),
+          realisation: REAL.expected,
+          redeploy: pct("redeployPct", "% capacity redeployed", warnings),
           years: parseInt($("horizon").value, 10),
           rates: {
             desk: moneyUsd("rateDesk"),
@@ -807,10 +840,41 @@
             admin: moneyUsd("rateAdmin"),
             case: moneyUsd("rateCase")
           },
-          warnings: [],
+          warnings,
+          overlaps: [],
           shared: {},
           on: Object.fromEntries(CATALOG.map((m) => [m.id, m.on]))
         };
+      }
+
+      function selectedLicenceUsd() {
+        return selected().reduce((s, m) => s + moneyUsd("lic-" + m.id), 0);
+      }
+
+      function applyOverlaps(c) {
+        const o = c.overlaps;
+        let changeN = num("changes");
+        if (c.on.change && c.on.tssa) {
+          const patchN = num("tssaServers") * num("patchCycles");
+          const taken = Math.min(changeN, Math.max(0, patchN));
+          const hrs = taken * num("chgHours");
+          if (taken > 0) {
+            o.push("TSSA patch cycles removed " + Math.round(taken).toLocaleString() + " changes (" + hrs.toFixed(0) + " h) from the Change volume.");
+            changeN -= taken;
+          }
+        }
+        c.shared.changeCount = changeN;
+
+        let aiopsAlerts = num("alerts");
+        if (c.on.aiops && c.on.network) {
+          const taken = Math.min(aiopsAlerts, num("netAlerts"));
+          const hrs = taken * num("triageMin") / 60;
+          if (taken > 0) {
+            o.push("Network alerts removed " + Math.round(taken).toLocaleString() + " alerts (" + hrs.toFixed(0) + " h of AIOps triage baseline) from the AIOps count.");
+            aiopsAlerts -= taken;
+          }
+        }
+        c.shared.aiopsAlerts = aiopsAlerts;
       }
 
       function cash(name, annualUsd) {
@@ -823,17 +887,19 @@
         return { name: name, type: "upside", annualUsd: annualUsd || 0, hours: 0 };
       }
 
-      function mixHours() {
-        const l2 = pct("l2Pct");
+      function mixHours(warnings) {
+        const l2 = pct("l2Pct", "L2 tickets %", warnings);
         return ((1 - l2) * num("l1Min") + l2 * num("l2Min")) / 60;
       }
       function cutHrs(base, cut, label, w) {
         return capHours(Math.max(0, base) * cut, Math.max(0, base), label, w);
       }
-      function showAgent(id, usdAfterReal, on) {
+      function showAgent(id, grossUsd, on) {
         const el = $(id);
         if (!el) return;
-        el.textContent = on ? fmtMoney(usdAfterReal) + " / yr after realisation" : "Off";
+        el.textContent = on
+          ? "C " + fmtMoney(grossUsd * REAL.conservative) + " · E " + fmtMoney(grossUsd * REAL.expected) + " / yr after realisation"
+          : "Off";
       }
 
       MODULES.itsm = function (c) {
@@ -841,9 +907,15 @@
         const s = c.shared;
         const tickets = num("tickets");
         const ssNow = pct("ssNowPct", "Current self-service %", w);
-        const d1 = pct("itsmDeflectPct", "ITSM extra deflection %", w);
+        let d1 = pct("itsmDeflectPct", "ITSM extra deflection %", w);
         const human = tickets * (1 - ssNow);
-        const mix = mixHours();
+        const mix = mixHours(w);
+        if (d1 > 0.4) {
+          const dropped = (d1 - 0.4) * human * mix;
+          const enOn = c.on.agents && $("agEN") && $("agEN").checked;
+          c.overlaps.push("ITSM extra deflection capped at 40%" + (enOn ? "" : " even without Employee Navigator") + " (" + dropped.toFixed(0) + " h not counted).");
+          d1 = 0.4;
+        }
         const deflected = human * d1;
         const remaining = Math.max(0, human - deflected);
         const baseHumanHrs = human * mix;
@@ -866,11 +938,12 @@
       MODULES.change = function (c) {
         const w = c.warnings;
         const s = c.shared;
-        const chgBase = num("changes") * num("chgHours");
+        const chgN = s.changeCount != null ? s.changeCount : num("changes");
+        const chgBase = chgN * num("chgHours");
         const chgCut = pct("chgCutPct", "Change effort cut", w);
         const chgSaved = cutHrs(chgBase, chgCut, "Change effort", w);
         s.changeHoursAfterCut = Math.max(0, chgBase - chgSaved);
-        const failBase = num("changes") * pct("failRatePct", "Failure rate", w);
+        const failBase = chgN * pct("failRatePct", "Failure rate", w);
         const avoided = failBase * pct("failCutPct", "Failure reduction", w);
         const lines = [
           capacity("Change effort", chgSaved, "eng", c.rates),
@@ -880,10 +953,9 @@
           if (!blank("failCost") && moneyUsd("failCost") > 0) {
             lines.push(cash("Failed changes avoided", avoided * moneyUsd("failCost")));
           } else {
-            lines.push(upside("Failed changes avoided (no unit cost entered)", avoided * num("chgHours") * (c.rates.eng || 0)));
+            lines.push(capacity("Failed-change rework avoided", avoided * num("chgHours"), "eng", c.rates));
           }
         }
-        if (c.on.tssa) w.push("TSSA is also selected: exclude patch changes from the Change volume so they are not counted twice.");
         return lines;
       };
 
@@ -898,7 +970,6 @@
           w.push("Helix AI Agents is an add-on: select ITSM and/or Change to count agent value.");
           return [];
         }
-        const real = c.realisation;
         const lines = [];
         const enOn = $("agEN") && $("agEN").checked;
         const scOn = $("agSC") && $("agSC").checked;
@@ -914,7 +985,7 @@
             comb = 0.4;
           }
           const extraTickets = Math.max(0, (s.humanTickets || 0) * comb - (s.humanTickets || 0) * (s.d1 || 0));
-          const mix = s.mixHrs || mixHours();
+          const mix = s.mixHrs || mixHours(w);
           const htCut = s.htCut || 0;
           const hrs = extraTickets * mix * (1 - htCut);
           const saved = capHours(hrs, extraTickets * mix, "Employee Navigator", w);
@@ -922,7 +993,7 @@
           s.remainingTickets = Math.max(0, (s.remainingTickets || 0) - extraTickets);
           const line = capacity("Employee Navigator extra deflection", saved, "desk", c.rates);
           lines.push(line);
-          showAgent("val-en", line.annualUsd * real, true);
+          showAgent("val-en", line.annualUsd, true);
         } else {
           showAgent("val-en", 0, false);
           if (enOn && !c.on.itsm) w.push("Employee Navigator needs ITSM ticket volume; it was skipped.");
@@ -934,7 +1005,7 @@
           s.remainHandleAfterHt = Math.max(0, base - saved);
           const line = capacity("Service Collaborator routing", saved, "desk", c.rates);
           lines.push(line);
-          showAgent("val-sc", line.annualUsd * real, true);
+          showAgent("val-sc", line.annualUsd, true);
         } else {
           showAgent("val-sc", 0, false);
           if (scOn && !c.on.itsm) w.push("Service Collaborator needs remaining ITSM tickets; it was skipped.");
@@ -945,7 +1016,7 @@
           const saved = cutHrs(base, pct("kcCutPct", "Knowledge Curator cut", w), "Knowledge Curator", w);
           const line = capacity("Knowledge Curator", saved, "admin", c.rates);
           lines.push(line);
-          showAgent("val-kc", line.annualUsd * real, true);
+          showAgent("val-kc", line.annualUsd, true);
         } else showAgent("val-kc", 0, false);
 
         if (craOn && c.on.change) {
@@ -954,7 +1025,7 @@
           s.changeHoursAfterCut = Math.max(0, base - saved);
           const line = capacity("Change Risk Advisor", saved, "eng", c.rates);
           lines.push(line);
-          showAgent("val-cra", line.annualUsd * real, true);
+          showAgent("val-cra", line.annualUsd, true);
         } else {
           showAgent("val-cra", 0, false);
           if (craOn && !c.on.change) w.push("Change Risk Advisor needs the Change module; it was skipped.");
@@ -965,7 +1036,7 @@
           const saved = cutHrs(base, pct("ifCutPct", "Insight Finder cut", w), "Insight Finder", w);
           const line = capacity("Insight Finder reporting", saved, "admin", c.rates);
           lines.push(line);
-          showAgent("val-if", line.annualUsd * real, true);
+          showAgent("val-if", line.annualUsd, true);
         } else showAgent("val-if", 0, false);
 
         return lines;
@@ -973,15 +1044,24 @@
 
       MODULES.aiops = function (c) {
         const w = c.warnings;
-        const alerts = num("alerts");
+        const alerts = c.shared.aiopsAlerts != null ? c.shared.aiopsAlerts : num("alerts");
         const noise = pct("noisePct", "% noise today", w);
         const supp = pct("noiseSuppressedPct", "% noise suppressed", w);
         const removed = alerts * noise * supp;
         const remain = Math.max(0, alerts - removed);
         const triageMin = num("triageMin") / 60;
+        const autoWanted = num("autoEvents");
+        const autoFromPool = Math.min(autoWanted, remain);
+        if (autoWanted > remain + 1e-9) {
+          const skipped = autoWanted - remain;
+          c.overlaps.push("Auto-remediation limited to the post-suppression pool: " + Math.round(skipped).toLocaleString() + " events (" + (skipped * num("autoMin") / 60).toFixed(0) + " h) not counted because those alerts were already suppressed.");
+        }
+        if (autoFromPool > 0) {
+          c.overlaps.push("Auto-remediated events taken out of the post-suppression triage pool: " + Math.round(autoFromPool).toLocaleString() + " events (" + (autoFromPool * triageMin).toFixed(0) + " h of remaining triage, not double-counted).");
+        }
         const triageBase = alerts * triageMin;
         const triageSaved = capHours(removed * triageMin, triageBase, "AIOps alert suppression", w);
-        const autoBase = num("autoEvents") * num("autoMin") / 60;
+        const autoBase = autoFromPool * num("autoMin") / 60;
         const autoSaved = cutHrs(autoBase, 1, "Auto-remediation", w);
         const p1Base = num("p1Count") * num("p1Engineers") * num("p1Hours");
         const mttrSaved = cutHrs(p1Base, pct("mttrPct", "P1 labour cut", w), "P1 labour", w);
@@ -989,7 +1069,6 @@
         const warSaved = cutHrs(warBase, pct("warCutPct", "War-room cut", w), "War rooms", w);
         const modelBase = num("svcModels") * num("svcModelHrs");
         const modelSaved = cutHrs(modelBase, pct("svcModelCutPct", "Service-model cut", w), "Service models", w);
-        if (c.on.network) w.push("Network Management is also selected: exclude network alerts from the AIOps alert count.");
         const lines = [
           capacity("AIOps noise suppression / triage", triageSaved, "eng", c.rates),
           capacity("Auto-remediation", autoSaved, "eng", c.rates),
@@ -1012,7 +1091,6 @@
         const removed = falseAl * pct("netSuppPct", "Network suppression", w);
         const minH = num("netAlertMin") / 60;
         const saved = capHours(removed * minH, alerts * minH, "Network alert suppression", w);
-        if (c.on.aiops) w.push("AIOps is also selected: keep network alerts out of the AIOps alert count.");
         return [
           capacity("Network onboarding", onboardSaved, "net", c.rates),
           capacity("Network false-alert suppression", saved, "net", c.rates)
@@ -1040,7 +1118,6 @@
         const patchBase = num("tssaServers") * num("patchCycles") * num("patchHrs");
         const vulnBase = num("vulnMonth") * 12 * num("vulnHrs");
         const compBase = num("compChecks") * num("compHrs");
-        if (c.on.change) w.push("Change is also selected: exclude patch changes from the Change volume.");
         return [
           capacity("Patch automation", cutHrs(patchBase, pct("patchCutPct", "Patch cut", w), "Patch cycles", w), "eng", c.rates),
           capacity("Vulnerability remediation", cutHrs(vulnBase, pct("vulnCutPct", "Vuln cut", w), "Vulnerabilities", w), "eng", c.rates),
@@ -1086,23 +1163,7 @@
         return CATALOG.filter((m) => m.on);
       }
 
-      function engine() {
-        const c = ctx();
-        const lines = [];
-        RUN_ORDER.filter((id) => c.on[id]).forEach((id) => {
-          const fn = MODULES[id];
-          const out = fn ? fn(c) : [];
-          out.forEach((line) => {
-            line.module = id;
-            lines.push(line);
-          });
-        });
-
-        const years = c.years;
-        const licence = moneyUsd("licence");
-        const services = moneyUsd("services");
-        const totalCost = services + licence * years;
-
+      function packScenario(lines, real, redeploy, years, licence, services) {
         let cashAnnual = 0;
         let capGross = 0;
         let upsideAnnual = 0;
@@ -1114,15 +1175,10 @@
           if (ln.type === "capacity") { capGross += ln.annualUsd; b.cap += ln.annualUsd; }
           if (ln.type === "upside") { upsideAnnual += ln.annualUsd; b.up += ln.annualUsd; }
         });
-        const capRealised = capGross * c.realisation;
-        const capRoi = capRealised * c.redeploy;
+        const capRealised = capGross * real;
+        const capRoi = capRealised * redeploy;
         const roiAnnual = cashAnnual + capRoi;
-        const moduleBars = selected().map((m) => {
-          const b = byMod[m.id];
-          const annual = b.cash + b.cap * c.realisation * c.redeploy;
-          return { id: m.id, name: m.short, total: yearly(annual, years).total };
-        });
-
+        const totalCost = services + licence * years;
         const cashH = yearly(cashAnnual, years);
         const capH = yearly(capRealised, years);
         const capRoiH = yearly(capRoi, years);
@@ -1132,6 +1188,37 @@
         const net = totalBenefit - totalCost;
         const roi = totalCost > 0 ? net / totalCost : null;
         const pay = paybackMonth(roiAnnual, years, services, licence);
+        const moduleBars = selected().map((m) => {
+          const b = byMod[m.id];
+          const annual = b.cash + b.cap * real * redeploy;
+          return { id: m.id, name: m.short, total: yearly(annual, years).total };
+        });
+        return {
+          real, cashAnnual, capGross, capRealised, capRoi, upsideAnnual, roiAnnual,
+          cashH, capH, capRoiH, upH, roiH, totalCost, totalBenefit, net, roi, pay, moduleBars
+        };
+      }
+
+      function engine() {
+        const c = ctx();
+        applyOverlaps(c);
+        const lines = [];
+        RUN_ORDER.filter((id) => c.on[id]).forEach((id) => {
+          const fn = MODULES[id];
+          const out = fn ? fn(c) : [];
+          out.forEach((line) => {
+            line.module = id;
+            lines.push(line);
+          });
+        });
+
+        const years = c.years;
+        const licence = selectedLicenceUsd();
+        syncServices(licence);
+        const services = moneyUsd("services");
+
+        const conservative = packScenario(lines, REAL.conservative, c.redeploy, years, licence, services);
+        const expected = packScenario(lines, REAL.expected, c.redeploy, years, licence, services);
 
         ["card-en", "card-sc", "card-kc", "card-cra", "card-if"].forEach((id) => {
           const card = $(id);
@@ -1140,10 +1227,8 @@
         });
 
         return {
-          c, years, lines, warnings: c.warnings, moduleBars,
-          cashAnnual, capGross, capRealised, capRoi, upsideAnnual, roiAnnual,
-          cashH, capH, capRoiH, upH, roiH,
-          totalCost, totalBenefit, net, roi, pay, licence, services
+          c, years, lines, warnings: c.warnings, overlaps: c.overlaps,
+          conservative, expected, licence, services
         };
       }
 
@@ -1174,31 +1259,53 @@
         });
       }
 
+      function scenCard(title, s, years) {
+        const neg = s.net < 0 ? " neg" : "";
+        return "<div class='scen" + (title.indexOf("Expected") >= 0 ? " expected" : "") + "'><h3>" + title + "</h3>" +
+          "<div class='kpi'><span>Cash (ramped)</span><b class='type-cash'>" + fmtMoney(s.cashH.total) + "</b></div>" +
+          "<div class='kpi'><span>Capacity realised (ramped)</span><b class='type-cap'>" + fmtMoney(s.capH.total) + "</b></div>" +
+          "<p class='subkpi'>" + fmtPct(s.capRoiH.total && s.capH.total ? (s.capRoi / s.capRealised || 0) : 0) + " of realised capacity in ROI (" + fmtMoney(s.capRoiH.total) + ").</p>" +
+          "<div class='kpi'><span>Upside (excluded)</span><b class='type-up'>" + fmtMoney(s.upH.total) + "</b></div>" +
+          "<div class='kpi'><span>Total cost</span><b>" + fmtMoney(s.totalCost) + "</b></div>" +
+          "<div class='kpi'><span>Net value</span><b>" + fmtMoney(s.net) + "</b></div>" +
+          "<div class='kpi hero" + neg + "'><span>Net ROI</span><b>" + (s.roi == null ? "n/a" : fmtPct(s.roi)) + "</b></div>" +
+          "<div class='kpi'><span>Payback</span><b>" + fmtMonth(s.pay, years) + "</b></div></div>";
+      }
+
       function renderKpis(m) {
-        const neg = m.net < 0 ? " neg" : "";
         $("kpis").innerHTML =
-          "<div class='kpi'><span>Cash (ramped)</span><b class='type-cash'>" + fmtMoney(m.cashH.total) + "</b></div>" +
-          "<div class='kpi'><span>Capacity realised (ramped)</span><b class='type-cap'>" + fmtMoney(m.capH.total) + "</b></div>" +
-          "<p class='subkpi'>" + fmtPct(m.c.redeploy) + " of realised capacity counted in ROI as redeployed cash-equivalent (" + fmtMoney(m.capRoiH.total) + ").</p>" +
-          "<div class='kpi'><span>Upside (excluded from ROI)</span><b class='type-up'>" + fmtMoney(m.upH.total) + "</b></div>" +
-          "<div class='kpi'><span>Total cost</span><b>" + fmtMoney(m.totalCost) + "</b></div>" +
-          "<div class='kpi'><span>Net value (ROI benefit − cost)</span><b>" + fmtMoney(m.net) + "</b></div>" +
-          "<div class='kpi hero" + neg + "'><span>Net ROI</span><b>" + (m.roi == null ? "n/a" : fmtPct(m.roi)) + "</b></div>" +
-          "<div class='kpi'><span>Payback</span><b>" + fmtMonth(m.pay, m.years) + "</b></div>";
-        $("credWarn").classList.toggle("show", m.roi != null && m.roi > 5);
+          "<div class='scenario-grid'>" +
+          scenCard("Conservative · 50% labour", m.conservative, m.years) +
+          scenCard("Expected · 70% labour", m.expected, m.years) +
+          "</div>" +
+          "<p class='subkpi'>ROI benefit = ramped cash + ramped (capacity × realisation × redeploy %). Charts use the expected scenario on that same basis.</p>";
+        const hot = (m.conservative.roi != null && m.conservative.roi > 5) || (m.expected.roi != null && m.expected.roi > 5);
+        $("credWarn").classList.toggle("show", hot);
+      }
+
+      function renderOverlaps(list) {
+        const box = $("overlaps");
+        if (!box) return;
+        if (!list || !list.length) {
+          box.classList.remove("show");
+          box.innerHTML = "";
+          return;
+        }
+        box.classList.add("show");
+        box.innerHTML = "<strong>Overlaps handled</strong><ul>" + list.map((w) => "<li>" + w + "</li>").join("") + "</ul>";
       }
 
       function renderCharts(m) {
+        const e = m.expected;
         const labels = Array.from({ length: m.years }, (_, i) => "Year " + (i + 1));
         const stacked = {
           labels,
           datasets: [
-            { label: "Cash", data: m.cashH.row, backgroundColor: "#2f6fed" },
-            { label: "Capacity (realised)", data: m.capH.row, backgroundColor: "#1f7a4d" },
-            { label: "Upside (not in ROI)", data: m.upH.row, backgroundColor: "#c4a35a" }
+            { label: "Cash (in ROI)", data: e.cashH.row, backgroundColor: "#2f6fed" },
+            { label: "Capacity in ROI (× realisation × redeploy %)", data: e.capRoiH.row, backgroundColor: "#1f7a4d" }
           ]
         };
-        const series = cumulativeSeries(m.roiAnnual, m.years, m.services, m.licence);
+        const series = cumulativeSeries(e.roiAnnual, m.years, m.services, m.licence);
         const line = {
           labels: series.labels,
           datasets: [
@@ -1221,7 +1328,7 @@
             scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: tick, font: { size: 10 } } } }
           }
         });
-        const mods = m.moduleBars || [];
+        const mods = e.moduleBars || [];
         modChart = new Chart($("modChart"), {
           type: "bar",
           data: {
@@ -1263,24 +1370,37 @@
       }
 
       function buildCopy(m) {
-        const scen = $("scenario").value;
-        return [
+        function block(label, s) {
+          return [
+            label,
+            "Cash: " + fmtMoney(s.cashH.total),
+            "Capacity realised: " + fmtMoney(s.capH.total),
+            "Capacity in ROI: " + fmtMoney(s.capRoiH.total),
+            "Upside (excluded): " + fmtMoney(s.upH.total),
+            "Total cost: " + fmtMoney(s.totalCost),
+            "Net value: " + fmtMoney(s.net),
+            "Net ROI: " + (s.roi == null ? "n/a" : fmtPct(s.roi)),
+            "Payback: " + fmtMonth(s.pay, m.years)
+          ].join("\n");
+        }
+        const lines = [
           "Helix Value Calculator — executive summary",
           "Independent personal project by Suhayl Patel. Not a BMC or BMC Helix tool, not a quote, and not a customer result.",
           "",
           "Products: " + (selected().map((x) => x.name).join(", ") || "none"),
-          "Currency: " + currency() + " @ " + fxRate() + " per USD  |  Horizon: " + m.years + " years  |  Scenario: " + scen,
-          "Ramp: 25% / 60% / 90%. Capacity realisation " + fmtPct(m.c.realisation) + ", redeployed " + fmtPct(m.c.redeploy) + ".",
+          "Currency: " + currency() + " @ " + fxRate() + " per USD  |  Horizon: " + m.years + " years",
+          "Year-1 licence (selected modules): " + fmtMoney(m.licence) + "  |  Services: " + fmtMoney(m.services),
+          "Ramp: 25% / 60% / 90%. Capacity redeployed into ROI: " + fmtPct(m.c.redeploy) + ".",
           "",
-          "Cash: " + fmtMoney(m.cashH.total),
-          "Capacity realised: " + fmtMoney(m.capH.total),
-          "Capacity in ROI: " + fmtMoney(m.capRoiH.total),
-          "Upside (excluded): " + fmtMoney(m.upH.total),
-          "Total cost: " + fmtMoney(m.totalCost),
-          "Net value: " + fmtMoney(m.net),
-          "Net ROI: " + (m.roi == null ? "n/a" : fmtPct(m.roi)),
-          "Payback: " + fmtMonth(m.pay, m.years)
-        ].join("\n");
+          block("CONSERVATIVE (50% labour realisation)", m.conservative),
+          "",
+          block("EXPECTED (70% labour realisation)", m.expected)
+        ];
+        if (m.overlaps && m.overlaps.length) {
+          lines.push("", "Overlaps handled:");
+          m.overlaps.forEach((o) => lines.push("- " + o));
+        }
+        return lines.join("\n");
       }
 
       function paintMoneyFields() {
@@ -1298,12 +1418,50 @@
         });
       }
 
+      function renderCostTable() {
+        const tb = $("costTable");
+        if (!tb.dataset.ready) {
+          tb.innerHTML = "<thead><tr><th>Module</th><th>In model</th><th>Annual licence</th></tr></thead><tbody>" +
+            CATALOG.map((m) =>
+              "<tr data-lic='" + m.id + "'><td>" + m.name + "</td><td class='oncell'></td>" +
+              "<td><input id='lic-" + m.id + "' data-money type='number' min='0' step='1000' value='" + m.licence + "' /></td></tr>"
+            ).join("") + "</tbody>";
+          tb.dataset.ready = "1";
+        }
+        CATALOG.forEach((m) => {
+          const row = tb.querySelector("[data-lic='" + m.id + "']");
+          if (!row) return;
+          row.classList.toggle("off", !m.on);
+          row.querySelector(".oncell").textContent = m.on ? "Yes" : "No";
+        });
+      }
+
+      function syncServices(licenceUsd) {
+        const svc = $("services");
+        if (svc.dataset.manual === "1") return;
+        const p = Math.min(100, Math.max(0, num("svcPct"))) / 100;
+        svc.dataset.usd = String(licenceUsd * p);
+        const d = licenceUsd * p * fxRate();
+        svc.value = String(+d.toFixed(d < 1000 ? 2 : 0));
+      }
+
+      function renderCostSum(m) {
+        const el = $("costSum");
+        if (!el) return;
+        el.textContent = "Selected year-1 licence " + fmtMoney(m.licence) +
+          " · services " + fmtMoney(m.services) +
+          " · " + m.years + "-year cost " + fmtMoney(m.expected.totalCost);
+      }
+
       function render() {
+        renderCostTable();
         const m = engine();
         lastCopy = buildCopy(m);
         renderKpis(m);
+        renderOverlaps(m.overlaps);
         renderWarnings(m.warnings);
         renderCharts(m);
+        renderCostSum(m);
       }
 
       function syncFxDefault() {
@@ -1362,16 +1520,21 @@
         setTimeout(() => { $("copied").hidden = true; }, 1600);
       });
 
-      document.querySelector(".wrap").addEventListener("input", (e) => {
+      document.addEventListener("input", (e) => {
+        if (!e.target.closest(".wrap")) return;
         if (e.target.id === "fxRate" || e.target.id === "currency") return;
         render();
       });
-      document.querySelector(".wrap").addEventListener("change", (e) => {
+      document.addEventListener("change", (e) => {
+        if (!e.target.closest(".wrap")) return;
         if (e.target.id === "currency") return;
         render();
       });
 
+      renderCostTable();
       initMoney();
+      $("services").addEventListener("input", () => { $("services").dataset.manual = "1"; });
+      $("svcPct").addEventListener("input", () => { $("services").dataset.manual = "0"; });
       renderPicker();
       renderTabs();
       render();
