@@ -2,7 +2,7 @@
 
 **Disclaimer.** Independent personal project by Suhayl Patel. Not a BMC or BMC Helix tool, not a quote, and not a customer result. Views are my own. All defaults are illustrative assumptions.
 
-A single-page, public portfolio model for **BMC Helix** value across ITSM, AIOps, agentic AI, and related operations products. It is built to be honest: cash vs released capacity vs optional upside as separate ledgers, a slow adoption ramp, labour realisation haircuts, and **true net ROI** after licence and services.
+A single-page, public portfolio model for **BMC Helix** value. **Simple mode** (default) is a 60-second estimate from a role and a handful of numbers. **Advanced mode** is the full nine-module engine. Cash vs released capacity vs optional upside stay separate; labour realisation (50% / 70%) is the default haircut; **true net ROI** is after licence and services.
 
 Open `index.html` in a browser (or GitHub Pages). There is no build step. Chart.js is loaded from a CDN.
 
@@ -27,10 +27,9 @@ Then visit http://127.0.0.1:8080/
 ## How the page is structured
 
 1. A sticky disclaimer at the top of every view.
-2. A **product picker**. Only selected modules appear as tabs. Default: **ITSM Service Desk** and **AIOps**. All nine products (ITSM, AI Agents, Change & Problem, AIOps, Network, CMDB/Asset, TSSA, BHCO, ESM) have working inputs. AI Agents is an add-on and only counts if ITSM and/or Change is selected.
-3. **Global settings:** currency (USD / AED / GBP / EUR with a user-entered rate), stored internally in USD so switching never drifts; loaded hourly rates by role; **per-module licence** (only selected modules are costed) plus one-time services (default 40% of that year-1 licence); 3 or 5 year horizon; Conservative (50%) **and** Expected (70%) labour realisation shown side by side; 25 / 60 / 90% adoption ramp; % of released capacity redeployed into ROI (default 50%).
-4. A **shared engine**. Each module registers benefit lines tagged `cash`, `capacity`, or `upside`.
-5. An outputs panel that scrolls on its own.
+2. **Simple mode:** pick CIO / Infrastructure / Service-Ops, enter up to six figures, get a conservative-to-expected value card. Copy link, print a one-pager, or open Advanced at the same values.
+3. **Advanced mode:** product picker, per-module licence, derived inputs you can override, overlaps, and methodology. AI Agents only counts if ITSM and/or Change is selected.
+4. **Global settings:** currency stored in USD; loaded hourly rates; selected-module licence + services (40% of year-1 licence); 3 or 5 year horizon; Conservative 50% and Expected 70% labour realisation; ramp 50 / 85 / 100%; optional Advanced redeploy % (default 100%).
 
 This is **not** a BMC product, quote, or customer case study. Do not put real customer names or data in a public fork.
 
@@ -45,7 +44,7 @@ This is **not** a BMC product, quote, or customer case study. Do not put real cu
    - **Upside** — shown, **never** in net ROI or payback (for example P1 business downtime).
 
 3. **Redeployed capacity.**  
-   Only the entered % of realised capacity (default 50%) is converted into cash-equivalent ROI. The rest stays visible as capacity.
+   Default **100%**: all realised labour is in ROI. The Advanced field can lower this if time will not be reused. Realisation (50% / 70%) is the single default haircut.
 
 4. **MTTR is labour, not the outage clock.**  
    P1 labour = engineers × hands-on hours × reduction %. Elapsed business downtime is upside only.
@@ -53,13 +52,13 @@ This is **not** a BMC product, quote, or customer case study. Do not put real cu
 5. **Hours cannot exceed the baseline in that area.**  
    If an input implies more hours saved than exist, the model caps the saving and shows a warning.
 
-6. **Adoption ramp** (benefits, not licence): Year 1 **25%**, Year 2 **60%**, Year 3+ **90%**.
+6. **Adoption ramp** (benefits, not licence): Year 1 **50%**, Year 2 **85%**, Year 3+ **100%**.
 
 7. **Cost** = one-time services (month 0) + (sum of selected module licences) × years.
 
 8. **Overlaps are subtracted, not only warned.** Patch cycles come out of the Change volume when TSSA is on; network alerts come out of the AIOps count; auto-remediated events come out of the post-suppression triage pool; ITSM extra deflection is capped at 40% even if Employee Navigator is off. Each deduction is listed once under **Overlaps handled**.
 
-9. **Net ROI** = (ROI benefit − total cost) / total cost, where ROI benefit = ramped cash + ramped (capacity × realisation × redeploy %). Conservative and Expected are both shown.  
+9. **Net ROI** = (ROI benefit − total cost) / total cost, where ROI benefit = ramped cash + ramped (capacity × realisation), with redeploy defaulting to 100%. Conservative and Expected are both shown.  
    **Payback month** is the first month where that cumulative benefit ≥ cumulative cost.
 
 10. **Credibility warning** if modelled net ROI is above **5×**.
