@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Helix Value Calculator — conservative ROI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --navy: #0b1f3a;
+      --navy-2: #122a4a;
+      --navy-3: #1a3a63;
+      --ink: #102033;
+      --muted: #5b6b80;
+      --line: #d8e0ea;
+      --paper: #f5f7fb;
+      --white: #ffffff;
+      --accent: #2f6fed;
+      --accent-2: #1f4fb8;
+      --gold: #c4a35a;
+      --good: #1f7a4d;
+      --warn: #9a5b12;
+      --bad: #9b2c2c;
+      --shadow: 0 10px 30px rgba(11, 31, 58, 0.08);
+      --mono: "IBM Plex Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+      --sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: var(--sans);
+      line-height: 1.45;
+    }
+
+    header.app-header {
+      background: linear-gradient(160deg, var(--navy) 0%, #16365f 55%, #0e2748 100%);
+      color: var(--white);
+      padding: 1.6rem 1.25rem 1.35rem;
+      border-bottom: 3px solid var(--gold);
+    }
+    .wrap { width: min(1180px, calc(100% - 1.5rem)); margin: 0 auto; }
+    header .eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin: 0 0 0.45rem;
+    }
+    header h1 {
+      font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+      font-weight: 650;
+      margin: 0 0 0.45rem;
+      letter-spacing: -0.02em;
+    }
+    header p.lede {
+      margin: 0;
+      max-width: 46rem;
+      color: #d7e2f2;
+      font-size: 0.98rem;
+    }
+
+    .globals {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 1rem;
+      margin: 1.1rem auto;
+    }
+    .globals h2 {
+      margin: 0 0 0.75rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .grid-5, .grid-4, .grid-3, .grid-2 { display: grid; gap: 0.75rem; }
+    .grid-5 { grid-template-columns: repeat(5, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+
+    label.field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.28rem;
+      font-size: 0.82rem;
+      color: var(--navy);
+      font-weight: 600;
+    }
+    .label-row {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .tip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #e7eef8;
+      color: var(--accent-2);
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: help;
+    }
+    .tip:hover::after, .tip:focus::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 8px);
+      transform: translateX(-50%);
+      width: min(240px, 70vw);
+      background: var(--navy);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 400;
+      line-height: 1.35;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      z-index: 20;
+      box-shadow: var(--shadow);
+    }
+    input[type="number"], select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.5rem 0.6rem;
+      font: inherit;
+      font-size: 0.92rem;
+      color: var(--ink);
+      background: #fff;
+    }
+    input:focus, select:focus, button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+      gap: 1rem;
+      align-items: start;
+      margin-bottom: 2rem;
+    }
+
+    .panel {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      padding: 0.6rem;
+      border-bottom: 1px solid var(--line);
+      background: #f8fafc;
+      border-radius: 12px 12px 0 0;
+    }
+    .tabs button {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-weight: 650;
+      font-size: 0.85rem;
+      padding: 0.45rem 0.7rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .tabs button[aria-selected="true"] {
+      background: var(--navy);
+      color: #fff;
+    }
+    .tab-panel { padding: 1rem; display: none; }
+    .tab-panel.active { display: block; }
+    .tab-panel h3 {
+      margin: 0 0 0.35rem;
+      font-size: 1.05rem;
+    }
+    .tab-panel .blurb {
+      margin: 0 0 1rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    .note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: #f3f6fb;
+      border-left: 3px solid var(--gold);
+      padding: 0.65rem 0.75rem;
+      margin: 0.9rem 0 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .warn-list {
+      display: none;
+      margin: 0 0 0.8rem;
+      padding: 0.65rem 0.75rem;
+      background: #fff6e8;
+      border: 1px solid #efd2a8;
+      color: var(--warn);
+      border-radius: 8px;
+      font-size: 0.82rem;
+    }
+    .warn-list.show { display: block; }
+    .warn-list ul { margin: 0.3rem 0 0; padding-left: 1.1rem; }
+
+    .agent-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    .agent-table th {
+      text-align: left;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.4rem 0.35rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .agent-table td {
+      padding: 0.45rem 0.35rem;
+      border-bottom: 1px solid #eef2f7;
+      vertical-align: middle;
+    }
+    .agent-table input[type="number"] { min-width: 0; }
+    .agent-name { font-weight: 650; }
+    .onoff {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-weight: 650;
+    }
+    .value-cell { font-family: var(--mono); font-size: 0.8rem; white-space: nowrap; }
+
+    .outputs {
+      position: sticky;
+      top: 0.75rem;
+      padding: 1rem;
+    }
+    .outputs h2 {
+      margin: 0 0 0.7rem;
+      font-size: 1.02rem;
+    }
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-bottom: 0.85rem;
+    }
+    .scen {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.7rem;
+    }
+    .scen.expected { border-color: #c9d9f5; background: #f4f8ff; }
+    .scen h3 {
+      margin: 0 0 0.45rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .kpi { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.8rem; margin: 0.22rem 0; }
+    .kpi b { font-family: var(--mono); font-weight: 650; }
+    .kpi.hero { margin-top: 0.4rem; padding-top: 0.4rem; border-top: 1px solid var(--line); font-size: 0.88rem; }
+    .kpi.hero b { color: var(--good); }
+    .kpi.hero.neg b { color: var(--bad); }
+
+    .chart-box { height: 210px; margin: 0.4rem 0 0.9rem; }
+    .chart-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin: 0.2rem 0 0.15rem;
+      color: var(--navy);
+    }
+    .chart-toggle {
+      display: flex;
+      gap: 0.35rem;
+      margin: 0 0 0.5rem;
+    }
+    .chart-toggle button {
+      font: inherit;
+      font-size: 0.75rem;
+      font-weight: 650;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 0.2rem 0.6rem;
+      cursor: pointer;
+    }
+    .chart-toggle button[aria-pressed="true"] {
+      background: var(--navy);
+      color: #fff;
+      border-color: var(--navy);
+    }
+
+    .truth {
+      background: #0b1f3a;
+      color: #e8eef7;
+      border-radius: 10px;
+      padding: 0.8rem 0.85rem;
+      font-size: 0.82rem;
+    }
+    .truth h3 { margin: 0 0 0.4rem; font-size: 0.86rem; color: var(--gold); }
+    .truth ol { margin: 0; padding-left: 1.15rem; }
+    .truth li { margin: 0.25rem 0; }
+    .downtime {
+      margin: 0.75rem 0;
+      padding: 0.7rem;
+      border: 1px dashed #c5d0de;
+      border-radius: 10px;
+      background: #fbfcfe;
+    }
+    .downtime h3 { margin: 0 0 0.2rem; font-size: 0.86rem; }
+    .downtime p { margin: 0 0 0.55rem; font-size: 0.78rem; color: var(--muted); }
+    .downtime-result { font-family: var(--mono); font-size: 0.82rem; margin-top: 0.5rem; color: var(--navy); }
+
+    .actions { display: flex; gap: 0.5rem; margin-top: 0.8rem; }
+    .actions button {
+      font: inherit;
+      font-weight: 650;
+      border: 0;
+      border-radius: 8px;
+      padding: 0.55rem 0.8rem;
+      cursor: pointer;
+      background: var(--navy);
+      color: #fff;
+    }
+    .actions button.secondary { background: #e7eef8; color: var(--navy); }
+    .copied { font-size: 0.78rem; color: var(--good); align-self: center; }
+
+    .sticky-kpis {
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--navy);
+      color: #fff;
+      padding: 0.55rem 0.75rem;
+      margin: 0 auto 0.85rem;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      font-size: 0.78rem;
+    }
+    .sticky-kpis strong { font-family: var(--mono); }
+
+    footer {
+      color: var(--muted);
+      font-size: 0.78rem;
+      padding: 0 0 2rem;
+    }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .outputs { position: static; }
+      .grid-5, .grid-4 { grid-template-columns: 1fr 1fr; }
+      .sticky-kpis { display: flex; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+    }
+    @media (max-width: 640px) {
+      .grid-5, .grid-4, .grid-3, .grid-2, .scenario-grid { grid-template-columns: 1fr; }
+      .agent-table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="wrap">
+      <p class="eyebrow">ITSM · AIOps · Agentic AI</p>
+      <h1>Helix Value Calculator — honest, conservative ROI</h1>
+      <p class="lede">Shows ranges, a realistic adoption ramp, and true net ROI after licence and services. Defaults are generic examples only.</p>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <section class="globals" aria-label="Global inputs">
+      <h2>Global inputs</h2>
+      <div class="grid-5">
+        <label class="field">
+          <span class="label-row">Currency <span class="tip" tabindex="0" data-tip="Switching currency converts money fields using AED = USD × 3.6725.">i</span></span>
+          <select id="currency">
+            <option value="USD">USD</option>
+            <option value="AED">AED</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="label-row">Blended hourly cost <span class="tip" tabindex="0" data-tip="Fully loaded cost of mixed IT staff used to value labour hours. Not a salary line for every role.">i</span></span>
+          <input id="hourly" type="number" min="0" step="1" value="85" />
+        </label>
+        <label class="field">
+          <span class="label-row">Annual Helix licence <span class="tip" tabindex="0" data-tip="All-in annual subscription you would pay for the Helix footprint in this model. Example only.">i</span></span>
+          <input id="licence" type="number" min="0" step="1000" value="420000" />
+        </label>
+        <label class="field">
+          <span class="label-row">One-time services <span class="tip" tabindex="0" data-tip="Implementation, integration, and change-management spend. Counted in month 0 for payback.">i</span></span>
+          <input id="services" type="number" min="0" step="1000" value="175000" />
+        </label>
+        <label class="field">
+          <span class="label-row">Time horizon <span class="tip" tabindex="0" data-tip="Benefits follow 25% / 60% / 90% adoption in years 1 / 2 / 3+. Licence is paid every year.">i</span></span>
+          <select id="horizon">
+            <option value="3" selected>3 years</option>
+            <option value="5">5 years</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <div class="wrap sticky-kpis" id="stickyKpis" aria-live="polite"></div>
+
+    <div class="layout">
+      <section class="panel">
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" id="tab-cost" aria-selected="true" aria-controls="panel-cost">Cost &amp; consolidation</button>
+          <button type="button" role="tab" id="tab-ops" aria-selected="false" aria-controls="panel-ops">Operations</button>
+          <button type="button" role="tab" id="tab-desk" aria-selected="false" aria-controls="panel-desk">Service desk</button>
+          <button type="button" role="tab" id="tab-ai" aria-selected="false" aria-controls="panel-ai">AI agents</button>
+        </div>
+
+        <div id="warnings" class="warn-list" style="margin: 0.8rem 1rem 0;"></div>
+
+        <div id="panel-cost" class="tab-panel active" role="tabpanel">
+          <h3>Cost and consolidation</h3>
+          <p class="blurb">Cash savings from retiring overlapping tools, cheaper monitoring at scale, and not hiring for growth. These are treated as budget items, not “freed time”.</p>
+          <div class="grid-3">
+            <label class="field">
+              <span class="label-row">Legacy tools retired (annual) <span class="tip" tabindex="0" data-tip="Annual run-cost of tools you can actually switch off. Do not include the Helix licence.">i</span></span>
+              <input id="legacyTools" type="number" min="0" step="1000" value="260000" />
+            </label>
+            <label class="field">
+              <span class="label-row">Monitored servers <span class="tip" tabindex="0" data-tip="Estate size used only to scale per-server monitoring cost.">i</span></span>
+              <input id="servers" type="number" min="0" step="1" value="1800" />
+            </label>
+            <label class="field">
+              <span class="label-row">Cost / server today <span class="tip" tabindex="0" data-tip="Infrastructure or tooling cost per monitored server today, excluding Helix licence.">i</span></span>
+              <input id="costServerNow" type="number" min="0" step="0.5" value="42" />
+            </label>
+            <label class="field">
+              <span class="label-row">Cost / server with Helix <span class="tip" tabindex="0" data-tip="Same per-server cost after consolidation. Licence is already in global inputs, so do not add it here.">i</span></span>
+              <input id="costServerHelix" type="number" min="0" step="0.5" value="16" />
+            </label>
+            <label class="field">
+              <span class="label-row">Headcount growth avoided (FTE) <span class="tip" tabindex="0" data-tip="Roles you would otherwise hire as ticket/alert volume grows. Count only roles not already in labour hours below.">i</span></span>
+              <input id="fteAvoided" type="number" min="0" step="0.1" value="2" />
+            </label>
+            <label class="field">
+              <span class="label-row">Fully loaded salary / FTE <span class="tip" tabindex="0" data-tip="Annual cost of one avoided hire. Separate from hourly rate used for task-level labour.">i</span></span>
+              <input id="fteSalary" type="number" min="0" step="1000" value="125000" />
+            </label>
+          </div>
+        </div>
+
+        <div id="panel-ops" class="tab-panel" role="tabpanel">
+          <h3>Operations</h3>
+          <p class="blurb">Noise is removed first, then remaining alerts are triaged. MTTR value is engineer hands-on time only — never elapsed outage clock.</p>
+          <div class="grid-3">
+            <label class="field">
+              <span class="label-row">Alerts per year <span class="tip" tabindex="0" data-tip="Total events presented to operators before noise reduction.">i</span></span>
+              <input id="alerts" type="number" min="0" step="100" value="140000" />
+            </label>
+            <label class="field">
+              <span class="label-row">% noise today <span class="tip" tabindex="0" data-tip="Share of alerts that are false, duplicate, or non-actionable.">i</span></span>
+              <input id="noisePct" type="number" min="0" max="100" step="1" value="82" />
+            </label>
+            <label class="field">
+              <span class="label-row">% of noise reduced <span class="tip" tabindex="0" data-tip="How much of that noisy slice Helix removes. Remaining noise is still triaged.">i</span></span>
+              <input id="noiseReducedPct" type="number" min="0" max="100" step="1" value="55" />
+            </label>
+            <label class="field">
+              <span class="label-row">Triage minutes / alert <span class="tip" tabindex="0" data-tip="Average operator time to look at one alert and decide.">i</span></span>
+              <input id="triageMin" type="number" min="0" step="0.1" value="3.5" />
+            </label>
+            <label class="field">
+              <span class="label-row">P1 incidents / year <span class="tip" tabindex="0" data-tip="Major incidents that pull a response team.">i</span></span>
+              <input id="p1Count" type="number" min="0" step="1" value="72" />
+            </label>
+            <label class="field">
+              <span class="label-row">Engineers per P1 <span class="tip" tabindex="0" data-tip="People actually working the incident, not everyone on the bridge.">i</span></span>
+              <input id="p1Engineers" type="number" min="0" step="0.5" value="4" />
+            </label>
+            <label class="field">
+              <span class="label-row">Hands-on hours / P1 <span class="tip" tabindex="0" data-tip="Labour hours per engineer. Do not enter elapsed wall-clock outage time.">i</span></span>
+              <input id="p1Hours" type="number" min="0" step="0.1" value="3.0" />
+            </label>
+            <label class="field">
+              <span class="label-row">% MTTR labour reduction <span class="tip" tabindex="0" data-tip="Reduction in hands-on engineer hours, not a promise about business downtime.">i</span></span>
+              <input id="mttrPct" type="number" min="0" max="100" step="1" value="22" />
+            </label>
+            <label class="field">
+              <span class="label-row">War rooms / year <span class="tip" tabindex="0" data-tip="Major coordination calls that exist today.">i</span></span>
+              <input id="warRooms" type="number" min="0" step="1" value="20" />
+            </label>
+            <label class="field">
+              <span class="label-row">People per war room <span class="tip" tabindex="0" data-tip="Average attendees whose time is tied up.">i</span></span>
+              <input id="warPeople" type="number" min="0" step="0.5" value="8" />
+            </label>
+            <label class="field">
+              <span class="label-row">Hours per war room <span class="tip" tabindex="0" data-tip="Length of the call / working session.">i</span></span>
+              <input id="warHours" type="number" min="0" step="0.25" value="2.5" />
+            </label>
+            <label class="field">
+              <span class="label-row">% war rooms avoided <span class="tip" tabindex="0" data-tip="Share of those sessions that better correlation and swarming make unnecessary.">i</span></span>
+              <input id="warAvoidPct" type="number" min="0" max="100" step="1" value="40" />
+            </label>
+            <label class="field">
+              <span class="label-row">Reporting FTEs <span class="tip" tabindex="0" data-tip="People compiling ops/service reports today.">i</span></span>
+              <input id="reportFte" type="number" min="0" step="0.1" value="1.2" />
+            </label>
+            <label class="field">
+              <span class="label-row">% reporting automated <span class="tip" tabindex="0" data-tip="Share of that reporting load that dashboards replace. Hours cannot exceed FTE baseline.">i</span></span>
+              <input id="reportAutoPct" type="number" min="0" max="100" step="1" value="55" />
+            </label>
+          </div>
+        </div>
+
+        <div id="panel-desk" class="tab-panel" role="tabpanel">
+          <h3>Service desk and ticket quality</h3>
+          <p class="blurb">Deflection is applied first. Reassignment savings run only on tickets that still reach an agent.</p>
+          <div class="grid-3">
+            <label class="field">
+              <span class="label-row">Tickets per year <span class="tip" tabindex="0" data-tip="All service-desk tickets before self-service / deflection.">i</span></span>
+              <input id="tickets" type="number" min="0" step="100" value="48000" />
+            </label>
+            <label class="field">
+              <span class="label-row">Current self-service % <span class="tip" tabindex="0" data-tip="Share already resolved without an agent. Additional deflection is only the gap to target.">i</span></span>
+              <input id="ssNowPct" type="number" min="0" max="100" step="1" value="18" />
+            </label>
+            <label class="field">
+              <span class="label-row">Target deflection % <span class="tip" tabindex="0" data-tip="End-state share resolved without an agent. Must be at or above current self-service.">i</span></span>
+              <input id="ssTargetPct" type="number" min="0" max="100" step="1" value="36" />
+            </label>
+            <label class="field">
+              <span class="label-row">Minutes per ticket <span class="tip" tabindex="0" data-tip="Average handle time for a human-touched ticket, including wrap-up.">i</span></span>
+              <input id="minPerTicket" type="number" min="0" step="0.5" value="12" />
+            </label>
+            <label class="field">
+              <span class="label-row">Reassignment rate % <span class="tip" tabindex="0" data-tip="Share of remaining (post-deflection) tickets that bounce to another group today.">i</span></span>
+              <input id="reassignPct" type="number" min="0" max="100" step="1" value="24" />
+            </label>
+            <label class="field">
+              <span class="label-row">Reassignment reduction % <span class="tip" tabindex="0" data-tip="How much that bounce rate falls. Extra handle time is assumed equal to minutes per ticket.">i</span></span>
+              <input id="reassignCutPct" type="number" min="0" max="100" step="1" value="35" />
+            </label>
+          </div>
+        </div>
+
+        <div id="panel-ai" class="tab-panel" role="tabpanel">
+          <h3>AI agents</h3>
+          <p class="blurb">Each agent is optional. Annual value is volume × minutes saved × hourly rate, before realisation and ramp. Turn an agent off if that work is already counted on another tab.</p>
+          <div style="overflow-x:auto;">
+            <table class="agent-table">
+              <thead>
+                <tr>
+                  <th>On</th>
+                  <th>Agent</th>
+                  <th>Annual volume</th>
+                  <th>Minutes saved each</th>
+                  <th>Annual value</th>
+                </tr>
+              </thead>
+              <tbody id="agentRows"></tbody>
+            </table>
+          </div>
+          <p class="note">Agent minutes and volumes are example assumptions for a portfolio model. Validate them against BMC’s published figures and your own telemetry before using the result in a business case.</p>
+        </div>
+      </section>
+
+      <aside class="panel outputs" aria-label="Results">
+        <h2>Outputs</h2>
+        <div class="chart-toggle" aria-label="Scenario shown in charts">
+          <button type="button" id="chartCons" aria-pressed="false">Conservative charts</button>
+          <button type="button" id="chartExp" aria-pressed="true">Expected charts</button>
+        </div>
+        <div class="scenario-grid">
+          <div class="scen" id="cardCons"></div>
+          <div class="scen expected" id="cardExp"></div>
+        </div>
+        <p class="chart-title">Benefit by category, per year</p>
+        <div class="chart-box"><canvas id="barChart"></canvas></div>
+        <p class="chart-title">Cumulative cost vs cumulative benefit</p>
+        <div class="chart-box"><canvas id="lineChart"></canvas></div>
+        <div class="truth">
+          <h3>What has to be true</h3>
+          <ol id="assumptions"></ol>
+        </div>
+        <div class="downtime">
+          <h3>Optional downtime upside (excluded from ROI)</h3>
+          <p>Business-outage value is shown here only. It never enters total benefit, net ROI, or payback.</p>
+          <div class="grid-2">
+            <label class="field">
+              <span class="label-row">Cost / minute of P1 outage <span class="tip" tabindex="0" data-tip="Leave blank to hide. This is a business-loss figure, not IT labour.">i</span></span>
+              <input id="downCost" type="number" min="0" step="100" placeholder="Leave blank" />
+            </label>
+            <label class="field">
+              <span class="label-row">Avg elapsed P1 minutes <span class="tip" tabindex="0" data-tip="Wall-clock duration used only for this optional upside, never for MTTR labour.">i</span></span>
+              <input id="downMins" type="number" min="0" step="1" placeholder="Leave blank" />
+            </label>
+          </div>
+          <div id="downResult" class="downtime-result"></div>
+        </div>
+        <div class="actions">
+          <button type="button" id="copyBtn">Copy summary</button>
+          <span id="copied" class="copied" hidden>Copied</span>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      Portfolio demonstration with illustrative defaults. Not affiliated with or endorsed by BMC Software. Helix is a trademark of BMC Software. No customer names or real customer data are used.
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const AED_PER_USD = 3.6725;
+      const FTE_HOURS = 1880;
+      const RAMP = [0.25, 0.6, 0.9, 0.9, 0.9];
+      const REAL = { conservative: 0.5, expected: 0.7 };
+      const AGENTS = [
+        { id: "va", name: "Virtual Agent / Employee Navigator", volume: 7500, minutes: 8, on: true, tip: "Employee conversations deflected or shortened. Turn off if already in ticket deflection." },
+        { id: "kc", name: "Knowledge Curator", volume: 350, minutes: 40, on: true, tip: "Articles created or refreshed with less specialist time." },
+        { id: "rca", name: "Root Cause Analyzer", volume: 110, minutes: 75, on: true, tip: "Investigation minutes avoided. Turn off if fully counted in MTTR hours." },
+        { id: "os", name: "Ops Swarmer", volume: 36, minutes: 150, on: true, tip: "Coordination minutes avoided. Turn off if fully counted in war rooms." },
+        { id: "cra", name: "Change Risk Advisor", volume: 180, minutes: 25, on: true, tip: "Change review minutes avoided on each assessed request." }
+      ];
+
+      const moneyIds = ["hourly", "licence", "services", "legacyTools", "costServerNow", "costServerHelix", "fteSalary", "downCost"];
+      let currency = "USD";
+      let chartScenario = "expected";
+      let barChart, lineChart;
+
+      const $ = (id) => document.getElementById(id);
+      const num = (id) => {
+        const v = parseFloat($(id).value);
+        return Number.isFinite(v) ? v : 0;
+      };
+      const blank = (id) => String($(id).value).trim() === "";
+      const pct = (id, label, warnings) => {
+        const raw = parseFloat($(id).value);
+        const v = Number.isFinite(raw) ? raw : 0;
+        if (v > 100 && warnings) {
+          warnings.push(label + ": value over 100% was treated as 100% so hours cannot exceed that area’s baseline.");
+        }
+        return Math.min(100, Math.max(0, v)) / 100;
+      };
+      const fmtMoney = (n) => {
+        const abs = Math.abs(n);
+        const formatted = abs.toLocaleString(undefined, { maximumFractionDigits: 0 });
+        const sign = n < 0 ? "-" : "";
+        return currency === "AED" ? sign + "AED " + formatted : sign + "$" + formatted;
+      };
+      const fmtPct = (n) => (n * 100).toFixed(0) + "%";
+      const fmtMonth = (m, years) => {
+        if (m == null) return "Not within " + years + " years";
+        return "Month " + m;
+      };
+
+      function capHours(saved, baseline, label, warnings) {
+        if (saved < 0) saved = 0;
+        if (saved > baseline + 1e-9) {
+          warnings.push(label + ": hours saved were capped at the baseline (" + baseline.toFixed(0) + " h).");
+          return Math.max(0, baseline);
+        }
+        return saved;
+      }
+
+      function renderAgents() {
+        $("agentRows").innerHTML = AGENTS.map((a) => `
+          <tr>
+            <td><label class="onoff"><input type="checkbox" data-agent="${a.id}" data-field="on" ${a.on ? "checked" : ""} /></label></td>
+            <td><span class="agent-name">${a.name}</span> <span class="tip" tabindex="0" data-tip="${a.tip}">i</span></td>
+            <td><input type="number" min="0" step="1" value="${a.volume}" data-agent="${a.id}" data-field="volume" /></td>
+            <td><input type="number" min="0" step="1" value="${a.minutes}" data-agent="${a.id}" data-field="minutes" /></td>
+            <td class="value-cell" id="agentVal-${a.id}">—</td>
+          </tr>
+        `).join("");
+      }
+
+      function readAgents() {
+        document.querySelectorAll("[data-agent]").forEach((el) => {
+          const a = AGENTS.find((x) => x.id === el.dataset.agent);
+          if (!a) return;
+          if (el.dataset.field === "on") a.on = el.checked;
+          if (el.dataset.field === "volume") a.volume = Math.max(0, parseFloat(el.value) || 0);
+          if (el.dataset.field === "minutes") a.minutes = Math.max(0, parseFloat(el.value) || 0);
+        });
+      }
+
+      function yearlyBenefit(annual, years) {
+        const row = [];
+        let total = 0;
+        for (let y = 0; y < years; y++) {
+          const v = annual * RAMP[y];
+          row.push(v);
+          total += v;
+        }
+        return { row, total };
+      }
+
+      function paybackMonth(annualBenefit, years, services, licence) {
+        const months = years * 12;
+        let cumCost = services;
+        let cumBen = 0;
+        if (cumBen >= cumCost && services === 0 && annualBenefit === 0 && licence === 0) return 0;
+        for (let m = 1; m <= months; m++) {
+          const yearIdx = Math.ceil(m / 12) - 1;
+          const ramp = RAMP[Math.min(yearIdx, RAMP.length - 1)];
+          cumCost += licence / 12;
+          cumBen += (annualBenefit * ramp) / 12;
+          if (cumBen >= cumCost - 1e-6) return m;
+        }
+        return null;
+      }
+
+      function cumulativeSeries(annualBenefit, years, services, licence) {
+        const months = years * 12;
+        const labels = [];
+        const cost = [];
+        const benefit = [];
+        let cumCost = services;
+        let cumBen = 0;
+        labels.push("0");
+        cost.push(cumCost);
+        benefit.push(0);
+        for (let m = 1; m <= months; m++) {
+          const yearIdx = Math.ceil(m / 12) - 1;
+          const ramp = RAMP[Math.min(yearIdx, RAMP.length - 1)];
+          cumCost += licence / 12;
+          cumBen += (annualBenefit * ramp) / 12;
+          if (m % 3 === 0 || m === months) {
+            labels.push(String(m));
+            cost.push(cumCost);
+            benefit.push(cumBen);
+          }
+        }
+        return { labels, cost, benefit };
+      }
+
+      function calculate() {
+        const warnings = [];
+        readAgents();
+        const hourly = num("hourly");
+        const licence = num("licence");
+        const services = num("services");
+        const years = parseInt($("horizon").value, 10);
+        const totalCost = services + licence * years;
+
+        const cashLegacy = num("legacyTools");
+        const cashMonitor = num("servers") * (num("costServerNow") - num("costServerHelix"));
+        const cashFte = num("fteAvoided") * num("fteSalary");
+        if (cashMonitor < 0) {
+          warnings.push("Monitoring cost with Helix is higher than today; consolidation shows a cost increase.");
+        }
+
+        const alerts = num("alerts");
+        const noise = pct("noisePct", "% noise today", warnings);
+        const noiseCut = pct("noiseReducedPct", "% of noise reduced", warnings);
+        const triageHrs = num("triageMin") / 60;
+        const noiseRemoved = alerts * noise * noiseCut;
+        const alertsAfter = Math.max(0, alerts - noiseRemoved);
+        const alertBase = alerts * triageHrs;
+        const alertSaved = capHours(alertBase - alertsAfter * triageHrs, alertBase, "Alert triage", warnings);
+
+        const p1Base = num("p1Count") * num("p1Engineers") * num("p1Hours");
+        const mttrSaved = capHours(p1Base * pct("mttrPct", "% MTTR labour reduction", warnings), p1Base, "MTTR labour", warnings);
+
+        const warBase = num("warRooms") * num("warPeople") * num("warHours");
+        const warSaved = capHours(warBase * pct("warAvoidPct", "% war rooms avoided", warnings), warBase, "War rooms", warnings);
+
+        const reportBase = num("reportFte") * FTE_HOURS;
+        const reportSaved = capHours(reportBase * pct("reportAutoPct", "% reporting automated", warnings), reportBase, "Reporting", warnings);
+
+        const tickets = num("tickets");
+        const ssNow = pct("ssNowPct", "Current self-service %", warnings);
+        const ssTarget = pct("ssTargetPct", "Target deflection %", warnings);
+        const tMin = num("minPerTicket") / 60;
+        if (ssTarget < ssNow) {
+          warnings.push("Target deflection is below current self-service, so extra deflection is treated as zero.");
+        }
+        const extraDeflect = Math.max(0, ssTarget - ssNow) * tickets;
+        const humanNow = tickets * (1 - ssNow);
+        const deskBase = humanNow * tMin;
+        const deflectSaved = capHours(extraDeflect * tMin, deskBase, "Ticket deflection", warnings);
+
+        const remaining = tickets * (1 - Math.max(ssNow, ssTarget));
+        const reassignBase = remaining * pct("reassignPct", "Reassignment rate %", warnings) * tMin;
+        const reassignSaved = capHours(reassignBase * pct("reassignCutPct", "Reassignment reduction %", warnings), reassignBase, "Reassignment", warnings);
+        if (deskBase + reassignBase > 0) {
+          const deskTotalSaved = deflectSaved + reassignSaved;
+          const deskCap = deskBase + reassignBase;
+          if (deskTotalSaved > deskCap + 1e-9) {
+            warnings.push("Service desk hours saved were capped at the combined baseline.");
+          }
+        }
+
+        const agentHours = {};
+        let agentTotalHrs = 0;
+        AGENTS.forEach((a) => {
+          const hrs = a.on ? a.volume * a.minutes / 60 : 0;
+          agentHours[a.id] = hrs;
+          agentTotalHrs += hrs;
+          const el = $("agentVal-" + a.id);
+          if (el) el.textContent = a.on ? fmtMoney(hrs * hourly) + " / yr" : "Off";
+        });
+
+        const labour = {
+          alerts: alertSaved,
+          mttr: mttrSaved,
+          war: warSaved,
+          report: reportSaved,
+          deflect: deflectSaved,
+          reassign: reassignSaved,
+          agents: agentTotalHrs
+        };
+        const labourHours = Object.values(labour).reduce((s, v) => s + v, 0);
+        const cashAnnual = cashLegacy + cashMonitor + cashFte;
+
+        const cats = (real) => ({
+          consolidation: cashAnnual,
+          operations: (labour.alerts + labour.mttr + labour.war + labour.report) * hourly * real,
+          desk: (labour.deflect + labour.reassign) * hourly * real,
+          agents: labour.agents * hourly * real
+        });
+
+        function scenario(real) {
+          const c = cats(real);
+          const annual = c.consolidation + c.operations + c.desk + c.agents;
+          const byYear = {
+            consolidation: yearlyBenefit(c.consolidation, years).row,
+            operations: yearlyBenefit(c.operations, years).row,
+            desk: yearlyBenefit(c.desk, years).row,
+            agents: yearlyBenefit(c.agents, years).row
+          };
+          const totalBenefit = yearlyBenefit(annual, years).total;
+          const net = totalBenefit - totalCost;
+          const roi = totalCost > 0 ? net / totalCost : null;
+          const pay = paybackMonth(annual, years, services, licence);
+          return { real, annual, byYear, totalBenefit, totalCost, net, roi, pay, cats: c };
+        }
+
+        const conservative = scenario(REAL.conservative);
+        const expected = scenario(REAL.expected);
+
+        const drivers = [
+          { name: "Legacy tools are actually retired", value: yearlyBenefit(cashLegacy, years).total, detail: fmtMoney(cashLegacy) + "/year cash, ramped." },
+          { name: "Per-server monitoring cost falls", value: yearlyBenefit(cashMonitor, years).total, detail: fmtMoney(cashMonitor) + "/year at the modelled estate size." },
+          { name: "Headcount growth is avoided", value: yearlyBenefit(cashFte, years).total, detail: num("fteAvoided") + " FTE × " + fmtMoney(num("fteSalary")) + "." },
+          { name: "Alert noise is reduced as entered", value: yearlyBenefit(labour.alerts * hourly * REAL.expected, years).total, detail: (noiseCut * 100).toFixed(0) + "% of a " + (noise * 100).toFixed(0) + "% noise baseline, then 70% realisation." },
+          { name: "MTTR labour (not outage clock) falls", value: yearlyBenefit(labour.mttr * hourly * REAL.expected, years).total, detail: (pct("mttrPct") * 100).toFixed(0) + "% of engineer hands-on hours." },
+          { name: "War rooms are avoided", value: yearlyBenefit(labour.war * hourly * REAL.expected, years).total, detail: (pct("warAvoidPct") * 100).toFixed(0) + "% of modelled war-room hours." },
+          { name: "Reporting is automated", value: yearlyBenefit(labour.report * hourly * REAL.expected, years).total, detail: (pct("reportAutoPct") * 100).toFixed(0) + "% of reporting FTE hours." },
+          { name: "Extra ticket deflection lands", value: yearlyBenefit(labour.deflect * hourly * REAL.expected, years).total, detail: "Self-service rises from " + (ssNow * 100).toFixed(0) + "% to " + (Math.max(ssNow, ssTarget) * 100).toFixed(0) + "%." },
+          { name: "Reassignments fall on remaining tickets", value: yearlyBenefit(labour.reassign * hourly * REAL.expected, years).total, detail: "After deflection only." },
+          ...AGENTS.map((a) => ({
+            name: a.name + " delivers the modelled minutes",
+            value: yearlyBenefit((a.on ? a.volume * a.minutes / 60 : 0) * hourly * REAL.expected, years).total,
+            detail: a.on ? a.volume.toLocaleString() + " × " + a.minutes + " min, then realisation and ramp." : "Off."
+          }))
+        ].sort((a, b) => b.value - a.value);
+
+        let downtime = null;
+        if (!blank("downCost") && !blank("downMins") && num("downCost") > 0 && num("downMins") > 0) {
+          const annual = num("p1Count") * num("downMins") * pct("mttrPct") * num("downCost");
+          downtime = {
+            conservative: yearlyBenefit(annual * 0.5, years),
+            expected: yearlyBenefit(annual, years),
+            note: "Optional upside only — excluded from headline ROI."
+          };
+        }
+
+        return {
+          years, warnings, conservative, expected, drivers, downtime, labourHours,
+          copy: buildCopy(conservative, expected, years, drivers, downtime)
+        };
+      }
+
+      function buildCopy(c, e, years, drivers, downtime) {
+        const lines = [
+          "Helix Value Calculator — executive summary",
+          "Illustrative model only. Not a customer result and not a BMC quote.",
+          "",
+          "Currency: " + currency + "  |  Horizon: " + years + " years",
+          "Adoption ramp: Year 1 25%, Year 2 60%, Year 3+ 90%.",
+          "Labour realisation: conservative 50%, expected 70%. Cash savings are not haircut.",
+          "",
+          "CONSERVATIVE",
+          "Total benefit: " + fmtMoney(c.totalBenefit),
+          "Total cost: " + fmtMoney(c.totalCost),
+          "Net value: " + fmtMoney(c.net),
+          "Net ROI: " + (c.roi == null ? "n/a" : fmtPct(c.roi)),
+          "Payback: " + fmtMonth(c.pay, years),
+          "",
+          "EXPECTED",
+          "Total benefit: " + fmtMoney(e.totalBenefit),
+          "Total cost: " + fmtMoney(e.totalCost),
+          "Net value: " + fmtMoney(e.net),
+          "Net ROI: " + (e.roi == null ? "n/a" : fmtPct(e.roi)),
+          "Payback: " + fmtMonth(e.pay, years),
+          "",
+          "What has to be true (largest modelled drivers):"
+        ];
+        drivers.slice(0, 3).forEach((d, i) => {
+          lines.push((i + 1) + ". " + d.name + " (" + fmtMoney(d.value) + " over the horizon). " + d.detail);
+        });
+        if (downtime) {
+          lines.push("");
+          lines.push("Optional downtime upside (NOT in ROI): expected " + fmtMoney(downtime.expected.total) + " over the horizon.");
+        }
+        lines.push("");
+        lines.push("Validate agent assumptions with BMC published figures and your own data.");
+        return lines.join("\n");
+      }
+
+      function cardHTML(title, s, years) {
+        const neg = s.net < 0 ? " neg" : "";
+        return `
+          <h3>${title}</h3>
+          <div class="kpi"><span>Total benefit</span><b>${fmtMoney(s.totalBenefit)}</b></div>
+          <div class="kpi"><span>Total cost</span><b>${fmtMoney(s.totalCost)}</b></div>
+          <div class="kpi"><span>Net value</span><b>${fmtMoney(s.net)}</b></div>
+          <div class="kpi hero${neg}"><span>Net ROI</span><b>${s.roi == null ? "n/a" : fmtPct(s.roi)}</b></div>
+          <div class="kpi"><span>Payback</span><b>${fmtMonth(s.pay, years)}</b></div>
+        `;
+      }
+
+      function renderWarnings(warnings) {
+        const box = $("warnings");
+        if (!warnings.length) {
+          box.classList.remove("show");
+          box.innerHTML = "";
+          return;
+        }
+        box.classList.add("show");
+        box.innerHTML = "<strong>Guardrail warnings</strong><ul>" +
+          warnings.map((w) => "<li>" + w + "</li>").join("") + "</ul>";
+      }
+
+      function renderCharts(model) {
+        const s = model[chartScenario];
+        const labels = Array.from({ length: model.years }, (_, i) => "Year " + (i + 1));
+        const stacked = {
+          labels,
+          datasets: [
+            { label: "Consolidation", data: s.byYear.consolidation, backgroundColor: "#2f6fed" },
+            { label: "Operations", data: s.byYear.operations, backgroundColor: "#1f7a4d" },
+            { label: "Service desk", data: s.byYear.desk, backgroundColor: "#c4a35a" },
+            { label: "AI agents", data: s.byYear.agents, backgroundColor: "#6b4c9a" }
+          ]
+        };
+        const series = cumulativeSeries(s.annual, model.years, num("services"), num("licence"));
+        const line = {
+          labels: series.labels,
+          datasets: [
+            { label: "Cumulative cost", data: series.cost, borderColor: "#9b2c2c", backgroundColor: "transparent", tension: 0.15 },
+            { label: "Cumulative benefit", data: series.benefit, borderColor: "#1f7a4d", backgroundColor: "transparent", tension: 0.15 }
+          ]
+        };
+        const moneyTick = (v) => fmtMoney(v);
+        if (barChart) barChart.destroy();
+        if (lineChart) lineChart.destroy();
+        barChart = new Chart($("barChart"), {
+          type: "bar",
+          data: stacked,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 10 } } } },
+            scales: {
+              x: { stacked: true },
+              y: { stacked: true, ticks: { callback: moneyTick, font: { size: 10 } } }
+            }
+          }
+        });
+        lineChart = new Chart($("lineChart"), {
+          type: "line",
+          data: line,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 10 } } } },
+            scales: {
+              x: { title: { display: true, text: "Month", font: { size: 10 } } },
+              y: { ticks: { callback: moneyTick, font: { size: 10 } } }
+            }
+          }
+        });
+      }
+
+      let lastCopy = "";
+      function render() {
+        const model = calculate();
+        lastCopy = model.copy;
+        $("cardCons").innerHTML = cardHTML("Conservative · 50% labour", model.conservative, model.years);
+        $("cardExp").innerHTML = cardHTML("Expected · 70% labour", model.expected, model.years);
+        $("stickyKpis").innerHTML =
+          "<span>Conservative ROI <strong>" + (model.conservative.roi == null ? "n/a" : fmtPct(model.conservative.roi)) + "</strong></span>" +
+          "<span>Expected ROI <strong>" + (model.expected.roi == null ? "n/a" : fmtPct(model.expected.roi)) + "</strong></span>" +
+          "<span>Payback <strong>" + fmtMonth(model.expected.pay, model.years) + "</strong></span>";
+        $("assumptions").innerHTML = model.drivers.slice(0, 3).map((d) =>
+          "<li><strong>" + d.name + "</strong> — " + d.detail + " Horizon impact " + fmtMoney(d.value) + ".</li>"
+        ).join("");
+        renderWarnings(model.warnings);
+        if (model.downtime) {
+          $("downResult").textContent =
+            "Separate upside over " + model.years + " years: conservative " +
+            fmtMoney(model.downtime.conservative.total) + " · expected " +
+            fmtMoney(model.downtime.expected.total) + ". Not in ROI.";
+        } else {
+          $("downResult").textContent = "Enter both fields to see a separate downtime range. Still excluded from ROI.";
+        }
+        if (window.Chart) renderCharts(model);
+      }
+
+      function bindTabs() {
+        const tabs = document.querySelectorAll(".tabs [role=tab]");
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", () => {
+            tabs.forEach((t) => t.setAttribute("aria-selected", "false"));
+            document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+            tab.setAttribute("aria-selected", "true");
+            document.getElementById(tab.getAttribute("aria-controls")).classList.add("active");
+          });
+        });
+      }
+
+      $("currency").addEventListener("change", () => {
+        const next = $("currency").value;
+        if (next === currency) return;
+        const factor = next === "AED" ? AED_PER_USD : 1 / AED_PER_USD;
+        moneyIds.forEach((id) => {
+          if (blank(id)) return;
+          $(id).value = String(+(num(id) * factor).toFixed(id === "hourly" || id.indexOf("Server") >= 0 ? 2 : 0));
+        });
+        currency = next;
+        render();
+      });
+
+      $("chartCons").addEventListener("click", () => {
+        chartScenario = "conservative";
+        $("chartCons").setAttribute("aria-pressed", "true");
+        $("chartExp").setAttribute("aria-pressed", "false");
+        render();
+      });
+      $("chartExp").addEventListener("click", () => {
+        chartScenario = "expected";
+        $("chartExp").setAttribute("aria-pressed", "true");
+        $("chartCons").setAttribute("aria-pressed", "false");
+        render();
+      });
+
+      $("copyBtn").addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(lastCopy);
+        } catch {
+          const ta = document.createElement("textarea");
+          ta.value = lastCopy;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+        }
+        $("copied").hidden = false;
+        setTimeout(() => { $("copied").hidden = true; }, 1600);
+      });
+
+      document.querySelector(".globals").addEventListener("input", render);
+      document.querySelector(".panel").addEventListener("input", render);
+      document.querySelector(".panel").addEventListener("change", render);
+      $("downCost").addEventListener("input", render);
+      $("downMins").addEventListener("input", render);
+
+      renderAgents();
+      bindTabs();
+      render();
+    })();
+  </script>
+</body>
+</html>
