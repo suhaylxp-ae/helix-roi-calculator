@@ -1193,6 +1193,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
       const MODULES = {};
       const RUN_ORDER = ["itsm", "change", "agents", "aiops", "network", "cmdb", "tssa", "bhco", "esm"];
       let barChart, lineChart, modChart, simpleChart, lastCopy = "";
+      if (window.Chart) Chart.defaults.animation = false;
       let activeTab = "itsm";
       let uiMode = "simple";
       let persona = "cio";
@@ -2577,6 +2578,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
           type: "bar",
           data: stacked,
           options: {
+            animation: false,
             responsive: true,
             maintainAspectRatio: false,
             plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 10 } } } },
@@ -2591,6 +2593,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
             datasets: [{ label: "ROI benefit", data: mods.map((x) => x.total), backgroundColor: "#1a3a63" }]
           },
           options: {
+            animation: false,
             indexAxis: "y",
             responsive: true,
             maintainAspectRatio: false,
@@ -2602,6 +2605,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
           type: "line",
           data: line,
           options: {
+            animation: false,
             responsive: true,
             maintainAspectRatio: false,
             plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 10 } } } },
@@ -2712,24 +2716,6 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         el.textContent = m.cost.mode === "onprem"
           ? ("On-premises " + m.years + "-year cost " + fmtMoney(m.cost.totalCost) + " · perpetual " + fmtMoney(m.cost.perpetual) + " · services " + fmtMoney(m.services))
           : ("Selected year-1 SaaS licence " + fmtMoney(m.licence) + " · services " + fmtMoney(m.services) + " · " + m.years + "-year cost " + fmtMoney(m.expected.totalCost));
-      }
-
-      function eachChart(fn) {
-        [simpleChart, barChart, lineChart, modChart].forEach((ch) => { if (ch) fn(ch); });
-      }
-
-      function freezeChartsForPrint() {
-        eachChart((ch) => {
-          ch.options.animation = false;
-          ch.resize();
-          ch.update("none");
-        });
-      }
-
-      function thawChartsAfterPrint() {
-        eachChart((ch) => {
-          ch.options.animation = true;
-        });
       }
 
       function drawQR(canvas) {
@@ -2887,6 +2873,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
             ]
           },
           options: {
+            animation: false,
             responsive: true,
             maintainAspectRatio: false,
             layout: { padding: { top: 4, bottom: 8 } },
@@ -2951,18 +2938,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         setMode(btn.dataset.mode);
       });
       $("seeMaths").addEventListener("click", () => setMode("advanced"));
-      $("printBtn").addEventListener("click", () => {
-        drawQR($("printQR"));
-        freezeChartsForPrint();
-        window.print();
-      });
-      window.addEventListener("beforeprint", () => {
-        drawQR($("printQR"));
-        freezeChartsForPrint();
-      });
-      window.addEventListener("afterprint", () => {
-        thawChartsAfterPrint();
-      });
+      $("printBtn").addEventListener("click", () => { drawQR($("printQR")); window.print(); });
       $("discMore").addEventListener("click", () => {
         const bar = document.querySelector(".disclaimer");
         const open = bar.classList.toggle("expanded");
