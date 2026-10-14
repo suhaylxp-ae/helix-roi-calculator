@@ -4,17 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>How much could better IT operations be worth?</title>
-  <meta name="description" content="Enter a few numbers you know. Get a conservative value estimate in under a minute. Independent Helix Value Calculator by Suhayl Patel — not a BMC tool." />
+  <meta name="description" content="Enter a few numbers you know. Get a cautious value estimate in under a minute. Independent Helix Value Calculator by Suhayl Patel. Not a BMC tool." />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="How much could better IT operations be worth?" />
-  <meta property="og:description" content="A conservative 60-second ROI estimate. Cash, released time, and upside counted separately. Not a BMC tool." />
+  <meta property="og:description" content="Enter a few numbers. Get a cautious value estimate in under a minute. Not a BMC tool." />
   <meta property="og:url" content="https://suhaylxp-ae.github.io/helix-roi-calculator/" />
   <meta property="og:image" content="https://suhaylxp-ae.github.io/helix-roi-calculator/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="How much could better IT operations be worth?" />
-  <meta name="twitter:description" content="A conservative 60-second ROI estimate. Independent project by Suhayl Patel." />
+  <meta name="twitter:description" content="A cautious 60-second value estimate. Independent project by Suhayl Patel." />
   <meta name="twitter:image" content="https://suhaylxp-ae.github.io/helix-roi-calculator/og-image.png" />
   <link rel="icon" href="favicon.ico" sizes="32x32" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
@@ -44,6 +44,7 @@
       --disclaimer-h: 3.1rem;
     }
     * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
     html, body { margin: 0; }
     body {
       color: var(--ink);
@@ -457,11 +458,13 @@
       color: #fff; border-radius: 16px; padding: 1.25rem 1.2rem 1.1rem; box-shadow: var(--shadow);
     }
     .results-card h2 { color: #fff; text-transform: none; letter-spacing: 0; font-size: 0.78rem; margin: 0 0 0.35rem; }
-    .results-card .headline { font-size: clamp(1.35rem, 4vw, 1.85rem); font-weight: 700; margin: 0 0 0.75rem; letter-spacing: -0.03em; line-height: 1.2; }
+    .results-card .headline { font-size: clamp(1.35rem, 4vw, 1.85rem); font-weight: 700; margin: 0 0 0.4rem; letter-spacing: -0.03em; line-height: 1.2; }
+    .outage-line { font-size: 0.88rem; color: var(--gold); margin: 0 0 0.75rem; line-height: 1.35; font-weight: 600; }
     .results-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; margin-bottom: 0.85rem; }
     .results-meta div { background: rgba(255,255,255,0.08); border-radius: 10px; padding: 0.55rem 0.65rem; }
     .results-meta span { display: block; font-size: 0.72rem; color: #c9d6e8; }
-    .results-meta b { font-family: var(--mono); font-size: 0.95rem; }
+    .results-meta b { font-family: var(--mono); font-size: 0.95rem; white-space: normal; }
+    #simpleHours { font-family: var(--sans) !important; font-weight: 600; font-size: 0.88rem; line-height: 1.35; }
     .drivers { margin: 0; padding-left: 1.1rem; font-size: 0.9rem; color: #e8eef7; }
     .drivers li { margin: 0.3rem 0; }
     .upside-note { font-size: 0.78rem; color: var(--gold); margin: 0.85rem 0 0; }
@@ -488,6 +491,17 @@
       border-radius: 8px; padding: 0.5rem 0.6rem; margin: 0 0 0.65rem;
     }
     .cred-note.show { display: block; }
+    .pace-note {
+      display: none; font-size: 0.82rem; background: rgba(255,255,255,0.1); color: #e8eef7;
+      border: 1px solid rgba(255,255,255,0.28); border-radius: 8px; padding: 0.55rem 0.65rem;
+      margin: 0 0 0.65rem; line-height: 1.4;
+    }
+    .pace-note.show { display: block; }
+    .pace-note button {
+      font: inherit; font-weight: 650; display: inline-block; margin-top: 0.4rem;
+      background: #fff; color: var(--navy); border: 0; border-radius: 8px;
+      padding: 0.35rem 0.75rem; cursor: pointer; min-height: 2.2rem;
+    }
     .adv-chip {
       display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem;
       background: #fff6e8; border: 1px solid #efd2a8; color: var(--warn);
@@ -511,8 +525,21 @@
     .print-inputs { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
     .print-inputs td { padding: 0.2rem 0.4rem; border-bottom: 1px solid #e6edf5; }
     .print-method { font-size: 0.8rem; color: var(--muted); padding-left: 1.1rem; }
-    .print-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; margin-top: 0.6rem; }
-    .print-disc { font-size: 0.72rem; color: var(--muted); }
+    .print-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; margin-top: 0.35rem; }
+    .print-disc { font-size: 0.68rem; color: var(--muted); margin: 0.3rem 0; }
+    .print-method { margin: 0.25rem 0; }
+    .print-sources { font-size: 0.65rem; color: var(--muted); margin: 0.25rem 0 0; }
+    .buy-toggle { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin: 0.45rem 0 0.2rem; font-size: 0.82rem; }
+    .buy-toggle button {
+      font: inherit; font-weight: 650; border: 1px solid rgba(255,255,255,0.35); background: transparent;
+      color: #fff; border-radius: 999px; padding: 0.28rem 0.7rem; cursor: pointer; min-height: 2.2rem;
+    }
+    .buy-toggle button[aria-pressed="true"] { background: #fff; color: var(--navy); }
+    .onprem-box { display: none; margin-top: 0.75rem; padding-top: 0.65rem; border-top: 1px solid var(--line); }
+    body.dep-onprem .onprem-box { display: block; }
+    a.src { font-size: 0.62rem; font-weight: 700; margin-left: 0.3rem; color: var(--accent-2); }
+    #simpleHours { font-family: var(--sans); font-weight: 600; white-space: normal; line-height: 1.35; }
+    .results-meta b { white-space: normal; }
 
     @media (max-width: 980px) {
       .layout { grid-template-columns: 1fr; }
@@ -542,40 +569,60 @@
       .disc-full { display: inline; }
     }
     @media print {
-      @page { size: A4; margin: 12mm; }
+      @page { size: auto; margin: 6mm; }
       html, body { background: #fff; color: #102033; }
       .disclaimer, .mode-bar, .no-print, #advanced, .simple-actions, .persona-grid,
-      #step2, .sticky-sum, header .lede, .about, footer, .disc-more { display: none !important; }
+      #step2, .sticky-sum, header .lede, header .eyebrow, .about, footer, .disc-more, .buy-toggle { display: none !important; }
+      #simple { margin: 0; }
       #simple .card { box-shadow: none; border: 0; margin: 0; padding: 0; }
-      #simple .card .step-label, #simple .card h2 { display: none; }
+      #simple .card .step-label, #simple .card h2, .results-card h2 { display: none; }
       .results-card {
         background: #fff; color: var(--navy); border: 1px solid var(--navy);
-        box-shadow: none; padding: 0.7rem 0.85rem;
+        box-shadow: none; padding: 0.3rem 0.5rem;
         -webkit-print-color-adjust: exact; print-color-adjust: exact;
       }
-      .results-card h2, .results-card .headline, .invest-note, .where-label, .upside-note, .order-hint { color: var(--navy); }
-      .results-meta div { background: #f5f7fb; }
+      .results-card h2, .results-card .headline, .invest-note, .where-label, .upside-note, .outage-line, .order-hint { color: var(--navy); }
+      .outage-line { margin: 0 0 0.35rem; font-size: 0.72rem; }
+      .pace-note { color: var(--navy); background: #f5f7fb; border-color: var(--line); }
+      .pace-note button { display: none; }
+      .results-card .headline { font-size: 1.05rem; margin: 0 0 0.25rem; }
+      .results-meta { margin-bottom: 0.25rem; gap: 0.25rem; }
+      .results-meta div { background: #f5f7fb; padding: 0.25rem 0.4rem; }
       .results-meta span, .drivers { color: var(--ink); }
-      .cred-note { color: var(--warn); background: #fff6e8; }
-      .print-only { display: block; margin-top: 0.7rem; }
-      .simple-chart { height: 150px; }
-      header.app-header { padding: 0.4rem 0 0.6rem; }
-      header h1 { font-size: 1.15rem; }
+      .cred-note { color: var(--warn); background: #fff6e8; margin: 0.15rem 0; padding: 0.25rem 0.4rem; }
+      .print-only { display: block; margin-top: 0.2rem; }
+      .simple-chart { height: 150px; margin: 0.15rem 0 0.1rem; padding: 0.2rem; }
+      .upside-note, .where-label, .invest-note { margin: 0.12rem 0; font-size: 0.68rem; }
+      .upside-note { margin-top: 0.4rem; }
+      #simpleHours { font-size: 0.74rem !important; }
+      .print-method { font-size: 0.64rem; padding-left: 0.95rem; margin: 0.12rem 0; }
+      .print-method li { margin: 0.05rem 0; }
+      .print-sources { font-size: 0.58rem; margin: 0.12rem 0 0; }
+      .print-disc { font-size: 0.58rem; margin: 0.12rem 0; }
+      .print-inputs { font-size: 0.68rem; }
+      .print-inputs td { padding: 0.08rem 0.3rem; }
+      .print-foot { margin-top: 0.12rem; }
+      .drivers { font-size: 0.72rem; }
+      .drivers li { margin: 0.12rem 0; }
+      header.app-header { padding: 0.08rem 0 0.15rem; }
+      header h1 { font-size: 0.95rem; margin: 0; }
+      #printQR { width: 60px; height: 60px; }
+      #printDate, #printUrl, #printPersona { margin: 0.08rem 0; font-size: 0.68rem; }
     }
   </style>
 </head>
 <body class="simple">
   <div class="disclaimer" role="note">
     <span class="disc-short"><strong>Disclaimer.</strong> Independent project by Suhayl Patel. Not a BMC tool.</span>
-    <span class="disc-full"> Independent personal project by Suhayl Patel. Not a BMC or BMC Helix tool, not a quote, and not a customer result. Views are my own. All defaults are illustrative assumptions.</span>
+    <span class="disc-full"> Independent work by Suhayl Patel. Not a BMC tool. Not a quote. Not a customer result. Views are my own. Default numbers are careful examples.</span>
     <button type="button" class="disc-more no-print" id="discMore" aria-expanded="false">more</button>
   </div>
 
   <header class="app-header">
     <div class="wrap">
-      <p class="eyebrow">Independent · conservative · not a BMC tool</p>
+      <p class="eyebrow">Independent · cautious · not a BMC tool</p>
       <h1 id="heroTitle">How much could better IT operations be worth?</h1>
-      <p class="lede" id="heroLede">Enter a few numbers you know. Get a conservative value estimate in under a minute.</p>
+      <p class="lede" id="heroLede">Enter a few numbers you know. Get a cautious value estimate in under a minute.</p>
     </div>
   </header>
 
@@ -597,15 +644,15 @@
       <div class="persona-grid" id="personas">
         <button type="button" class="persona" data-persona="cio" aria-pressed="true">
           <strong>CIO</strong>
-          <span>Service desk, AIOps, cloud waste, and agentic AI — a board-level mix.</span>
+          <span>Service desk, alerts, cloud waste, and AI agents.</span>
         </button>
         <button type="button" class="persona" data-persona="infra" aria-pressed="false">
           <strong>Head of Infrastructure</strong>
-          <span>Alerts, network, servers, CMDB, and cloud spend.</span>
+          <span>Alerts, network, servers, asset records, and cloud spend.</span>
         </button>
         <button type="button" class="persona" data-persona="ops" aria-pressed="false">
           <strong>Head of Service / Operations</strong>
-          <span>Tickets, changes, agents, and business-side cases.</span>
+          <span>Tickets, changes, AI agents, and business cases.</span>
         </button>
       </div>
     </section>
@@ -613,7 +660,7 @@
     <section class="card" id="step2" aria-label="Your numbers">
       <p class="step-label">Step 2</p>
       <h2>Your numbers</h2>
-      <p class="ramp-note">Sliders are a starting point. Type the figure you actually know. Other module inputs are filled from these with documented ratios.</p>
+      <p class="ramp-note">Slide or type the number you know. We fill the rest from these.</p>
       <p id="advChip" class="adv-chip" hidden><span>Using your Advanced edits</span> <button type="button" id="resetSimple">Reset to simple</button></p>
       <div class="simple-fields" id="simpleFields"></div>
     </section>
@@ -623,20 +670,30 @@
       <div class="results-card" id="resultsCard">
         <h2>Shareable estimate</h2>
         <p class="headline" id="simpleHeadline">—</p>
+        <p class="outage-line" id="outageLine"></p>
         <div class="results-meta">
-          <div><span>Net ROI <i class="order-hint">conservative · expected</i></span><b id="simpleRoi">—</b></div>
-          <div><span>Payback <i class="order-hint">expected · conservative</i></span><b id="simplePay">—</b></div>
-          <div style="grid-column:1/-1"><span>Hours given back to your team per year</span><b id="simpleHours">—</b></div>
+          <div><span>Net ROI <i class="order-hint">cautious · likely</i></span><b id="simpleRoi">—</b></div>
+          <div><span>Payback <i class="order-hint">likely · cautious</i></span><b id="simplePay">—</b></div>
+          <div style="grid-column:1/-1"><span>Staff hours back each year</span><b id="simpleHours">—</b></div>
         </div>
         <p class="invest-note" id="simpleInvest"></p>
+        <div class="buy-toggle no-print" id="simpleBuy" role="group" aria-label="How do you buy Helix?">
+          <span>How do you buy Helix?</span>
+          <button type="button" data-dep="saas" aria-pressed="true">SaaS (subscription)</button>
+          <button type="button" data-dep="onprem" aria-pressed="false">On-premises</button>
+        </div>
         <p id="credNote" class="cred-note" hidden></p>
-        <p class="where-label">Where the hours go</p>
+        <p id="paceNote" class="pace-note" hidden>
+          Value builds slowly for this setup. Most teams see it in years 3 to 5.
+          <button type="button" id="tryFive">Try the 5-year view</button>
+        </p>
+        <p class="where-label">Where the value comes from</p>
         <ol class="drivers" id="simpleDrivers"></ol>
         <div class="simple-chart"><canvas id="simpleChart"></canvas></div>
-        <p class="upside-note">Downtime avoidance not included. That’s extra upside.</p>
+        <p class="upside-note">Outage costs are not counted. That is extra benefit (not counted).</p>
         <div class="simple-actions no-print">
           <button type="button" id="copyLinkBtn">Copy link</button>
-          <button type="button" id="printBtn">Download one-pager</button>
+          <button type="button" id="printBtn">Download one page</button>
           <button type="button" class="ghost" id="seeMaths">See the maths</button>
         </div>
         <p class="copied" id="linkCopied" hidden style="margin:0.5rem 0 0;color:#b8e0c8;">Link copied</p>
@@ -645,12 +702,13 @@
         <p id="printPersona"></p>
         <table class="print-inputs" id="printInputs"></table>
         <ul class="print-method">
-          <li>Adoption ramp: 50% / 85% / 100% in years 1 / 2 / 3+.</li>
-          <li>A 30–50% haircut on freed time (not every hour is truly reusable).</li>
-          <li>Downtime avoidance is excluded from this number.</li>
-          <li>Overlaps are subtracted so the same hour is not counted twice.</li>
+          <li>Adoption grows over time: 50% in year 1, 85% in year 2, 100% after.</li>
+          <li>We count only 50–70% of saved time.</li>
+          <li>Outage costs are not counted in ROI.</li>
+          <li>Each saving is counted once.</li>
         </ul>
-        <p class="print-disc">Independent personal project by Suhayl Patel. Not a BMC or BMC Helix tool, not a quote, and not a customer result. All defaults are illustrative assumptions.</p>
+        <p class="print-sources">Defaults are cautious. They sit at or below public figures. No public source: major-outage labour cut, emergency team call cut, handle-time cut, HR/ESM self-solved tickets, on-prem cost split. These are our own careful estimates.</p>
+        <p class="print-disc">Independent work by Suhayl Patel. Not a BMC tool. Not a quote. Not a customer result. Default numbers are careful examples.</p>
         <div class="print-foot">
           <div>
             <p id="printDate"></p>
@@ -685,36 +743,74 @@
           <input id="fxRate" type="number" min="0.0001" step="0.0001" value="1" />
         </label>
         <label class="field">
-          <span class="label-row">Time horizon <span class="tip" tabindex="0" data-tip="Benefits follow 50% / 85% / 100% in years 1 / 2 / 3+. Licence is paid every year on selected modules only.">i</span></span>
+          <span class="label-row">Time horizon <span class="tip" tabindex="0" data-tip="Benefits grow over time: 50% in year 1, 85% in year 2, 100% after. SaaS licence is paid every year on selected products only.">i</span></span>
           <select id="horizon">
             <option value="3" selected>3 years</option>
             <option value="5">5 years</option>
           </select>
         </label>
+        <label class="field">
+          <span class="label-row">How do you buy Helix?</span>
+          <select id="deployMode">
+            <option value="saas" selected>SaaS (subscription)</option>
+            <option value="onprem">On-premises</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid-4" style="margin-top:0.75rem;">
         <label class="field adv-redeploy">
-          <span class="label-row">% capacity redeployed <span class="assump">advanced</span> <span class="tip" tabindex="0" data-tip="Default 100%: all realised labour is counted in ROI. Realisation (50% / 70%) is the single haircut. Lower this only if you will not reuse the time.">i</span></span>
+          <span class="label-row">% of saved time put to other work <span class="assump">advanced</span> <span class="tip" tabindex="0" data-tip="Default 100%. We already count only 50% or 70% of saved time. Lower this only if the team will not use the time.">i</span></span>
           <input id="redeployPct" type="number" min="0" step="1" value="100" />
         </label>
       </div>
-      <p class="ramp-note">Adoption ramp (benefits only): year 1 <b>50%</b>, year 2 <b>85%</b>, year 3+ <b>100%</b>. Labour realisation is Conservative 50% and Expected 70% — that is the only default haircut. Redeploy % lives in Advanced and defaults to 100%.</p>
-      <p class="ref-note">For context, a BMC-commissioned Forrester TEI study (2021) of a composite organisation reported about 25% deflection and 15% agent efficiency.</p>
+      <p class="ramp-note">Adoption grows over time: year 1 <b>50%</b>, year 2 <b>85%</b>, after that <b>100%</b>. We count only 50% (cautious) or 70% (likely) of saved time. The share of saved time your team can really use is the only default cut.</p>
       <h2 style="margin-top:1rem;">Licence by module <span class="assump">illustrative assumption</span></h2>
-      <p class="ramp-note">Only <b>selected</b> modules are summed. One-time services default to 40% of that year-1 licence; edit the dollars or the %.</p>
+      <p class="ramp-note">Only <b>selected</b> products are summed. One-time services start at 40% of that year-1 SaaS licence. You can edit the dollars or the %.</p>
       <div style="overflow-x:auto;"><table class="cost-table" id="costTable"></table></div>
       <div class="grid-3" style="margin-top:0.75rem;">
         <label class="field">
-          <span class="label-row">Services as % of year-1 licence <span class="assump">illustrative assumption</span></span>
+          <span class="label-row">Services as % of year-1 SaaS licence <span class="assump">illustrative assumption</span></span>
           <input id="svcPct" type="number" min="0" max="100" step="1" value="40" />
         </label>
         <label class="field">
-          <span class="label-row">One-time services <span class="tip" tabindex="0" data-tip="Counted in month 0. Defaults to the % of selected year-1 licence. Editing this amount stops auto-recalc; change the % to resume.">i</span></span>
+          <span class="label-row">One-time services <span class="tip" tabindex="0" data-tip="Counted in month 0. Starts at the % of selected year-1 SaaS licence. Edit this amount to stop auto-calc. Change the % to resume.">i</span></span>
           <input id="services" data-money type="number" min="0" step="1000" value="60000" />
         </label>
         <p class="cost-sum" id="costSum"></p>
       </div>
+      <div class="onprem-box" id="onpremBox">
+        <h2>On-premises cost <span class="assump">illustrative assumption</span></h2>
+        <p class="ramp-note">Benefits do not change. Payback uses cash by month. The licence is paid once in month 0. Then you pay running costs each year.</p>
+        <div class="grid-4">
+          <label class="field">
+            <span class="label-row">Perpetual licence <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Starts at 2.5 × the selected annual SaaS licence. Edit to override.">i</span></span>
+            <input id="perpLic" data-money type="number" min="0" step="1000" value="0" />
+          </label>
+          <label class="field">
+            <span class="label-row">Licence multiple of SaaS <span class="assump">illustrative assumption</span></span>
+            <input id="perpMult" type="number" min="0" step="0.1" value="2.5" />
+          </label>
+          <label class="field">
+            <span class="label-row">Annual maintenance % of licence <span class="assump">illustrative assumption</span></span>
+            <input id="maintPct" type="number" min="0" max="100" step="1" value="20" />
+          </label>
+          <label class="field">
+            <span class="label-row">Infrastructure and hosting / year <span class="assump">illustrative assumption</span></span>
+            <input id="onpremHost" data-money type="number" min="0" step="1000" value="40000" />
+          </label>
+          <label class="field">
+            <span class="label-row">Admin and upgrade staff (FTE) <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 0.5 FTE. Cost = FTE × engineer hourly rate × hours per year.">i</span></span>
+            <input id="adminFte" type="number" min="0" step="0.1" value="0.5" />
+          </label>
+          <label class="field">
+            <span class="label-row">Hours per FTE / year <span class="assump">illustrative assumption</span></span>
+            <input id="fteHours" type="number" min="0" step="10" value="1880" />
+          </label>
+        </div>
+      </div>
       <h2 style="margin-top:1rem;">Loaded hourly rates</h2>
       <div class="grid-5 roles">
-        <label class="field">Service desk <input id="rateDesk" data-money data-role="desk" type="number" min="0" step="1" value="55" /><span class="assump">illustrative assumption</span></label>
+        <label class="field">Service desk <input id="rateDesk" data-money data-role="desk" type="number" min="0" step="1" value="55" /><span class="assump">illustrative assumption</span> <a class="src" href="https://www.thinkhdi.com/library/supportworld/2021/understanding-cost-per-ticket" target="_blank" rel="noopener">source</a></label>
         <label class="field">Engineer <input id="rateEng" data-money data-role="eng" type="number" min="0" step="1" value="95" /><span class="assump">illustrative assumption</span></label>
         <label class="field">Network <input id="rateNet" data-money data-role="net" type="number" min="0" step="1" value="90" /><span class="assump">illustrative assumption</span></label>
         <label class="field">Admin <input id="rateAdmin" data-money data-role="admin" type="number" min="0" step="1" value="80" /><span class="assump">illustrative assumption</span></label>
@@ -728,64 +824,64 @@
         <div id="warnings" class="warn-list"></div>
 
         <div id="panel-itsm" class="tab-panel" data-module="itsm" role="tabpanel">
-          <h3>ITSM Service Desk <span class="tag tag-cap">capacity</span></h3>
-          <p class="blurb">Extra deflection is applied first to tickets that still reach an agent. Handle-time reduction then applies only to remaining tickets. L1/L2 mix is used for both.</p>
+          <h3>ITSM Service Desk <span class="tag tag-cap">staff time</span></h3>
+          <p class="blurb">First we count extra tickets solved without the service desk. Then we cut handle time only on tickets that remain.</p>
           <div class="grid-3">
-            <label class="field"><span class="label-row">Tickets / year <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="IT tickets before extra Helix deflection. Current self-service is already excluded from agent work.">i</span></span><input id="tickets" type="number" min="0" step="100" value="48000" /></label>
-            <label class="field"><span class="label-row">Current self-service % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Share already resolved without an agent today.">i</span></span><input id="ssNowPct" type="number" min="0" max="100" step="1" value="18" /></label>
-            <label class="field"><span class="label-row">Target extra deflection % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Extra share of remaining (human) tickets deflected. Default 20%. Combined with Employee Navigator using 1-(1-d1)(1-d2), capped at 40%.">i</span></span><input id="itsmDeflectPct" type="number" min="0" max="100" step="1" value="20" /></label>
-            <label class="field"><span class="label-row">L1 minutes / ticket <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Handle time for tickets that stay at L1.">i</span></span><input id="l1Min" type="number" min="0" step="0.5" value="12" /></label>
-            <label class="field"><span class="label-row">L2 tickets % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Share of human-handled tickets that escalate to L2.">i</span></span><input id="l2Pct" type="number" min="0" max="100" step="1" value="20" /></label>
-            <label class="field"><span class="label-row">L2 minutes / ticket <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Handle time for L2 tickets.">i</span></span><input id="l2Min" type="number" min="0" step="0.5" value="25" /></label>
-            <label class="field"><span class="label-row">Handle-time reduction % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Applied only after deflection, on remaining tickets. Default 15%.">i</span></span><input id="itsmHtCutPct" type="number" min="0" max="100" step="1" value="15" /></label>
+            <label class="field"><span class="label-row">Tickets / year <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="IT tickets before extra self-solved tickets. Current self-service is already excluded from agent work.">i</span></span><input id="tickets" type="number" min="0" step="100" value="48000" /></label>
+            <label class="field"><span class="label-row">Current self-service % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Share already solved without an agent today.">i</span> <a class="src" href="https://www.thinkhdi.com/library/supportworld/2018/metric-of-month-user-self-service" target="_blank" rel="noopener">source</a></span><input id="ssNowPct" type="number" min="0" max="100" step="1" value="18" /></label>
+            <label class="field"><span class="label-row">Extra self-solved tickets % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Extra share of remaining tickets solved without the service desk. Default 15%. Combined with Employee Navigator, capped at 40%.">i</span> <a class="src" href="https://www.thinkhdi.com/~/media/hdicorp/files/sponsored/q42019-trendrep-shift-left-roi.pdf" target="_blank" rel="noopener">source</a></span><input id="itsmDeflectPct" type="number" min="0" max="100" step="1" value="15" /></label>
+            <label class="field"><span class="label-row">Level 1 minutes / ticket <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Handle time for tickets that stay at Level 1. Default 10 minutes.">i</span> <a class="src" href="https://www.thinkhdi.com/library/supportworld/2019/metric-of-month-ticket-handle-time" target="_blank" rel="noopener">source</a></span><input id="l1Min" type="number" min="0" step="0.5" value="10" /></label>
+            <label class="field"><span class="label-row">Level 2 tickets % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Share of human-handled tickets that escalate to Level 2.">i</span></span><input id="l2Pct" type="number" min="0" max="100" step="1" value="20" /></label>
+            <label class="field"><span class="label-row">Level 2 minutes / ticket <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Handle time for Level 2 tickets.">i</span></span><input id="l2Min" type="number" min="0" step="0.5" value="25" /></label>
+            <label class="field"><span class="label-row">Handle-time cut on remaining tickets % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Applied only after self-solved tickets, on remaining tickets. Default 10%. Our own careful estimate.">i</span></span><input id="itsmHtCutPct" type="number" min="0" max="100" step="1" value="10" /></label>
           </div>
         </div>
 
         <div id="panel-aiops" class="tab-panel" data-module="aiops" role="tabpanel">
-          <h3>AIOps <span class="tag tag-cap">capacity</span> <span class="tag tag-up">optional upside</span></h3>
-          <p class="blurb">Noise is suppressed first. Triage applies only to alerts that remain. MTTR is engineer hands-on hours, never elapsed outage clock.</p>
+          <h3>AIOps <span class="tag tag-cap">staff time</span> <span class="tag tag-up">extra benefit (not counted)</span></h3>
+          <p class="blurb">Noise is cut first. Checking alerts applies only to alerts that remain. Time to fix major outages is engineer hands-on hours, never the outage clock.</p>
           <div class="grid-3">
             <label class="field"><span class="label-row">Alerts / year <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Do not include network alerts if the Network module is also on.">i</span></span><input id="alerts" type="number" min="0" step="100" value="140000" /></label>
             <label class="field"><span class="label-row">% noise today <span class="assump">illustrative assumption</span></span><input id="noisePct" type="number" min="0" max="100" step="1" value="82" /></label>
-            <label class="field"><span class="label-row">% of noise suppressed <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 50%. Removed from the noisy slice only.">i</span></span><input id="noiseSuppressedPct" type="number" min="0" max="100" step="1" value="50" /></label>
-            <label class="field"><span class="label-row">Triage minutes / remaining alert <span class="assump">illustrative assumption</span></span><input id="triageMin" type="number" min="0" step="0.1" value="3.5" /></label>
+            <label class="field"><span class="label-row">% of noise suppressed <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 50%. Removed from the noisy slice only.">i</span> <a class="src" href="https://www.bigpanda.io/report/tool-effectiveness-for-it-event-management/detection-benchmarks/" target="_blank" rel="noopener">source</a></span><input id="noiseSuppressedPct" type="number" min="0" max="100" step="1" value="50" /></label>
+            <label class="field"><span class="label-row">Minutes to check each remaining alert <span class="assump">illustrative assumption</span></span><input id="triageMin" type="number" min="0" step="0.1" value="3.5" /></label>
             <label class="field"><span class="label-row">Auto-remediable events / year <span class="assump">illustrative assumption</span></span><input id="autoEvents" type="number" min="0" step="10" value="8000" /></label>
             <label class="field"><span class="label-row">Minutes each auto-remediated <span class="assump">illustrative assumption</span></span><input id="autoMin" type="number" min="0" step="0.5" value="8" /></label>
-            <label class="field"><span class="label-row">P1s / year <span class="assump">illustrative assumption</span></span><input id="p1Count" type="number" min="0" step="1" value="72" /></label>
-            <label class="field"><span class="label-row">Engineers per P1 <span class="assump">illustrative assumption</span></span><input id="p1Engineers" type="number" min="0" step="0.5" value="4" /></label>
-            <label class="field"><span class="label-row">Hands-on hours / P1 <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Labour hours per engineer, not wall-clock outage.">i</span></span><input id="p1Hours" type="number" min="0" step="0.1" value="3" /></label>
-            <label class="field"><span class="label-row">P1 labour cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 25% of hands-on hours.">i</span></span><input id="mttrPct" type="number" min="0" max="100" step="1" value="25" /></label>
-            <label class="field"><span class="label-row">War rooms / year <span class="assump">illustrative assumption</span></span><input id="warRooms" type="number" min="0" step="1" value="20" /></label>
-            <label class="field"><span class="label-row">People per war room <span class="assump">illustrative assumption</span></span><input id="warPeople" type="number" min="0" step="0.5" value="8" /></label>
-            <label class="field"><span class="label-row">Hours per war room <span class="assump">illustrative assumption</span></span><input id="warHours" type="number" min="0" step="0.25" value="2.5" /></label>
-            <label class="field"><span class="label-row">War-room cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 25%.">i</span></span><input id="warCutPct" type="number" min="0" max="100" step="1" value="25" /></label>
+            <label class="field"><span class="label-row">Major outages / year <span class="assump">illustrative assumption</span></span><input id="p1Count" type="number" min="0" step="1" value="72" /></label>
+            <label class="field"><span class="label-row">Engineers per major outage <span class="assump">illustrative assumption</span></span><input id="p1Engineers" type="number" min="0" step="0.5" value="4" /></label>
+            <label class="field"><span class="label-row">Hands-on hours / major outage <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Staff hours per engineer. Not the outage clock.">i</span></span><input id="p1Hours" type="number" min="0" step="0.1" value="3" /></label>
+            <label class="field"><span class="label-row">Major-outage labour cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20% of hands-on hours. Our own careful estimate.">i</span></span><input id="mttrPct" type="number" min="0" max="100" step="1" value="20" /></label>
+            <label class="field"><span class="label-row">Emergency team calls / year <span class="assump">illustrative assumption</span></span><input id="warRooms" type="number" min="0" step="1" value="20" /></label>
+            <label class="field"><span class="label-row">People per emergency team call <span class="assump">illustrative assumption</span></span><input id="warPeople" type="number" min="0" step="0.5" value="8" /></label>
+            <label class="field"><span class="label-row">Hours per emergency team call <span class="assump">illustrative assumption</span></span><input id="warHours" type="number" min="0" step="0.25" value="2.5" /></label>
+            <label class="field"><span class="label-row">Emergency team call cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20%. Our own careful estimate.">i</span></span><input id="warCutPct" type="number" min="0" max="100" step="1" value="20" /></label>
             <label class="field"><span class="label-row">Service models <span class="assump">illustrative assumption</span></span><input id="svcModels" type="number" min="0" step="1" value="40" /></label>
             <label class="field"><span class="label-row">Hours to maintain / model / year <span class="assump">illustrative assumption</span></span><input id="svcModelHrs" type="number" min="0" step="0.5" value="12" /></label>
             <label class="field"><span class="label-row">Service-model cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20%.">i</span></span><input id="svcModelCutPct" type="number" min="0" max="100" step="1" value="20" /></label>
           </div>
           <div class="downtime">
-            <h3>Optional downtime <span class="tag tag-up">upside only</span></h3>
-            <p>P1 elapsed minutes × cost per minute. Never in net ROI or payback.</p>
+            <h3>Optional outage cost <span class="tag tag-up">extra benefit (not counted)</span></h3>
+            <p>Major-outage minutes × cost per minute. Never in net ROI or payback.</p>
             <div class="grid-2">
-              <label class="field"><span class="label-row">Avg elapsed P1 minutes <span class="assump">illustrative assumption</span></span><input id="downMins" type="number" min="0" step="1" placeholder="Leave blank" /></label>
-              <label class="field"><span class="label-row">Cost / minute of P1 outage <span class="tip" tabindex="0" data-tip="Leave blank to omit. Business-loss figure.">i</span></span><input id="downCost" data-money type="number" min="0" step="100" placeholder="Leave blank" /></label>
+              <label class="field"><span class="label-row">Avg elapsed major-outage minutes <span class="assump">illustrative assumption</span></span><input id="downMins" type="number" min="0" step="1" placeholder="Leave blank" /></label>
+              <label class="field"><span class="label-row">Cost / minute of major outage <span class="tip" tabindex="0" data-tip="Leave blank to omit. Business-loss figure. Not counted in ROI.">i</span> <a class="src" href="https://uptimeinstitute.com/about-ui/press-releases/uptime-announces-annual-outage-analysis-report-2025" target="_blank" rel="noopener">source</a></span><input id="downCost" data-money type="number" min="0" step="100" placeholder="Leave blank" /></label>
             </div>
           </div>
-          <p class="ref-note">Reference (not a default in this model): BMC reports 75% faster MTTR in its own AIOps deployment (helixops.ai).</p>
+          <p class="ref-note">Vendor claim (not used as a default): BMC reports 75% faster time to fix in its own AIOps work (helixops.ai).</p>
         </div>
 
         <div id="panel-agents" class="tab-panel" data-module="agents" role="tabpanel">
-          <h3>Helix AI Agents <span class="tag tag-cap">capacity add-on</span></h3>
-          <p class="blurb">Add-on layer. Only counted if ITSM and/or Change is selected. Combined extra deflection with ITSM is 1−(1−d1)(1−d2), capped at 40%. Each agent’s value is shown after labour realisation.</p>
+          <h3>Helix AI Agents <span class="tag tag-cap">staff time add-on</span></h3>
+          <p class="blurb">Add-on only. Counted if ITSM and/or Change is selected. Extra self-solved tickets with ITSM are combined and capped at 40%. Each agent’s value is shown after we count only 50–70% of saved time.</p>
           <div id="agentsLock" class="agents-lock">Select ITSM and/or Change to activate AI Agents. This layer does not run on its own.</div>
           <div class="agent-card" id="card-en">
             <div class="agent-head"><label><input id="agEN" type="checkbox" checked /> <strong>Employee Navigator</strong></label><span class="agent-val" id="val-en">—</span></div>
-            <p class="blurb" style="margin:0.35rem 0 0.5rem;">Extra deflection on remaining ITSM tickets. Combined with ITSM extra deflection.</p>
-            <label class="field"><span class="label-row">Extra deflection % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 5%.">i</span></span><input id="enDeflectPct" type="number" min="0" max="100" step="1" value="5" /></label>
+            <p class="blurb" style="margin:0.35rem 0 0.5rem;">Extra tickets solved without the service desk. Combined with ITSM extra self-solved tickets.</p>
+            <label class="field"><span class="label-row">Extra self-solved tickets % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 5%.">i</span></span><input id="enDeflectPct" type="number" min="0" max="100" step="1" value="5" /></label>
           </div>
           <div class="agent-card" id="card-sc">
             <div class="agent-head"><label><input id="agSC" type="checkbox" checked /> <strong>Service Collaborator</strong></label><span class="agent-val" id="val-sc">—</span></div>
-            <p class="blurb" style="margin:0.35rem 0 0.5rem;">Classification/routing cut on tickets that still remain after deflection and ITSM handle-time reduction.</p>
+            <p class="blurb" style="margin:0.35rem 0 0.5rem;">Routing cut on tickets that still remain after self-solved tickets and the handle-time cut.</p>
             <label class="field"><span class="label-row">Cut on remaining handle time % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 15%.">i</span></span><input id="scCutPct" type="number" min="0" max="100" step="1" value="15" /></label>
           </div>
           <div class="agent-card" id="card-kc">
@@ -808,19 +904,19 @@
               <label class="field"><span class="label-row">Effort cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 15%.">i</span></span><input id="ifCutPct" type="number" min="0" max="100" step="1" value="15" /></label>
             </div>
           </div>
-          <p class="note">Agent values are example assumptions. Validate against BMC’s published figures and your telemetry. Combined deflection cannot exceed 40% of remaining human tickets.</p>
+          <p class="note">Agent values are careful examples. Check them against your own data. Combined self-solved tickets cannot exceed 40% of remaining human tickets.</p>
         </div>
 
         <div id="panel-change" class="tab-panel" data-module="change" role="tabpanel">
-          <h3>Change &amp; Problem <span class="tag tag-cap">capacity</span> <span class="tag tag-cash">cash if cost filled</span></h3>
-          <p class="blurb">Effort cut first. Failed-change reduction is cash if you enter a cost per failure; otherwise avoided rework hours are capacity. Problem hours are separate. Patch changes are subtracted when TSSA is also on.</p>
+          <h3>Change &amp; Problem <span class="tag tag-cap">staff time</span> <span class="tag tag-cash">cash if cost filled</span></h3>
+          <p class="blurb">Effort cut first. Failed-change reduction is cash if you enter a cost per failure. If not, avoided rework hours are staff time. Problem hours are separate. Patch changes are subtracted when TSSA is also on.</p>
           <div class="grid-3">
             <label class="field"><span class="label-row">Changes / year <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Exclude patch changes if TSSA is also selected.">i</span></span><input id="changes" type="number" min="0" step="1" value="2400" /></label>
             <label class="field"><span class="label-row">Hours per change <span class="assump">illustrative assumption</span></span><input id="chgHours" type="number" min="0" step="0.1" value="4" /></label>
             <label class="field"><span class="label-row">Change effort cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 15%.">i</span></span><input id="chgCutPct" type="number" min="0" max="100" step="1" value="15" /></label>
-            <label class="field"><span class="label-row">Failure rate % <span class="assump">illustrative assumption</span></span><input id="failRatePct" type="number" min="0" max="100" step="0.5" value="8" /></label>
+            <label class="field"><span class="label-row">Change failure rate % <span class="assump">illustrative assumption</span> <a class="src" href="https://dora.dev/research/2024/dora-report/" target="_blank" rel="noopener">source</a></span><input id="failRatePct" type="number" min="0" max="100" step="0.5" value="10" /></label>
             <label class="field"><span class="label-row">Relative failure reduction % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 10% of today’s failures avoided.">i</span></span><input id="failCutPct" type="number" min="0" max="100" step="1" value="10" /></label>
-            <label class="field"><span class="label-row">Cost per failed change <span class="tip" tabindex="0" data-tip="Blank = avoided rework hours as capacity. Filled = cash.">i</span></span><input id="failCost" data-money type="number" min="0" step="100" placeholder="Leave blank" /></label>
+            <label class="field"><span class="label-row">Cost per failed change <span class="tip" tabindex="0" data-tip="Blank = avoided rework hours as staff time. Filled = cash.">i</span></span><input id="failCost" data-money type="number" min="0" step="100" placeholder="Leave blank" /></label>
             <label class="field"><span class="label-row">Problem tickets / year <span class="assump">illustrative assumption</span></span><input id="problems" type="number" min="0" step="1" value="180" /></label>
             <label class="field"><span class="label-row">Hours per problem <span class="assump">illustrative assumption</span></span><input id="probHours" type="number" min="0" step="0.1" value="6" /></label>
             <label class="field"><span class="label-row">Problem effort cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 10%.">i</span></span><input id="probCutPct" type="number" min="0" max="100" step="1" value="10" /></label>
@@ -828,7 +924,7 @@
         </div>
 
         <div id="panel-network" class="tab-panel" data-module="network" role="tabpanel">
-          <h3>Network Management <span class="tag tag-cap">capacity</span></h3>
+          <h3>Network Management <span class="tag tag-cap">staff time</span></h3>
           <p class="blurb">Onboarding hours and false-alert suppression. If AIOps is also selected, these alerts are subtracted from the AIOps count.</p>
           <div class="grid-3">
             <label class="field"><span class="label-row">Devices <span class="assump">illustrative assumption</span></span><input id="netDevices" type="number" min="0" step="1" value="2500" /></label>
@@ -843,8 +939,8 @@
         </div>
 
         <div id="panel-cmdb" class="tab-panel" data-module="cmdb" role="tabpanel">
-          <h3>Discovery / CMDB / Asset Management <span class="tag tag-cap">capacity</span> <span class="tag tag-cash">cash if filled</span></h3>
-          <p class="blurb">Record-update and audit hours. Reclaimed unused assets are cash only if you enter a count and unit cost. Breach risk is qualitative upside — not valued.</p>
+          <h3>Discovery / CMDB / Asset Management <span class="tag tag-cap">staff time</span> <span class="tag tag-cash">cash if filled</span></h3>
+          <p class="blurb">Record-update and audit hours. Reclaimed unused assets are cash only if you enter a count and unit cost. Breach risk is extra benefit (not counted).</p>
           <div class="grid-3">
             <label class="field"><span class="label-row">Assets <span class="assump">illustrative assumption</span></span><input id="assets" type="number" min="0" step="1" value="25000" /></label>
             <label class="field"><span class="label-row">Asset-record updates / year <span class="assump">illustrative assumption</span></span><input id="assetUpdates" type="number" min="0" step="100" value="20000" /></label>
@@ -853,23 +949,23 @@
             <label class="field"><span class="label-row">Audits / year <span class="assump">illustrative assumption</span></span><input id="audits" type="number" min="0" step="1" value="4" /></label>
             <label class="field"><span class="label-row">Hours per audit <span class="assump">illustrative assumption</span></span><input id="auditHrs" type="number" min="0" step="1" value="80" /></label>
             <label class="field"><span class="label-row">Audit cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20%.">i</span></span><input id="auditCutPct" type="number" min="0" max="100" step="1" value="20" /></label>
-            <label class="field"><span class="label-row">Reclaimable unused assets <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 0. Cash only if count and unit cost are both filled.">i</span></span><input id="reclaimCount" type="number" min="0" step="1" value="0" /></label>
+            <label class="field"><span class="label-row">Reclaimable unused assets <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 0. Cash only if count and unit cost are both filled.">i</span> <a class="src" href="https://www.gartner.com/en/newsroom/press-releases/2016-07-19-gartner-says-organizations-can-cut-software-costs-by-30-percent-using-three-best-practices" target="_blank" rel="noopener">source</a></span><input id="reclaimCount" type="number" min="0" step="1" value="0" /></label>
             <label class="field"><span class="label-row">Unit cost of unused asset <span class="tip" tabindex="0" data-tip="Leave blank unless reclaiming cash.">i</span></span><input id="reclaimCost" data-money type="number" min="0" step="10" placeholder="Leave blank" /></label>
           </div>
-          <p class="ref-note">Breach-risk reduction is upside text only and is not converted to money in this model.</p>
+          <p class="ref-note">Breach-risk reduction is extra benefit (not counted). It is not converted to money.</p>
         </div>
 
         <div id="panel-tssa" class="tab-panel" data-module="tssa" role="tabpanel">
-          <h3>Server Automation (TSSA) <span class="tag tag-cap">capacity</span></h3>
+          <h3>Server Automation (TSSA) <span class="tag tag-cap">staff time</span></h3>
           <p class="blurb">Patch, vulnerability, and compliance labour. If Change is also selected, patch cycles are subtracted from the Change volume.</p>
           <div class="grid-3">
             <label class="field"><span class="label-row">Servers <span class="assump">illustrative assumption</span></span><input id="tssaServers" type="number" min="0" step="1" value="1800" /></label>
             <label class="field"><span class="label-row">Patch cycles / year <span class="assump">illustrative assumption</span></span><input id="patchCycles" type="number" min="0" step="1" value="12" /></label>
             <label class="field"><span class="label-row">Hours / server / cycle <span class="assump">illustrative assumption</span></span><input id="patchHrs" type="number" min="0" step="0.05" value="0.4" /></label>
-            <label class="field"><span class="label-row">Patch cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 30%.">i</span></span><input id="patchCutPct" type="number" min="0" max="100" step="1" value="30" /></label>
+            <label class="field"><span class="label-row">Patch cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 25%.">i</span> <a class="src" href="https://media.bitpipe.com/io_15x/io_152272/item_2184126/ponemon-state-of-vulnerability-response-.pdf" target="_blank" rel="noopener">source</a></span><input id="patchCutPct" type="number" min="0" max="100" step="1" value="25" /></label>
             <label class="field"><span class="label-row">Vulnerabilities fixed / month <span class="assump">illustrative assumption</span></span><input id="vulnMonth" type="number" min="0" step="1" value="40" /></label>
             <label class="field"><span class="label-row">Hours per vulnerability <span class="assump">illustrative assumption</span></span><input id="vulnHrs" type="number" min="0" step="0.1" value="1.5" /></label>
-            <label class="field"><span class="label-row">Vulnerability cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 30%.">i</span></span><input id="vulnCutPct" type="number" min="0" max="100" step="1" value="30" /></label>
+            <label class="field"><span class="label-row">Vulnerability cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 25%.">i</span> <a class="src" href="https://media.bitpipe.com/io_15x/io_152272/item_2184126/ponemon-state-of-vulnerability-response-.pdf" target="_blank" rel="noopener">source</a></span><input id="vulnCutPct" type="number" min="0" max="100" step="1" value="25" /></label>
             <label class="field"><span class="label-row">Compliance checks / year <span class="assump">illustrative assumption</span></span><input id="compChecks" type="number" min="0" step="1" value="4" /></label>
             <label class="field"><span class="label-row">Hours per compliance check <span class="assump">illustrative assumption</span></span><input id="compHrs" type="number" min="0" step="1" value="60" /></label>
             <label class="field"><span class="label-row">Compliance cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 30%.">i</span></span><input id="compCutPct" type="number" min="0" max="100" step="1" value="30" /></label>
@@ -878,29 +974,29 @@
 
         <div id="panel-bhco" class="tab-panel" data-module="bhco" role="tabpanel">
           <h3>Continuous Optimization (BHCO) <span class="tag tag-cash">true cash</span></h3>
-          <div class="cash-callout">This module is one of the few that produces <strong>true cash</strong> (cloud, hardware, storage) rather than only released time. Capacity-planning hours stay in the capacity ledger. Capacity outages are upside only.</div>
+          <div class="cash-callout">This module is one of the few that produces <strong>true cash</strong> (cloud, hardware, storage), not only staff time. Planning hours stay in the staff-time ledger. Capacity outages are extra benefit (not counted).</div>
           <div class="grid-3">
             <label class="field"><span class="label-row">Monthly cloud spend <span class="assump">illustrative assumption</span></span><input id="cloudMonth" data-money type="number" min="0" step="1000" value="180000" /></label>
-            <label class="field"><span class="label-row">Right-sizing % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 5% of annualised cloud spend.">i</span></span><input id="cloudCutPct" type="number" min="0" max="100" step="0.5" value="5" /></label>
+            <label class="field"><span class="label-row">Cloud right-sizing % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 8% of yearly cloud spend.">i</span> <a class="src" href="https://resources.flexera.com/web/pdf/Flexera-State-of-the-Cloud-Report-2025.pdf" target="_blank" rel="noopener">source</a></span><input id="cloudCutPct" type="number" min="0" max="100" step="0.5" value="8" /></label>
             <label class="field"><span class="label-row">Annual hardware refresh spend <span class="assump">illustrative assumption</span></span><input id="hwSpend" data-money type="number" min="0" step="1000" value="400000" /></label>
             <label class="field"><span class="label-row">Avoided refresh % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 5%.">i</span></span><input id="hwCutPct" type="number" min="0" max="100" step="0.5" value="5" /></label>
             <label class="field"><span class="label-row">Annual storage spend <span class="assump">illustrative assumption</span></span><input id="storSpend" data-money type="number" min="0" step="1000" value="90000" /></label>
             <label class="field"><span class="label-row">Avoided storage % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 5%.">i</span></span><input id="storCutPct" type="number" min="0" max="100" step="0.5" value="5" /></label>
-            <label class="field"><span class="label-row">Capacity planning + reporting hours / year <span class="assump">illustrative assumption</span></span><input id="bhcoHours" type="number" min="0" step="1" value="600" /></label>
+            <label class="field"><span class="label-row">Planning and reporting hours / year <span class="assump">illustrative assumption</span></span><input id="bhcoHours" type="number" min="0" step="1" value="600" /></label>
             <label class="field"><span class="label-row">Planning-hours cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20%.">i</span></span><input id="bhcoHrsCutPct" type="number" min="0" max="100" step="1" value="20" /></label>
-            <label class="field"><span class="label-row">Capacity-outage events / year <span class="assump">illustrative assumption</span></span><input id="capOutages" type="number" min="0" step="1" value="6" /></label>
+            <label class="field"><span class="label-row">Shortage-outage events / year <span class="assump">illustrative assumption</span></span><input id="capOutages" type="number" min="0" step="1" value="6" /></label>
             <label class="field"><span class="label-row">Elapsed minutes / outage <span class="assump">illustrative assumption</span></span><input id="capOutageMin" type="number" min="0" step="1" value="45" /></label>
-            <label class="field"><span class="label-row">Cost / minute of capacity outage <span class="tip" tabindex="0" data-tip="Blank = qualitative upside only. Filled = valued upside, still excluded from ROI.">i</span></span><input id="capOutageCost" data-money type="number" min="0" step="100" placeholder="Leave blank" /></label>
+            <label class="field"><span class="label-row">Cost / minute of shortage outage <span class="tip" tabindex="0" data-tip="Blank = extra benefit (not counted). Filled = valued extra benefit, still excluded from ROI.">i</span></span><input id="capOutageCost" data-money type="number" min="0" step="100" placeholder="Leave blank" /></label>
           </div>
         </div>
 
         <div id="panel-esm" class="tab-panel" data-module="esm" role="tabpanel">
-          <h3>ESM / Business Workflows <span class="tag tag-cap">capacity</span></h3>
-          <p class="blurb">HR, finance, and facilities cases — not IT tickets. Deflection first, then rework and status-enquiry cuts on remaining cases.</p>
+          <h3>ESM / Business Workflows <span class="tag tag-cap">staff time</span></h3>
+          <p class="blurb">HR, finance, and facilities cases. Not IT tickets. Self-solved tickets first, then rework and status-enquiry cuts on remaining cases.</p>
           <div class="grid-3">
             <label class="field"><span class="label-row">Cases / year <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Do not include ITSM tickets.">i</span></span><input id="esmCases" type="number" min="0" step="100" value="12000" /></label>
             <label class="field"><span class="label-row">Handle minutes / case <span class="assump">illustrative assumption</span></span><input id="esmMin" type="number" min="0" step="0.5" value="25" /></label>
-            <label class="field"><span class="label-row">Deflection % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 8%.">i</span></span><input id="esmDeflectPct" type="number" min="0" max="100" step="1" value="8" /></label>
+            <label class="field"><span class="label-row">Self-solved tickets % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 8%. Our own careful estimate.">i</span></span><input id="esmDeflectPct" type="number" min="0" max="100" step="1" value="8" /></label>
             <label class="field"><span class="label-row">% of remaining cases with rework <span class="assump">illustrative assumption</span></span><input id="esmReworkPct" type="number" min="0" max="100" step="1" value="22" /></label>
             <label class="field"><span class="label-row">Rework minutes / those cases <span class="assump">illustrative assumption</span></span><input id="esmReworkMin" type="number" min="0" step="0.5" value="15" /></label>
             <label class="field"><span class="label-row">Rework cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20%.">i</span></span><input id="esmReworkCutPct" type="number" min="0" max="100" step="1" value="20" /></label>
@@ -910,17 +1006,17 @@
             <label class="field"><span class="label-row">Status-enquiry cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20%.">i</span></span><input id="esmStatusCutPct" type="number" min="0" max="100" step="1" value="20" /></label>
           </div>
         </div>
-        <div id="emptyMods" class="empty-mods" hidden>Select at least one product to see module inputs.</div>
+        <div id="emptyMods" class="empty-mods" hidden>Select at least one product to see inputs.</div>
       </section>
 
       <aside class="panel outputs" aria-label="Results">
         <h2>Outputs</h2>
         <div id="kpis"></div>
         <div id="overlaps" class="overlaps"></div>
-        <div id="credWarn" class="cred">Credibility warning: modelled net ROI is above 5×. Check double-counted labour, aggressive ramps, and whether licence matches the selected footprint.</div>
-        <p class="chart-title">ROI benefit by type, per year <span class="subkpi" style="display:inline;margin:0;">(cash + realised capacity, expected scenario; upside excluded)</span></p>
+        <div id="credWarn" class="cred">Check this result. Modelled net ROI is above 5×. Look for hours counted twice, fast adoption, or a licence that does not match the products you selected.</div>
+        <p class="chart-title">ROI benefit by type, per year <span class="subkpi" style="display:inline;margin:0;">(cash + staff time counted, likely case; extra benefit not counted)</span></p>
         <div class="chart-box"><canvas id="barChart"></canvas></div>
-        <p class="chart-title">Benefit by module (ROI benefit, ramped)</p>
+        <p class="chart-title">Benefit by product (with adoption over time)</p>
         <div class="chart-box mod"><canvas id="modChart"></canvas></div>
         <p class="chart-title">Cumulative cost vs cumulative ROI benefit</p>
         <div class="chart-box"><canvas id="lineChart"></canvas></div>
@@ -932,26 +1028,46 @@
     </div>
 
     <details class="method" id="methodBox">
-      <summary>Methodology &amp; guardrails</summary>
+      <summary>How we count value</summary>
       <div class="body">
-        <p>Cash, realised labour, and optional upside are separate ledgers. Headline ROI is ramped cash plus realised capacity (50% conservative / 70% expected). Adoption ramp is 50% / 85% / 100%. Hours cannot exceed the baseline in that area. Overlaps are subtracted, not double-counted. Downtime is never in headline ROI.</p>
+        <p>Cash, counted staff time, and extra benefit (not counted) are kept apart. Headline ROI is cash plus counted staff time. Adoption grows over time: 50% in year 1, 85% in year 2, 100% after. We count only 50–70% of saved time. Hours cannot exceed the baseline in that area. Each saving is counted once. Outage costs are not counted in ROI.</p>
         <p><strong>Simple-mode ratios</strong> (illustrative; edit the derived fields here to override):</p>
         <ul>
-          <li>Tickets / year = tickets per month × 12. Alerts / year = alerts per day × 365. P1s / year = P1s per month × 12.</li>
+          <li>Tickets / year = tickets per month × 12. Alerts / year = alerts per day × 365. Major outages / year = major outages per month × 12.</li>
           <li>Changes / year = 5% of IT tickets. Problems / year = 0.375% of IT tickets.</li>
           <li>Auto-remediable events = 5.7% of annual alerts. Network alerts = 43% of annual alerts when Network is on (then subtracted from AIOps).</li>
-          <li>War rooms / year = P1s × 20 / 72. Knowledge articles and reporting hours = IT staff × 5. ESM cases = IT staff × 150.</li>
+          <li>Emergency team calls / year = major outages × 20 / 72. Knowledge articles and reporting hours = IT staff × 5. ESM cases = IT staff × 150.</li>
           <li>Network devices = IT staff × 31. New devices = IT staff × 5. Assets = IT staff × 312. Asset updates = IT staff × 250.</li>
           <li>Service models = IT staff × 0.5. BHCO planning hours = IT staff × 7.5. Monthly vulns = servers × 40 / 1,800.</li>
           <li>Annual hardware refresh = 18.5% of annualised cloud. Annual storage = 4.2% of annualised cloud.</li>
         </ul>
       </div>
     </details>
+
+    <details class="method" id="sourcesBox">
+      <summary>Sources for the default numbers</summary>
+      <div class="body">
+        <p>Defaults are cautious. They sit at or below these public figures. Where no neutral public source exists, the number is our own careful estimate.</p>
+        <ol>
+          <li>Self-service rate: worldwide average 8.9% (range 0–48%). MetricNet via HDI. <a href="https://www.thinkhdi.com/library/supportworld/2018/metric-of-month-user-self-service" target="_blank" rel="noopener">thinkhdi.com</a></li>
+          <li>Shift-left planning assumption: 30% of Level 1 tickets to self-help. HDI. <a href="https://www.thinkhdi.com/~/media/hdicorp/files/sponsored/q42019-trendrep-shift-left-roi.pdf" target="_blank" rel="noopener">HDI PDF</a></li>
+          <li>Ticket handle time: 8.6 minutes on average. MetricNet via HDI. <a href="https://www.thinkhdi.com/library/supportworld/2019/metric-of-month-ticket-handle-time" target="_blank" rel="noopener">thinkhdi.com</a></li>
+          <li>Cost per ticket: about $16–17 in North America (2021). MetricNet via HDI. <a href="https://www.thinkhdi.com/library/supportworld/2021/understanding-cost-per-ticket" target="_blank" rel="noopener">thinkhdi.com</a></li>
+          <li>Alert noise reduction: median event compression 87% (vendor data, 130 enterprises). BigPanda. <a href="https://www.bigpanda.io/report/tool-effectiveness-for-it-event-management/detection-benchmarks/" target="_blank" rel="noopener">BigPanda</a></li>
+          <li>Outage cost: 54% of serious outages cost over $100,000. Uptime Institute 2025. <a href="https://uptimeinstitute.com/about-ui/press-releases/uptime-announces-annual-outage-analysis-report-2025" target="_blank" rel="noopener">Uptime Institute</a></li>
+          <li>Change failure rate: 5% to 40% by team group. DORA 2024. <a href="https://dora.dev/research/2024/dora-report/" target="_blank" rel="noopener">dora.dev</a></li>
+          <li>Patching: 16 days on average to patch critical issues; automation users report faster response. Ponemon 2019. <a href="https://media.bitpipe.com/io_15x/io_152272/item_2184126/ponemon-state-of-vulnerability-response-.pdf" target="_blank" rel="noopener">Ponemon PDF</a></li>
+          <li>Software asset management: up to 30% lower software spend in year 1. Gartner 2016. <a href="https://www.gartner.com/en/newsroom/press-releases/2016-07-19-gartner-says-organizations-can-cut-software-costs-by-30-percent-using-three-best-practices" target="_blank" rel="noopener">Gartner</a></li>
+          <li>Cloud waste: 27% of cloud spend is wasted. Flexera 2025. <a href="https://resources.flexera.com/web/pdf/Flexera-State-of-the-Cloud-Report-2025.pdf" target="_blank" rel="noopener">Flexera PDF</a></li>
+        </ol>
+        <p>No neutral public source: major-outage labour cut, emergency team call cut, handle-time cut, HR/ESM case deflection, on-prem cost split. These are our own careful estimates.</p>
+      </div>
+    </details>
   </div>
 
   <section class="wrap card about" aria-label="About">
     <h2>About</h2>
-    <p>Built by Suhayl Patel, enterprise account executive in the UAE. I built this because ROI decks that overclaim lose trust. This model is deliberately conservative.</p>
+    <p>Built by Suhayl Patel, an enterprise account executive in the UAE. I built this because big ROI claims lose trust. This model is cautious on purpose.</p>
     <p>
       <a href="https://www.linkedin.com/in/suhaylxp/" rel="noopener">LinkedIn</a>
       ·
@@ -961,7 +1077,7 @@
   </section>
 
   <footer class="wrap">
-    Independent personal project by Suhayl Patel. Not affiliated with or endorsed by BMC Software. Helix is a trademark of BMC Software. No customer names or real customer data are used.
+    Independent work by Suhayl Patel. Not affiliated with or endorsed by BMC Software. Helix is a trademark of BMC Software. No customer names or real customer data are used.
   </footer>
 
   <script>
@@ -1000,28 +1116,28 @@
       const SIMPLE_FIELDS = [
         { id: "staff", key: "simpleStaff", label: "IT staff", hint: "People in IT / operations. Example: 80.", min: 5, max: 500, step: 1, value: 80 },
         { id: "tickets", key: "simpleTickets", label: "IT tickets per month", hint: "Logged tickets, not self-service only. Example: 4,000.", min: 100, max: 30000, step: 50, value: 4000 },
-        { id: "alerts", key: "simpleAlerts", label: "Alerts per day", hint: "Monitoring noise you still look at. Example: 384.", min: 10, max: 1000, step: 1, value: 384 },
-        { id: "p1", key: "simpleP1", label: "Major outages (P1) per month", hint: "Sev-1 incidents. Example: 6.", min: 0, max: 40, step: 1, value: 6 },
+        { id: "alerts", key: "simpleAlerts", label: "Alerts per day", hint: "Alerts your team still checks. Example: 384.", min: 10, max: 1000, step: 1, value: 384 },
+        { id: "p1", key: "simpleP1", label: "Major outages per month", hint: "Serious outages. Example: 6.", min: 0, max: 40, step: 1, value: 6 },
         { id: "servers", key: "simpleServers", label: "Servers", hint: "OS instances you patch. Example: 1,800.", min: 50, max: 10000, step: 10, value: 1800 },
         { id: "cloud", key: "simpleCloud", label: "Monthly cloud spend", hint: "Compute / cloud bill. Example: 180,000.", min: 0, max: 2000000, step: 1000, value: 180000, money: true }
       ];
 
       const DRIVER_COPY = {
-        "ITSM extra deflection": function (h) { return "Fewer tickets reaching agents: about " + Math.round(h).toLocaleString() + " hours a year."; },
-        "ITSM handle-time on remaining tickets": function (h) { return "Faster handling of remaining tickets: about " + Math.round(h).toLocaleString() + " hours a year."; },
-        "AIOps noise suppression / triage": function (h) { return "Fewer noisy alerts: about " + Math.round(h).toLocaleString() + " hours of triage saved a year."; },
-        "Auto-remediation": function (h) { return "Events closed without a human: about " + Math.round(h).toLocaleString() + " hours a year."; },
-        "P1 hands-on labour": function (h) { return "Shorter major-incident labour: about " + Math.round(h).toLocaleString() + " hours a year."; },
-        "War rooms": function (h) { return "Fewer war-room hours: about " + Math.round(h).toLocaleString() + " a year."; },
-        "Cloud right-sizing": function (_, usd) { return "Cloud right-sizing: about " + fmtMoney(usd) + " a year in cash."; },
-        "Avoided hardware refresh": function (_, usd) { return "Deferred hardware refresh: about " + fmtMoney(usd) + " a year."; },
-        "Change effort": function (h) { return "Lighter change work: about " + Math.round(h).toLocaleString() + " hours a year."; },
-        "Employee Navigator extra deflection": function (h) { return "More tickets solved without an agent: about " + Math.round(h).toLocaleString() + " hours a year."; },
-        "Service Collaborator routing": function (h) { return "Smarter ticket routing: about " + Math.round(h).toLocaleString() + " hours a year."; },
-        "Patch automation": function (h) { return "Faster patching: about " + Math.round(h).toLocaleString() + " hours a year."; },
-        "Network false-alert suppression": function (h) { return "Fewer false network alerts: about " + Math.round(h).toLocaleString() + " hours a year."; },
-        "Asset-record updates": function (h) { return "Less CMDB busywork: about " + Math.round(h).toLocaleString() + " hours a year."; },
-        "ESM case deflection": function (h) { return "Fewer business-side cases hitting a queue: about " + Math.round(h).toLocaleString() + " hours a year."; }
+        "Self-solved tickets": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from tickets solved without the service desk."; },
+        "ITSM handle-time on remaining tickets": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from faster remaining tickets."; },
+        "Fewer noisy alerts": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from fewer noisy alerts."; },
+        "Auto-remediation": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from events closed without a person."; },
+        "Faster major-outage work": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from faster major-outage work."; },
+        "Fewer emergency team calls": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from fewer emergency team calls."; },
+        "Cloud right-sizing": function (_, usd) { return "You save about " + fmtMoney(usd) + " a year from cloud right-sizing."; },
+        "Avoided hardware refresh": function (_, usd) { return "You save about " + fmtMoney(usd) + " a year by delaying hardware refresh."; },
+        "Change effort": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from lighter change work."; },
+        "More self-solved tickets": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from more tickets solved without an agent."; },
+        "Service Collaborator routing": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from smarter ticket routing."; },
+        "Patch automation": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from faster patching."; },
+        "Network false-alert suppression": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from fewer false network alerts."; },
+        "Asset-record updates": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from fewer asset-record updates."; },
+        "Fewer business cases": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from fewer business cases."; }
       };
 
       const LIVE_URL = "https://suhaylxp-ae.github.io/helix-roi-calculator/";
@@ -1126,31 +1242,31 @@
         return { row, total };
       }
 
-      function paybackMonth(annualBenefit, years, services, licence) {
+      function paybackMonth(annualBenefit, years, upfront, annualRun) {
         const months = years * 12;
-        let cumCost = services;
+        let cumCost = upfront;
         let cumBen = 0;
         for (let m = 1; m <= months; m++) {
           const yearIdx = Math.ceil(m / 12) - 1;
           const ramp = RAMP[Math.min(yearIdx, RAMP.length - 1)];
-          cumCost += licence / 12;
+          cumCost += annualRun / 12;
           cumBen += (annualBenefit * ramp) / 12;
           if (cumBen >= cumCost - 1e-6) return m;
         }
         return null;
       }
 
-      function cumulativeSeries(annualBenefit, years, services, licence) {
+      function cumulativeSeries(annualBenefit, years, upfront, annualRun) {
         const labels = ["0"];
-        const cost = [services];
+        const cost = [upfront];
         const benefit = [0];
-        let cumCost = services;
+        let cumCost = upfront;
         let cumBen = 0;
         const months = years * 12;
         for (let m = 1; m <= months; m++) {
           const yearIdx = Math.ceil(m / 12) - 1;
           const ramp = RAMP[Math.min(yearIdx, RAMP.length - 1)];
-          cumCost += licence / 12;
+          cumCost += annualRun / 12;
           cumBen += (annualBenefit * ramp) / 12;
           if (m % 3 === 0 || m === months) {
             labels.push(String(m));
@@ -1161,11 +1277,54 @@
         return { labels, cost, benefit };
       }
 
+      function isOnprem() {
+        return $("deployMode") && $("deployMode").value === "onprem";
+      }
+
+      function setDeploy(mode, fromUser) {
+        const v = mode === "onprem" ? "onprem" : "saas";
+        if ($("deployMode")) $("deployMode").value = v;
+        document.body.classList.toggle("dep-onprem", v === "onprem");
+        document.querySelectorAll("#simpleBuy [data-dep]").forEach((b) => {
+          b.setAttribute("aria-pressed", String(b.dataset.dep === v));
+        });
+        if (fromUser && v === "saas" && $("perpLic")) $("perpLic").dataset.manual = "0";
+      }
+
+      function buildCost(years) {
+        const saas = selectedLicenceUsd();
+        syncServices(saas);
+        const services = moneyUsd("services");
+        if (!isOnprem()) {
+          return {
+            mode: "saas", saasLicence: saas, services,
+            upfront: services, annualRun: saas,
+            totalCost: services + saas * years,
+            perpetual: 0, maint: 0, host: 0, admin: 0
+          };
+        }
+        const mult = num("perpMult") || 2.5;
+        if ($("perpLic") && $("perpLic").dataset.manual !== "1") {
+          setMoneyVal("perpLic", saas * mult);
+        }
+        const perp = moneyUsd("perpLic");
+        const maint = perp * ((num("maintPct") || 20) / 100);
+        const host = moneyUsd("onpremHost");
+        const admin = (num("adminFte") || 0.5) * moneyUsd("rateEng") * (num("fteHours") || 1880);
+        const annualRun = maint + host + admin;
+        return {
+          mode: "onprem", saasLicence: saas, services,
+          perpetual: perp, maint, host, admin,
+          upfront: perp + services, annualRun,
+          totalCost: perp + services + annualRun * years
+        };
+      }
+
       function ctx() {
         const warnings = [];
         return {
           realisation: REAL.expected,
-          redeploy: pct("redeployPct", "% capacity redeployed", warnings),
+          redeploy: pct("redeployPct", "% of saved time put to other work", warnings),
           years: parseInt($("horizon").value, 10),
           rates: {
             desk: moneyUsd("rateDesk"),
@@ -1204,7 +1363,7 @@
           const taken = Math.min(aiopsAlerts, num("netAlerts"));
           const hrs = taken * num("triageMin") / 60;
           if (taken > 0) {
-            o.push("Network alerts removed " + Math.round(taken).toLocaleString() + " alerts (" + hrs.toFixed(0) + " h of AIOps triage baseline) from the AIOps count.");
+            o.push("Network alerts removed " + Math.round(taken).toLocaleString() + " alerts (" + hrs.toFixed(0) + " h of checking-alerts baseline) from the AIOps count.");
             aiopsAlerts -= taken;
           }
         }
@@ -1232,7 +1391,7 @@
         const el = $(id);
         if (!el) return;
         el.textContent = on
-          ? "C " + fmtMoney(grossUsd * REAL.conservative) + " · E " + fmtMoney(grossUsd * REAL.expected) + " / yr after realisation"
+          ? "C " + fmtMoney(grossUsd * REAL.conservative) + " · E " + fmtMoney(grossUsd * REAL.expected) + " / yr after we count 50–70% of saved time"
           : "Off";
       }
 
@@ -1241,19 +1400,19 @@
         const s = c.shared;
         const tickets = num("tickets");
         const ssNow = pct("ssNowPct", "Current self-service %", w);
-        let d1 = pct("itsmDeflectPct", "ITSM extra deflection %", w);
+        let d1 = pct("itsmDeflectPct", "extra self-solved tickets %", w);
         const human = tickets * (1 - ssNow);
         const mix = mixHours(w);
         if (d1 > 0.4) {
           const dropped = (d1 - 0.4) * human * mix;
           const enOn = c.on.agents && $("agEN") && $("agEN").checked;
-          c.overlaps.push("ITSM extra deflection capped at 40%" + (enOn ? "" : " even without Employee Navigator") + " (" + dropped.toFixed(0) + " h not counted).");
+          c.overlaps.push("Self-solved tickets capped at 40%" + (enOn ? "" : " even without Employee Navigator") + " (" + dropped.toFixed(0) + " h not counted).");
           d1 = 0.4;
         }
         const deflected = human * d1;
         const remaining = Math.max(0, human - deflected);
         const baseHumanHrs = human * mix;
-        const deflectHrs = cutHrs(deflected * mix, 1, "ITSM deflection", w);
+        const deflectHrs = cutHrs(deflected * mix, 1, "self-solved tickets", w);
         const remainBase = remaining * mix;
         const htCut = pct("itsmHtCutPct", "ITSM handle-time cut", w);
         const htSaved = cutHrs(remainBase, htCut, "ITSM handle-time", w);
@@ -1264,7 +1423,7 @@
         s.remainHandleAfterHt = Math.max(0, remainBase - htSaved);
         s.htCut = htCut;
         return [
-          capacity("ITSM extra deflection", deflectHrs, "desk", c.rates),
+          capacity("Self-solved tickets", deflectHrs, "desk", c.rates),
           capacity("ITSM handle-time on remaining tickets", htSaved, "desk", c.rates)
         ];
       };
@@ -1312,10 +1471,10 @@
         const ifOn = $("agIF") && $("agIF").checked;
 
         if (enOn && c.on.itsm) {
-          const d2 = pct("enDeflectPct", "Employee Navigator deflection", w);
+          const d2 = pct("enDeflectPct", "Employee Navigator self-solved tickets", w);
           let comb = 1 - (1 - (s.d1 || 0)) * (1 - d2);
           if (comb > 0.4) {
-            w.push("Combined extra deflection was capped at 40% of remaining human tickets.");
+            w.push("Combined extra self-solved tickets were capped at 40% of remaining human tickets.");
             comb = 0.4;
           }
           const extraTickets = Math.max(0, (s.humanTickets || 0) * comb - (s.humanTickets || 0) * (s.d1 || 0));
@@ -1325,7 +1484,7 @@
           const saved = capHours(hrs, extraTickets * mix, "Employee Navigator", w);
           s.remainHandleAfterHt = Math.max(0, (s.remainHandleAfterHt || 0) - saved);
           s.remainingTickets = Math.max(0, (s.remainingTickets || 0) - extraTickets);
-          const line = capacity("Employee Navigator extra deflection", saved, "desk", c.rates);
+          const line = capacity("More self-solved tickets", saved, "desk", c.rates);
           lines.push(line);
           showAgent("val-en", line.annualUsd, true);
         } else {
@@ -1391,27 +1550,27 @@
           c.overlaps.push("Auto-remediation limited to the post-suppression pool: " + Math.round(skipped).toLocaleString() + " events (" + (skipped * num("autoMin") / 60).toFixed(0) + " h) not counted because those alerts were already suppressed.");
         }
         if (autoFromPool > 0) {
-          c.overlaps.push("Auto-remediated events taken out of the post-suppression triage pool: " + Math.round(autoFromPool).toLocaleString() + " events (" + (autoFromPool * triageMin).toFixed(0) + " h of remaining triage, not double-counted).");
+          c.overlaps.push("Auto-fixed events taken out of remaining alerts: " + Math.round(autoFromPool).toLocaleString() + " events (" + (autoFromPool * triageMin).toFixed(0) + " h of remaining alert-check time, counted once).");
         }
         const triageBase = alerts * triageMin;
         const triageSaved = capHours(removed * triageMin, triageBase, "AIOps alert suppression", w);
         const autoBase = autoFromPool * num("autoMin") / 60;
         const autoSaved = cutHrs(autoBase, 1, "Auto-remediation", w);
         const p1Base = num("p1Count") * num("p1Engineers") * num("p1Hours");
-        const mttrSaved = cutHrs(p1Base, pct("mttrPct", "P1 labour cut", w), "P1 labour", w);
+        const mttrSaved = cutHrs(p1Base, pct("mttrPct", "major-outage labour cut", w), "major-outage labour", w);
         const warBase = num("warRooms") * num("warPeople") * num("warHours");
-        const warSaved = cutHrs(warBase, pct("warCutPct", "War-room cut", w), "War rooms", w);
+        const warSaved = cutHrs(warBase, pct("warCutPct", "emergency team call cut", w), "emergency team calls", w);
         const modelBase = num("svcModels") * num("svcModelHrs");
         const modelSaved = cutHrs(modelBase, pct("svcModelCutPct", "Service-model cut", w), "Service models", w);
         const lines = [
-          capacity("AIOps noise suppression / triage", triageSaved, "eng", c.rates),
+          capacity("Fewer noisy alerts", triageSaved, "eng", c.rates),
           capacity("Auto-remediation", autoSaved, "eng", c.rates),
-          capacity("P1 hands-on labour", mttrSaved, "eng", c.rates),
-          capacity("War rooms", warSaved, "eng", c.rates),
+          capacity("Faster major-outage work", mttrSaved, "eng", c.rates),
+          capacity("Fewer emergency team calls", warSaved, "eng", c.rates),
           capacity("Service-model maintenance", modelSaved, "eng", c.rates)
         ];
         if (!blank("downCost") && !blank("downMins") && moneyUsd("downCost") > 0 && num("downMins") > 0) {
-          lines.push(upside("P1 downtime (business loss)", num("p1Count") * num("downMins") * moneyUsd("downCost") * pct("mttrPct")));
+          lines.push(upside("Major-outage business loss (not counted)", num("p1Count") * num("downMins") * moneyUsd("downCost") * pct("mttrPct")));
         }
         return lines;
       };
@@ -1466,10 +1625,10 @@
           cash("Cloud right-sizing", moneyUsd("cloudMonth") * 12 * pct("cloudCutPct", "Cloud right-sizing", w)),
           cash("Avoided hardware refresh", moneyUsd("hwSpend") * pct("hwCutPct", "Hardware avoided", w)),
           cash("Avoided storage spend", moneyUsd("storSpend") * pct("storCutPct", "Storage avoided", w)),
-          capacity("Capacity planning / reporting", cutHrs(planBase, pct("bhcoHrsCutPct", "BHCO hours cut", w), "BHCO planning hours", w), "eng", c.rates)
+          capacity("Planning and reporting hours", cutHrs(planBase, pct("bhcoHrsCutPct", "BHCO hours cut", w), "planning hours", w), "eng", c.rates)
         ];
         if (!blank("capOutageCost") && moneyUsd("capOutageCost") > 0) {
-          lines.push(upside("Capacity outages", num("capOutages") * num("capOutageMin") * moneyUsd("capOutageCost")));
+          lines.push(upside("Shortage outages (not counted)", num("capOutages") * num("capOutageMin") * moneyUsd("capOutageCost")));
         }
         return lines;
       };
@@ -1478,16 +1637,16 @@
         const w = c.warnings;
         const cases = num("esmCases");
         const handleH = num("esmMin") / 60;
-        const d = pct("esmDeflectPct", "ESM deflection", w);
+        const d = pct("esmDeflectPct", "ESM self-solved tickets", w);
         const deflected = cases * d;
         const remaining = Math.max(0, cases - deflected);
-        const defHrs = cutHrs(deflected * handleH, 1, "ESM deflection", w);
+        const defHrs = cutHrs(deflected * handleH, 1, "ESM self-solved tickets", w);
         const reworkBase = remaining * pct("esmReworkPct", "ESM rework %", w) * num("esmReworkMin") / 60;
         const reworkSaved = cutHrs(reworkBase, pct("esmReworkCutPct", "ESM rework cut", w), "ESM rework", w);
         const statusBase = remaining * pct("esmStatusPct", "ESM status %", w) * num("esmEnquiries") * num("esmEnqMin") / 60;
         const statusSaved = cutHrs(statusBase, pct("esmStatusCutPct", "ESM status cut", w), "ESM status enquiries", w);
         return [
-          capacity("ESM case deflection", defHrs, "case", c.rates),
+          capacity("Fewer business cases", defHrs, "case", c.rates),
           capacity("ESM rework", reworkSaved, "case", c.rates),
           capacity("ESM status enquiries", statusSaved, "case", c.rates)
         ];
@@ -1642,10 +1801,45 @@
             "</div></label>";
         }).join("") + (want.indexOf("cloud") < 0
           ? "<label class='simple-field'><span>Currency</span><span class='hint'>Display only. Amounts stay in USD internally.</span><div class='simple-row'><select id='simpleCurrency'><option value='USD'>USD</option><option value='AED'>AED</option><option value='GBP'>GBP</option><option value='EUR'>EUR</option></select></div></label>"
-          : "");
+          : "") +
+          "<label class='simple-field'><span>Avg minutes per major outage</span><span class='hint'>Optional. Leave blank if you do not want outage cost shown.</span><div class='simple-row'><input id='simpleDownMins' type='number' min='0' step='1' placeholder='Leave blank' /></div></label>" +
+          "<label class='simple-field'><span>Cost per minute of outage</span><span class='hint'>Optional. Not counted in ROI.</span><div class='simple-row'><input id='simpleDownCost' data-money type='number' min='0' step='100' placeholder='Leave blank' /></div></label>";
         const cloud = $("simpleCloud");
         if (cloud) cloud.dataset.usd = String(simpleState.cloudUsd);
         fillSimpleFieldsFromState();
+        fillOutageSimple();
+      }
+
+      function fillOutageSimple() {
+        const mins = $("simpleDownMins");
+        const cost = $("simpleDownCost");
+        if (mins && $("downMins")) mins.value = $("downMins").value;
+        if (!cost || !$("downCost")) return;
+        if (blank("downCost")) {
+          cost.value = "";
+          cost.dataset.usd = "";
+          return;
+        }
+        cost.dataset.usd = $("downCost").dataset.usd || String(moneyUsd("downCost"));
+        const d = moneyUsd("downCost") * fxRate();
+        cost.value = String(+d.toFixed(d < 1000 ? 2 : 0));
+      }
+
+      function syncOutageFromSimple() {
+        const mins = $("simpleDownMins");
+        const cost = $("simpleDownCost");
+        if (mins && $("downMins")) $("downMins").value = mins.value;
+        if (!cost || !$("downCost")) return;
+        if (String(cost.value).trim() === "") {
+          $("downCost").value = "";
+          $("downCost").dataset.usd = "";
+          cost.dataset.usd = "";
+        } else {
+          $("downCost").value = cost.value;
+          const usd = String((parseFloat(cost.value) || 0) / fxRate());
+          $("downCost").dataset.usd = usd;
+          cost.dataset.usd = usd;
+        }
       }
 
       function applyPersona(id, fromUser) {
@@ -1704,16 +1898,17 @@
         simpleState.cloudUsd = moneyUsd("cloudMonth") || simpleState.cloudUsd;
         applying = true;
         fillSimpleFieldsFromState();
+        fillOutageSimple();
         applying = false;
       }
 
       function paintHero() {
         $("heroTitle").textContent = uiMode === "simple"
           ? "How much could better IT operations be worth?"
-          : "Helix Value Calculator — honest, conservative ROI";
+          : "Helix Value Calculator — cautious, honest ROI";
         $("heroLede").textContent = uiMode === "simple"
-          ? "Enter a few numbers you know. Get a conservative value estimate in under a minute."
-          : "Pick products, then see cash, released capacity, and optional upside as separate ledgers. Headline ROI is cash plus realised labour.";
+          ? "Enter a few numbers you know. Get a cautious value estimate in under a minute."
+          : "Pick products. See cash and staff-time value. Outage costs are extra benefit (not counted).";
         document.body.classList.toggle("simple", uiMode === "simple");
         document.body.classList.toggle("advanced", uiMode === "advanced");
       }
@@ -1723,7 +1918,6 @@
         const fromSimple = uiMode === "simple" && mode === "advanced";
         uiMode = mode;
         paintHero();
-        if (uiMode === "simple") $("horizon").value = "3";
         applying = true;
         if (fromAdvanced) syncSimpleFromAdvanced();
         else if (fromSimple && !hasAdvEdits()) applyDerive();
@@ -1739,7 +1933,8 @@
         const parts = [
           "m=" + (uiMode === "advanced" ? "a" : "s"),
           "p=" + persona,
-          "c=" + encodeURIComponent(currency())
+          "c=" + encodeURIComponent(currency()),
+          "dep=" + (isOnprem() ? "o" : "s")
         ];
         parts.push("staff=" + simpleState.staff);
         parts.push("tix=" + simpleState.tickets);
@@ -1747,6 +1942,11 @@
         parts.push("p1=" + simpleState.p1);
         parts.push("srv=" + simpleState.servers);
         parts.push("cloud=" + Math.round(simpleState.cloudUsd));
+        if (isOnprem() && $("perpLic") && $("perpLic").dataset.manual === "1") {
+          parts.push("o.perpLic=" + encodeURIComponent(String(+moneyUsd("perpLic").toFixed(4))));
+        }
+        if (!blank("downMins")) parts.push("o.downMins=" + encodeURIComponent($("downMins").value));
+        if (!blank("downCost")) parts.push("o.downCost=" + encodeURIComponent(String(+moneyUsd("downCost").toFixed(4))));
         const spec = PERSONAS[persona];
         const mods = CATALOG.filter((m) => m.on).map((m) => m.id);
         const sameMods = mods.slice().sort().join(".") === spec.modules.slice().sort().join(".");
@@ -1766,19 +1966,29 @@
       }
 
       function parseHash() {
-        const raw = location.hash.replace(/^#/, "");
-        if (!raw) return null;
-        const dec = decodeURIComponent(raw);
-        if (dec.charAt(0) === "{") {
-          try { return { kind: "json", data: JSON.parse(dec) }; } catch { return null; }
+        try {
+          const raw = location.hash.replace(/^#/, "");
+          if (!raw) return null;
+          let dec = raw;
+          try { dec = decodeURIComponent(raw); } catch (e) { return null; }
+          if (dec.charAt(0) === "{") {
+            return { kind: "json", data: JSON.parse(dec) };
+          }
+          const data = {};
+          raw.split("&").forEach((pair) => {
+            const i = pair.indexOf("=");
+            if (i < 0) return;
+            let k, v;
+            try {
+              k = decodeURIComponent(pair.slice(0, i));
+              v = decodeURIComponent(pair.slice(i + 1));
+            } catch (e) { return; }
+            data[k] = v;
+          });
+          return { kind: "compact", data: data };
+        } catch (e) {
+          return null;
         }
-        const data = {};
-        raw.split("&").forEach((pair) => {
-          const i = pair.indexOf("=");
-          if (i < 0) return;
-          data[decodeURIComponent(pair.slice(0, i))] = decodeURIComponent(pair.slice(i + 1));
-        });
-        return { kind: "compact", data: data };
       }
 
       function applyFieldValue(el, val) {
@@ -1798,6 +2008,8 @@
         if (o.persona && PERSONAS[o.persona]) persona = o.persona;
         if (o.m === "a" || o.mode === "advanced") uiMode = "advanced";
         if (o.m === "s" || o.mode === "simple") uiMode = "simple";
+        if (o.dep === "o" || o.deployMode === "onprem") setDeploy("onprem", false);
+        else if (o.dep === "s" || o.deployMode === "saas") setDeploy("saas", false);
         if (o.c) $("currency").value = o.c;
         if (o.currency) $("currency").value = o.currency;
         if (o.c || o.currency) $("fxRate").value = String(FX_DEFAULT[currency()] || 1);
@@ -1840,14 +2052,16 @@
             const id = k.slice(2);
             const el = $(id);
             applyFieldValue(el, o[k]);
-            if (el && MONEY_DERIVE[id]) el.dataset.usd = String(parseFloat(o[k]) || 0);
+            if (el && (MONEY_DERIVE[id] || id === "downCost")) el.dataset.usd = String(parseFloat(o[k]) || 0);
+            if (id === "perpLic" && el) el.dataset.manual = "1";
           });
         }
         fillSimpleFieldsFromState();
+        fillOutageSimple();
         paintHero();
       }
 
-      function packScenario(lines, real, redeploy, years, licence, services) {
+      function packScenario(lines, real, redeploy, years, cost) {
         let cashAnnual = 0;
         let capGross = 0;
         let upsideAnnual = 0;
@@ -1862,7 +2076,7 @@
         const capRealised = capGross * real;
         const capRoi = capRealised * redeploy;
         const roiAnnual = cashAnnual + capRoi;
-        const totalCost = services + licence * years;
+        const totalCost = cost.totalCost;
         const cashH = yearly(cashAnnual, years);
         const capH = yearly(capRealised, years);
         const capRoiH = yearly(capRoi, years);
@@ -1871,7 +2085,7 @@
         const totalBenefit = roiH.total;
         const net = totalBenefit - totalCost;
         const roi = totalCost > 0 ? net / totalCost : null;
-        const pay = paybackMonth(roiAnnual, years, services, licence);
+        const pay = paybackMonth(roiAnnual, years, cost.upfront, cost.annualRun);
         const moduleBars = selected().map((m) => {
           const b = byMod[m.id];
           const annual = b.cash + b.cap * real * redeploy;
@@ -1897,12 +2111,12 @@
         });
 
         const years = c.years;
-        const licence = selectedLicenceUsd();
-        syncServices(licence);
-        const services = moneyUsd("services");
+        const cost = buildCost(years);
+        const licence = cost.saasLicence;
+        const services = cost.services;
 
-        const conservative = packScenario(lines, REAL.conservative, c.redeploy, years, licence, services);
-        const expected = packScenario(lines, REAL.expected, c.redeploy, years, licence, services);
+        const conservative = packScenario(lines, REAL.conservative, c.redeploy, years, cost);
+        const expected = packScenario(lines, REAL.expected, c.redeploy, years, cost);
 
         ["card-en", "card-sc", "card-kc", "card-cra", "card-if"].forEach((id) => {
           const card = $(id);
@@ -1912,7 +2126,7 @@
 
         return {
           c, years, lines, warnings: c.warnings, overlaps: c.overlaps,
-          conservative, expected, licence, services
+          conservative, expected, licence, services, cost
         };
       }
 
@@ -1945,11 +2159,11 @@
 
       function scenCard(title, s, years) {
         const neg = s.net < 0 ? " neg" : "";
-        return "<div class='scen" + (title.indexOf("Expected") >= 0 ? " expected" : "") + "'><h3>" + title + "</h3>" +
-          "<div class='kpi'><span>Cash (ramped)</span><b class='type-cash'>" + fmtMoney(s.cashH.total) + "</b></div>" +
-          "<div class='kpi'><span>Capacity realised (ramped)</span><b class='type-cap'>" + fmtMoney(s.capH.total) + "</b></div>" +
-          "<p class='subkpi'>Realised capacity in ROI: " + fmtMoney(s.capRoiH.total) + (s.capRealised > 0 && Math.abs(s.capRoi / s.capRealised - 1) > 0.01 ? " (" + fmtPct(s.capRoi / s.capRealised) + " redeployed)" : "") + ".</p>" +
-          "<div class='kpi'><span>Upside (excluded)</span><b class='type-up'>" + fmtMoney(s.upH.total) + "</b></div>" +
+        return "<div class='scen" + (title.indexOf("Likely") >= 0 ? " expected" : "") + "'><h3>" + title + "</h3>" +
+          "<div class='kpi'><span>Cash (with adoption over time)</span><b class='type-cash'>" + fmtMoney(s.cashH.total) + "</b></div>" +
+          "<div class='kpi'><span>Staff time counted</span><b class='type-cap'>" + fmtMoney(s.capH.total) + "</b></div>" +
+          "<p class='subkpi'>Staff time in ROI: " + fmtMoney(s.capRoiH.total) + (s.capRealised > 0 && Math.abs(s.capRoi / s.capRealised - 1) > 0.01 ? " (" + fmtPct(s.capRoi / s.capRealised) + " put to other work)" : "") + ".</p>" +
+          "<div class='kpi'><span>Extra benefit (not counted)</span><b class='type-up'>" + fmtMoney(s.upH.total) + "</b></div>" +
           "<div class='kpi'><span>Total cost</span><b>" + fmtMoney(s.totalCost) + "</b></div>" +
           "<div class='kpi'><span>Net value</span><b>" + fmtMoney(s.net) + "</b></div>" +
           "<div class='kpi hero" + neg + "'><span>Net ROI</span><b>" + (s.roi == null ? "n/a" : fmtPct(s.roi)) + "</b></div>" +
@@ -1959,10 +2173,10 @@
       function renderKpis(m) {
         $("kpis").innerHTML =
           "<div class='scenario-grid'>" +
-          scenCard("Conservative · 50% labour", m.conservative, m.years) +
-          scenCard("Expected · 70% labour", m.expected, m.years) +
+          scenCard("Cautious · 50% of saved time", m.conservative, m.years) +
+          scenCard("Likely · 70% of saved time", m.expected, m.years) +
           "</div>" +
-          "<p class='subkpi'>ROI benefit = ramped cash + ramped (capacity × realisation). Redeploy % defaults to 100% and is an Advanced override. Charts use the expected scenario.</p>";
+          "<p class='subkpi'>ROI benefit = cash + staff time we count. We count only 50–70% of saved time. Charts use the likely case.</p>";
         const hot = (m.conservative.roi != null && m.conservative.roi > 5) || (m.expected.roi != null && m.expected.roi > 5);
         $("credWarn").classList.toggle("show", hot);
       }
@@ -1976,7 +2190,7 @@
           return;
         }
         box.classList.add("show");
-        box.innerHTML = "<strong>Overlaps handled</strong><ul>" + list.map((w) => "<li>" + w + "</li>").join("") + "</ul>";
+        box.innerHTML = "<strong>Each saving counted once</strong><ul>" + list.map((w) => "<li>" + w + "</li>").join("") + "</ul>";
       }
 
       function renderCharts(m) {
@@ -1986,10 +2200,10 @@
           labels,
           datasets: [
             { label: "Cash (in ROI)", data: e.cashH.row, backgroundColor: "#2f6fed" },
-            { label: "Capacity in ROI (× realisation)", data: e.capRoiH.row, backgroundColor: "#1f7a4d" }
+            { label: "Staff time in ROI", data: e.capRoiH.row, backgroundColor: "#1f7a4d" }
           ]
         };
-        const series = cumulativeSeries(e.roiAnnual, m.years, m.services, m.licence);
+        const series = cumulativeSeries(e.roiAnnual, m.years, m.cost.upfront, m.cost.annualRun);
         const line = {
           labels: series.labels,
           datasets: [
@@ -2050,7 +2264,7 @@
           return;
         }
         box.classList.add("show");
-        box.innerHTML = "<strong>Guardrail warnings</strong><ul>" + list.map((w) => "<li>" + w + "</li>").join("") + "</ul>";
+        box.innerHTML = "<strong>Limits we applied</strong><ul>" + list.map((w) => "<li>" + w + "</li>").join("") + "</ul>";
       }
 
       function buildCopy(m) {
@@ -2058,9 +2272,9 @@
           return [
             label,
             "Cash: " + fmtMoney(s.cashH.total),
-            "Capacity realised: " + fmtMoney(s.capH.total),
-            "Capacity in ROI: " + fmtMoney(s.capRoiH.total),
-            "Upside (excluded): " + fmtMoney(s.upH.total),
+            "Staff time counted: " + fmtMoney(s.capH.total),
+            "Staff time in ROI: " + fmtMoney(s.capRoiH.total),
+            "Extra benefit (not counted): " + fmtMoney(s.upH.total),
             "Total cost: " + fmtMoney(s.totalCost),
             "Net value: " + fmtMoney(s.net),
             "Net ROI: " + (s.roi == null ? "n/a" : fmtPct(s.roi)),
@@ -2069,16 +2283,19 @@
         }
         const lines = [
           "Helix Value Calculator — executive summary",
-          "Independent personal project by Suhayl Patel. Not a BMC or BMC Helix tool, not a quote, and not a customer result.",
+          "Independent work by Suhayl Patel. Not a BMC tool. Not a quote. Not a customer result.",
           "",
+          "How you buy Helix: " + (m.cost.mode === "onprem" ? "On-premises" : "SaaS (subscription)"),
           "Products: " + (selected().map((x) => x.name).join(", ") || "none"),
           "Currency: " + currency() + " @ " + fxRate() + " per USD  |  Horizon: " + m.years + " years",
-          "Year-1 licence (selected modules): " + fmtMoney(m.licence) + "  |  Services: " + fmtMoney(m.services),
-          "Ramp: 50% / 85% / 100%. Labour realisation 50% / 70%. Redeploy into ROI: " + fmtPct(m.c.redeploy) + ".",
+          m.cost.mode === "onprem"
+            ? ("On-premises over " + m.years + " years: " + fmtMoney(m.cost.totalCost) + " (licence " + fmtMoney(m.cost.perpetual) + ", maintenance " + fmtMoney(m.cost.maint) + "/yr, hosting " + fmtMoney(m.cost.host) + "/yr, admin " + fmtMoney(m.cost.admin) + "/yr, services " + fmtMoney(m.services) + ").")
+            : ("Year-1 SaaS licence (selected products): " + fmtMoney(m.licence) + "  |  Services: " + fmtMoney(m.services)),
+          "Adoption grows over time: 50% in year 1, 85% in year 2, 100% after. We count only 50–70% of saved time. Time put to other work: " + fmtPct(m.c.redeploy) + ".",
           "",
-          block("CONSERVATIVE (50% labour realisation)", m.conservative),
+          block("CAUTIOUS (50% of saved time)", m.conservative),
           "",
-          block("EXPECTED (70% labour realisation)", m.expected)
+          block("LIKELY (70% of saved time)", m.expected)
         ];
         if (m.overlaps && m.overlaps.length) {
           lines.push("", "Overlaps handled:");
@@ -2133,9 +2350,9 @@
       function renderCostSum(m) {
         const el = $("costSum");
         if (!el) return;
-        el.textContent = "Selected year-1 licence " + fmtMoney(m.licence) +
-          " · services " + fmtMoney(m.services) +
-          " · " + m.years + "-year cost " + fmtMoney(m.expected.totalCost);
+        el.textContent = m.cost.mode === "onprem"
+          ? ("On-premises " + m.years + "-year cost " + fmtMoney(m.cost.totalCost) + " · perpetual " + fmtMoney(m.cost.perpetual) + " · services " + fmtMoney(m.services))
+          : ("Selected year-1 SaaS licence " + fmtMoney(m.licence) + " · services " + fmtMoney(m.services) + " · " + m.years + "-year cost " + fmtMoney(m.expected.totalCost));
       }
 
       function drawQR(canvas) {
@@ -2165,13 +2382,26 @@
         const lo = m.conservative;
         const hi = m.expected;
         $("simpleHeadline").textContent = fmtCompact(lo.totalBenefit, 2) + "–" + fmtCompact(hi.totalBenefit, 2) + " over " + m.years + " years";
+        const outageEl = $("outageLine");
+        if (outageEl) {
+          const outageMins = blank("downMins") ? 0 : num("downMins");
+          const outageCpm = blank("downCost") ? 0 : moneyUsd("downCost");
+          const p1Year = num("p1Count");
+          if (outageMins > 0 && outageCpm > 0 && p1Year > 0) {
+            outageEl.textContent = "Plus avoided outage costs of up to " + fmtMoney(p1Year * outageMins * outageCpm) + " a year (not counted in ROI).";
+          } else {
+            outageEl.textContent = "Add your outage cost to see this";
+          }
+        }
         $("simpleRoi").textContent = (lo.roi == null ? "n/a" : fmtPct(lo.roi)) + "–" + (hi.roi == null ? "n/a" : fmtPct(hi.roi));
         if (lo.pay == null && hi.pay == null) $("simplePay").textContent = "not within " + m.years + " years";
         else if (hi.pay && lo.pay && hi.pay !== lo.pay) $("simplePay").textContent = "month " + hi.pay + "–" + lo.pay;
         else $("simplePay").textContent = (hi.pay || lo.pay) == null ? "not within " + m.years + " years" : "month " + (hi.pay || lo.pay);
         const hrs = m.lines.filter((l) => l.type === "capacity").reduce((s, l) => s + (l.hours || 0), 0);
-        $("simpleHours").textContent = hourRange(hrs) + " after a 30–50% haircut for time that isn't truly freed up";
-        $("simpleInvest").textContent = "Based on an assumed investment of " + fmtMoney(m.expected.totalCost) + " over " + m.years + " years (licence + services), editable in See the maths.";
+        $("simpleHours").textContent = hourRange(hrs) + " staff hours back each year. We count only 50–70% of saved time, because not every saved hour turns into useful work.";
+        $("simpleInvest").textContent = m.cost.mode === "onprem"
+          ? ("Based on an on-premises investment of " + fmtMoney(m.expected.totalCost) + " over " + m.years + " years (licence, maintenance, hosting, admin, services).")
+          : ("Based on a SaaS investment of " + fmtMoney(m.expected.totalCost) + " over " + m.years + " years (licence and services).");
         const note = $("credNote");
         const topDriver = m.lines.slice().sort((a, b) => {
           const va = a.type === "capacity" ? a.annualUsd * REAL.expected : a.annualUsd;
@@ -2186,6 +2416,14 @@
         } else {
           note.hidden = true;
           note.classList.remove("show");
+        }
+        const pace = $("paceNote");
+        if (pace) {
+          const slow = (lo.roi != null && lo.roi < 0) || lo.pay == null;
+          pace.hidden = !slow;
+          pace.classList.toggle("show", slow);
+          const fiveBtn = $("tryFive");
+          if (fiveBtn) fiveBtn.hidden = m.years >= 5;
         }
         const ranked = m.lines.slice().sort((a, b) => {
           const va = a.type === "capacity" ? a.annualUsd * REAL.expected : a.annualUsd;
@@ -2207,18 +2445,20 @@
         $("stickyVal").textContent = fmtCompact(lo.totalBenefit, 2) + "–" + fmtCompact(hi.totalBenefit, 2);
         $("stickyRoi").textContent = (lo.roi == null ? "n/a" : fmtPct(lo.roi)) + "–" + (hi.roi == null ? "n/a" : fmtPct(hi.roi));
         $("stickySum").hidden = uiMode !== "simple";
-        $("printPersona").textContent = "Persona: " + (PERSONA_LABEL[persona] || persona);
+        $("printPersona").textContent = "Persona: " + (PERSONA_LABEL[persona] || persona) + ". How you buy Helix: " + (m.cost.mode === "onprem" ? "On-premises" : "SaaS (subscription)") + ".";
         const rows = SIMPLE_FIELDS.filter((f) => PERSONAS[persona].fields.indexOf(f.id) >= 0).map((f) => {
           const label = f.label;
           const val = f.money ? fmtMoney(simpleState.cloudUsd) : (simpleState[f.id] || 0).toLocaleString();
           return "<tr><td>" + label + "</td><td>" + val + "</td></tr>";
         }).join("");
-        $("printInputs").innerHTML = rows + "<tr><td>Assumed 3-year investment</td><td>" + fmtMoney(m.expected.totalCost) + "</td></tr>";
+        $("printInputs").innerHTML = rows +
+          "<tr><td>How you buy Helix</td><td>" + (m.cost.mode === "onprem" ? "On-premises" : "SaaS (subscription)") + "</td></tr>" +
+          "<tr><td>Assumed " + m.years + "-year investment</td><td>" + fmtMoney(m.expected.totalCost) + "</td></tr>";
         $("printDate").textContent = "Printed " + new Date().toISOString().slice(0, 10);
         $("printUrl").textContent = LIVE_URL;
         drawQR($("printQR"));
         updateAdvChip();
-        const series = cumulativeSeries(hi.roiAnnual, m.years, m.services, m.licence);
+        const series = cumulativeSeries(hi.roiAnnual, m.years, m.cost.upfront, m.cost.annualRun);
         if (simpleChart) simpleChart.destroy();
         if (!window.Chart || !$("simpleChart")) return;
         simpleChart = new Chart($("simpleChart"), {
@@ -2233,16 +2473,18 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 10 } } } },
+            layout: { padding: { top: 4, bottom: 8 } },
+            plugins: { legend: { position: "top", labels: { boxWidth: 8, font: { size: 9 }, padding: 6 } } },
             scales: {
-              x: { title: { display: true, text: "Month", font: { size: 10 } } },
-              y: { ticks: { callback: (v) => fmtMoney(v), font: { size: 10 } } }
+              x: { title: { display: true, text: "Month", font: { size: 9 } } },
+              y: { ticks: { callback: (v) => fmtMoney(v), font: { size: 9 } } }
             }
           }
         });
       }
 
       function render() {
+        setDeploy(isOnprem() ? "onprem" : "saas", false);
         renderCostTable();
         const m = engine();
         lastCopy = buildCopy(m);
@@ -2369,6 +2611,7 @@
       document.addEventListener("input", (e) => {
         if (applying) return;
         if (e.target.id === "fxRate" || e.target.id === "currency" || e.target.id === "simpleCurrency") return;
+        if (e.target.id === "simpleDownMins" || e.target.id === "simpleDownCost") syncOutageFromSimple();
         if (uiMode === "simple" && e.target.closest("#simple")) {
           applying = true;
           applyDerive();
@@ -2386,9 +2629,33 @@
       initMoney();
       $("services").addEventListener("input", () => { $("services").dataset.manual = "1"; });
       $("svcPct").addEventListener("input", () => { $("services").dataset.manual = "0"; });
+      if ($("perpLic")) $("perpLic").addEventListener("input", () => { $("perpLic").dataset.manual = "1"; });
+      if ($("perpMult")) $("perpMult").addEventListener("input", () => { $("perpLic").dataset.manual = "0"; });
+      if ($("simpleBuy")) {
+        $("simpleBuy").addEventListener("click", (e) => {
+          const btn = e.target.closest("[data-dep]");
+          if (!btn) return;
+          setDeploy(btn.dataset.dep, true);
+          render();
+        });
+      }
+      if ($("deployMode")) {
+        $("deployMode").addEventListener("change", () => setDeploy($("deployMode").value, true));
+      }
+      if ($("tryFive")) {
+        $("tryFive").addEventListener("click", () => {
+          $("horizon").value = "5";
+          render();
+        });
+      }
       const hashed = parseHash();
       if (hashed) applyHash(hashed);
-      else applyPersona("cio", true);
+      else {
+        uiMode = "simple";
+        $("horizon").value = "3";
+        setDeploy("saas", false);
+        applyPersona("cio", true);
+      }
       paintHero();
       renderPicker();
       renderTabs();
@@ -2397,9 +2664,16 @@
       window.addEventListener("hashchange", () => {
         if (applying) return;
         const parsed = parseHash();
-        if (!parsed) return;
         applying = true;
-        applyHash(parsed);
+        if (!parsed) {
+          persona = "cio";
+          uiMode = "simple";
+          setDeploy("saas", false);
+          applyPersona("cio", true);
+          paintHero();
+        } else {
+          applyHash(parsed);
+        }
         applying = false;
         renderPicker();
         renderTabs();
