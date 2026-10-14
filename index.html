@@ -619,7 +619,11 @@
       .results-meta > div { background: #f5f7fb; padding: 0.25rem 0.4rem; }
       .roi-pair { gap: 0.25rem; }
       .roi-pair > div { background: #f5f7fb; padding: 0.25rem 0.4rem; }
-      body.outage-on .simple-chart { height: 128px; margin-bottom: 0.4rem; }
+      body.outage-on .simple-chart { height: 160px; margin-bottom: 0.15rem; overflow: visible; }
+      body.outage-on .where-label { font-size: 0.6rem; margin: 0.06rem 0; }
+      body.outage-on .drivers { font-size: 0.6rem; margin: 0; padding-left: 0.9rem; }
+      body.outage-on .drivers li { margin: 0.02rem 0; }
+      body.outage-on .upside-note { margin-top: 1.15rem; }
       .results-meta span, .drivers { color: var(--ink); }
       .cred-note { color: var(--warn); background: #fff6e8; margin: 0.15rem 0; padding: 0.25rem 0.4rem; }
       .print-only { display: block; margin-top: 0.2rem; }
@@ -1243,6 +1247,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
       const AGENT_EXTRA = ["agSC", "agKC", "agCRA"];
       const AGENT_IDS = { en: "agEN", sc: "agSC", kc: "agKC", cra: "agCRA", if: "agIF", tr: "agTR" };
       let extraAgentOrder = ["agSC", "agKC", "agCRA"];
+      const FIELD_DEFAULTS = {};
       let extraAgentWarnUntil = 0;
 
       const $ = (id) => document.getElementById(id);
@@ -1499,7 +1504,12 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
       }
 
       function extraChecked() {
-        return AGENT_EXTRA.filter((id) => $(id) && $(id).checked);
+        const changeOn = CATALOG.some((m) => m.id === "change" && m.on);
+        return AGENT_EXTRA.filter((id) => {
+          if (!$(id) || !$(id).checked) return false;
+          if (id === "agCRA" && !changeOn) return false;
+          return true;
+        });
       }
 
       function enforceExtraAgentCap(showWarn) {
@@ -1782,7 +1792,6 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
           showAgent("val-cra", line.annualUsd, true);
         } else {
           showAgent("val-cra", 0, false);
-          if (craOn && !c.on.change) w.push("Change Coordinator needs the Change module; it was skipped.");
         }
 
         if (ifOn) {
@@ -2240,14 +2249,41 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         const mods = CATALOG.filter((m) => m.on).map((m) => m.id);
         const sameMods = mods.slice().sort().join(".") === spec.modules.slice().sort().join(".");
         if (!sameMods) parts.push("mods=" + mods.join("."));
+        const hashed = {};
         const d = deriveMap();
         Object.keys(d).forEach((id) => {
           const el = $(id);
           if (!el) return;
           const cur = MONEY_DERIVE[id] ? moneyUsd(id) : num(id);
           if (Math.abs(cur - d[id]) > (MONEY_DERIVE[id] ? 2 : 1)) {
+            hashed[id] = 1;
             parts.push("o." + id + "=" + encodeURIComponent(MONEY_DERIVE[id] ? String(+cur.toFixed(4)) : el.value));
           }
+        });
+        document.querySelectorAll("#advanced input, #advanced select").forEach((el) => {
+          if (!el.id || hashed[el.id]) return;
+          if (d[el.id] != null) return;
+          if (el.type === "checkbox" || el.type === "hidden") return;
+          if (/^(currency|fxRate|horizon|deployMode|packMode|outageInRoi|services|perpLic|perpMult|downMins|downCost)$/.test(el.id)) return;
+          if (el.id.indexOf("simple") === 0) return;
+          if (el.id === "esmDeflectPct" && el.dataset.manual !== "1") {
+            if (el.value === (isPackAdvanced() ? "8" : "5")) return;
+          }
+          const def = FIELD_DEFAULTS[el.id];
+          if (def == null) return;
+          if (el.hasAttribute("data-money")) {
+            if (blank(el.id)) return;
+            const cur = moneyUsd(el.id);
+            const defUsd = parseFloat(def);
+            if (!Number.isFinite(defUsd) && cur === 0) return;
+            if (Number.isFinite(defUsd) && Math.abs(cur - defUsd) <= 0.02) return;
+            hashed[el.id] = 1;
+            parts.push("o." + el.id + "=" + encodeURIComponent(String(+cur.toFixed(4))));
+            return;
+          }
+          if (String(el.value) === String(def)) return;
+          hashed[el.id] = 1;
+          parts.push("o." + el.id + "=" + encodeURIComponent(el.value));
         });
         const s = parts.join("&");
         if (history.replaceState) history.replaceState(null, "", "#" + s);
@@ -2791,7 +2827,8 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         });
         $("simpleDrivers").innerHTML = top.map((t) => "<li>" + t + "</li>").join("");
         $("stickyVal").textContent = fmtCompact(lo.totalBenefit, 2) + "–" + fmtCompact(hi.totalBenefit, 2);
-        $("stickyRoi").textContent = (lo.roi == null ? "n/a" : fmtPct(lo.roi)) + "–" + (hi.roi == null ? "n/a" : fmtPct(hi.roi));
+        const stickyRoi = (lo.roi == null ? "n/a" : fmtPct(lo.roi)) + "–" + (hi.roi == null ? "n/a" : fmtPct(hi.roi));
+        $("stickyRoi").textContent = m.outageOn ? ("With outages " + stickyRoi) : stickyRoi;
         $("stickySum").hidden = uiMode !== "simple";
         $("printPersona").textContent = "Persona: " + (PERSONA_LABEL[persona] || persona) + ". How you buy Helix: " + (m.cost.mode === "onprem" ? "On-premises" : "SaaS (subscription)") + ". Package: " + packLabel() + "." +
           (m.outageOn ? " ROI without outages: " + roiText(m.conservativeBase || lo, m.expectedBase || hi) + ". ROI with outages: " + roiText(lo, hi) + "." : "");
@@ -2973,6 +3010,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
 
       document.addEventListener("input", (e) => {
         if (applying) return;
+        if (e.target.type === "checkbox") return;
         if (e.target.id === "fxRate" || e.target.id === "currency" || e.target.id === "simpleCurrency") return;
         if (e.target.id === "simpleDownMins" || e.target.id === "simpleDownCost") syncOutageFromSimple();
         if (uiMode === "simple" && e.target.closest("#simple")) {
@@ -3001,6 +3039,11 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
 
       renderCostTable();
       initMoney();
+      document.querySelectorAll("#advanced input, #advanced select").forEach((el) => {
+        if (!el.id) return;
+        if (el.hasAttribute("data-money")) FIELD_DEFAULTS[el.id] = el.dataset.usd != null ? el.dataset.usd : "";
+        else FIELD_DEFAULTS[el.id] = el.value;
+      });
       $("services").addEventListener("input", () => { $("services").dataset.manual = "1"; });
       $("svcPct").addEventListener("input", () => { $("services").dataset.manual = "0"; });
       if ($("perpLic")) $("perpLic").addEventListener("input", () => { $("perpLic").dataset.manual = "1"; });
