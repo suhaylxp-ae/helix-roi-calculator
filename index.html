@@ -16,8 +16,9 @@
   <meta name="twitter:title" content="How much could better IT operations be worth?" />
   <meta name="twitter:description" content="A conservative 60-second ROI estimate. Independent project by Suhayl Patel." />
   <meta name="twitter:image" content="https://suhaylxp-ae.github.io/helix-roi-calculator/og-image.png" />
+  <link rel="icon" href="favicon.ico" sizes="32x32" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="og-image.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -479,6 +480,39 @@
     .about a { color: var(--accent-2); }
     .adv-redeploy { display: none; }
     body.advanced .adv-redeploy { display: flex; }
+    .order-hint { font-style: normal; font-weight: 400; text-transform: none; letter-spacing: 0; color: #c9d6e8; font-size: 0.65rem; }
+    .invest-note { font-size: 0.8rem; color: #d7e2f2; margin: 0 0 0.65rem; line-height: 1.4; }
+    .where-label { margin: 0 0 0.35rem; font-size: 0.78rem; color: #c9d6e8; }
+    .cred-note {
+      display: none; font-size: 0.8rem; background: rgba(196,163,90,0.18); color: #f3e3bf;
+      border-radius: 8px; padding: 0.5rem 0.6rem; margin: 0 0 0.65rem;
+    }
+    .cred-note.show { display: block; }
+    .adv-chip {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem;
+      background: #fff6e8; border: 1px solid #efd2a8; color: var(--warn);
+      border-radius: 8px; padding: 0.45rem 0.65rem; font-size: 0.82rem; margin: 0 0 0.75rem;
+    }
+    .adv-chip button {
+      font: inherit; font-weight: 650; border: 0; background: var(--navy); color: #fff;
+      border-radius: 999px; padding: 0.28rem 0.7rem; cursor: pointer; min-height: 2rem;
+    }
+    .sticky-sum {
+      display: none; justify-content: space-between; gap: 0.6rem; align-items: center;
+      background: var(--navy); color: #fff; border-radius: 10px; padding: 0.45rem 0.75rem;
+      font-size: 0.82rem; z-index: 40;
+    }
+    .sticky-sum strong { font-size: 0.88rem; }
+    .disc-more {
+      display: none; margin-left: 0.4rem; font: inherit; font-size: 0.72rem; font-weight: 700;
+      background: transparent; color: var(--gold); border: 0; cursor: pointer; text-decoration: underline;
+    }
+    .print-only { display: none; }
+    .print-inputs { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .print-inputs td { padding: 0.2rem 0.4rem; border-bottom: 1px solid #e6edf5; }
+    .print-method { font-size: 0.8rem; color: var(--muted); padding-left: 1.1rem; }
+    .print-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; margin-top: 0.6rem; }
+    .print-disc { font-size: 0.72rem; color: var(--muted); }
 
     @media (max-width: 980px) {
       .layout { grid-template-columns: 1fr; }
@@ -489,26 +523,52 @@
       .cost-table { display: block; overflow-x: auto; }
     }
     @media (max-width: 640px) {
+      :root { --disclaimer-h: 2.35rem; }
       .grid-6, .grid-5, .grid-4, .grid-3, .grid-2, .roles, .scenario-grid, .results-meta { grid-template-columns: 1fr; }
       .agent-table { display: block; overflow-x: auto; }
       header h1 { font-size: 1.35rem; }
       .pick, .actions button, .simple-actions button { min-height: 3rem; }
       .persona { min-height: 5.8rem; }
+      body.simple .sticky-sum { display: flex; position: sticky; top: var(--disclaimer-h); }
+      .disc-short { display: inline; }
+      .disc-full { display: none; }
+      .disclaimer.expanded .disc-full { display: inline; }
+      .disc-more { display: inline; }
+      .disclaimer { font-size: 0.72rem; padding: 0.4rem 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .disclaimer.expanded { white-space: normal; overflow: visible; text-overflow: unset; }
+    }
+    @media (min-width: 641px) {
+      .disc-short { display: none; }
+      .disc-full { display: inline; }
     }
     @media print {
-      .disclaimer { position: static; }
-      .mode-bar, .no-print, #advanced, .simple-actions, .persona-grid, #step2 { display: none !important; }
-      body { background: #fff; }
-      .results-card { background: var(--navy); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      header.app-header { padding: 0.8rem 0; }
-      footer, .about { break-inside: avoid; }
+      @page { size: A4; margin: 12mm; }
+      html, body { background: #fff; color: #102033; }
+      .disclaimer, .mode-bar, .no-print, #advanced, .simple-actions, .persona-grid,
+      #step2, .sticky-sum, header .lede, .about, footer, .disc-more { display: none !important; }
+      #simple .card { box-shadow: none; border: 0; margin: 0; padding: 0; }
+      #simple .card .step-label, #simple .card h2 { display: none; }
+      .results-card {
+        background: #fff; color: var(--navy); border: 1px solid var(--navy);
+        box-shadow: none; padding: 0.7rem 0.85rem;
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+      .results-card h2, .results-card .headline, .invest-note, .where-label, .upside-note, .order-hint { color: var(--navy); }
+      .results-meta div { background: #f5f7fb; }
+      .results-meta span, .drivers { color: var(--ink); }
+      .cred-note { color: var(--warn); background: #fff6e8; }
+      .print-only { display: block; margin-top: 0.7rem; }
+      .simple-chart { height: 150px; }
+      header.app-header { padding: 0.4rem 0 0.6rem; }
+      header h1 { font-size: 1.15rem; }
     }
   </style>
 </head>
 <body class="simple">
   <div class="disclaimer" role="note">
-    <strong>Disclaimer.</strong>
-    Independent personal project by Suhayl Patel. Not a BMC or BMC Helix tool, not a quote, and not a customer result. Views are my own. All defaults are illustrative assumptions.
+    <span class="disc-short"><strong>Disclaimer.</strong> Independent project by Suhayl Patel. Not a BMC tool.</span>
+    <span class="disc-full"> Independent personal project by Suhayl Patel. Not a BMC or BMC Helix tool, not a quote, and not a customer result. Views are my own. All defaults are illustrative assumptions.</span>
+    <button type="button" class="disc-more no-print" id="discMore" aria-expanded="false">more</button>
   </div>
 
   <header class="app-header">
@@ -524,6 +584,10 @@
       <button type="button" data-mode="simple">Simple</button>
       <button type="button" data-mode="advanced">Advanced</button>
     </div>
+  </div>
+  <div id="stickySum" class="sticky-sum wrap" hidden>
+    <strong id="stickyVal">—</strong>
+    <span id="stickyRoi">—</span>
   </div>
 
   <div id="simple" class="wrap">
@@ -550,6 +614,7 @@
       <p class="step-label">Step 2</p>
       <h2>Your numbers</h2>
       <p class="ramp-note">Sliders are a starting point. Type the figure you actually know. Other module inputs are filled from these with documented ratios.</p>
+      <p id="advChip" class="adv-chip" hidden><span>Using your Advanced edits</span> <button type="button" id="resetSimple">Reset to simple</button></p>
       <div class="simple-fields" id="simpleFields"></div>
     </section>
 
@@ -557,13 +622,15 @@
       <p class="step-label">Step 3</p>
       <div class="results-card" id="resultsCard">
         <h2>Shareable estimate</h2>
-        <p class="headline" id="simpleHeadline">Estimated value: —</p>
+        <p class="headline" id="simpleHeadline">—</p>
         <div class="results-meta">
-          <div><span>Net ROI</span><b id="simpleRoi">—</b></div>
-          <div><span>Payback</span><b id="simplePay">—</b></div>
+          <div><span>Net ROI <i class="order-hint">conservative · expected</i></span><b id="simpleRoi">—</b></div>
+          <div><span>Payback <i class="order-hint">expected · conservative</i></span><b id="simplePay">—</b></div>
           <div style="grid-column:1/-1"><span>Hours given back to your team per year</span><b id="simpleHours">—</b></div>
         </div>
-        <p style="margin:0 0 0.35rem;font-size:0.78rem;color:#c9d6e8;">Where the hours go</p>
+        <p class="invest-note" id="simpleInvest"></p>
+        <p id="credNote" class="cred-note" hidden></p>
+        <p class="where-label">Where the hours go</p>
         <ol class="drivers" id="simpleDrivers"></ol>
         <div class="simple-chart"><canvas id="simpleChart"></canvas></div>
         <p class="upside-note">Downtime avoidance not included. That’s extra upside.</p>
@@ -573,6 +640,24 @@
           <button type="button" class="ghost" id="seeMaths">See the maths</button>
         </div>
         <p class="copied" id="linkCopied" hidden style="margin:0.5rem 0 0;color:#b8e0c8;">Link copied</p>
+      </div>
+      <div id="printExtras" class="print-only">
+        <p id="printPersona"></p>
+        <table class="print-inputs" id="printInputs"></table>
+        <ul class="print-method">
+          <li>Adoption ramp: 50% / 85% / 100% in years 1 / 2 / 3+.</li>
+          <li>A 30–50% haircut on freed time (not every hour is truly reusable).</li>
+          <li>Downtime avoidance is excluded from this number.</li>
+          <li>Overlaps are subtracted so the same hour is not counted twice.</li>
+        </ul>
+        <p class="print-disc">Independent personal project by Suhayl Patel. Not a BMC or BMC Helix tool, not a quote, and not a customer result. All defaults are illustrative assumptions.</p>
+        <div class="print-foot">
+          <div>
+            <p id="printDate"></p>
+            <p id="printUrl">https://suhaylxp-ae.github.io/helix-roi-calculator/</p>
+          </div>
+          <canvas id="printQR" width="96" height="96" aria-label="QR code to the live calculator"></canvas>
+        </div>
       </div>
     </section>
   </div>
@@ -868,9 +953,9 @@
     <h2>About</h2>
     <p>Built by Suhayl Patel, enterprise account executive in the UAE. I built this because ROI decks that overclaim lose trust. This model is deliberately conservative.</p>
     <p>
-      <a href="https://www.linkedin.com/in/YOUR-LINKEDIN" rel="noopener">LinkedIn</a>
+      <a href="https://www.linkedin.com/in/suhaylxp/" rel="noopener">LinkedIn</a>
       ·
-      <a href="https://github.com/YOUR-GITHUB" rel="noopener">GitHub</a>
+      <a href="https://github.com/suhaylxp-ae" rel="noopener">GitHub</a>
     </p>
     <p class="ramp-note">Independent personal project. Not affiliated with or endorsed by BMC Software. Helix is a trademark of BMC Software. No customer names or real customer data are used.</p>
   </section>
@@ -915,9 +1000,9 @@
       const SIMPLE_FIELDS = [
         { id: "staff", key: "simpleStaff", label: "IT staff", hint: "People in IT / operations. Example: 80.", min: 5, max: 500, step: 1, value: 80 },
         { id: "tickets", key: "simpleTickets", label: "IT tickets per month", hint: "Logged tickets, not self-service only. Example: 4,000.", min: 100, max: 30000, step: 50, value: 4000 },
-        { id: "alerts", key: "simpleAlerts", label: "Alerts per day", hint: "Monitoring noise you still look at. Example: 384.", min: 10, max: 5000, step: 1, value: 384 },
+        { id: "alerts", key: "simpleAlerts", label: "Alerts per day", hint: "Monitoring noise you still look at. Example: 384.", min: 10, max: 1000, step: 1, value: 384 },
         { id: "p1", key: "simpleP1", label: "Major outages (P1) per month", hint: "Sev-1 incidents. Example: 6.", min: 0, max: 40, step: 1, value: 6 },
-        { id: "servers", key: "simpleServers", label: "Servers", hint: "OS instances you patch. Example: 1,800.", min: 50, max: 20000, step: 10, value: 1800 },
+        { id: "servers", key: "simpleServers", label: "Servers", hint: "OS instances you patch. Example: 1,800.", min: 50, max: 10000, step: 10, value: 1800 },
         { id: "cloud", key: "simpleCloud", label: "Monthly cloud spend", hint: "Compute / cloud bill. Example: 180,000.", min: 0, max: 2000000, step: 1000, value: 180000, money: true }
       ];
 
@@ -938,6 +1023,16 @@
         "Asset-record updates": function (h) { return "Less CMDB busywork: about " + Math.round(h).toLocaleString() + " hours a year."; },
         "ESM case deflection": function (h) { return "Fewer business-side cases hitting a queue: about " + Math.round(h).toLocaleString() + " hours a year."; }
       };
+
+      const LIVE_URL = "https://suhaylxp-ae.github.io/helix-roi-calculator/";
+      const QR_N = 35;
+      const QR_BITS = "0000000000000000000000000000000000001111111000111110111001100011111110010000010101100001010101000100000100101110101100001010011110101011101001011101011100011101011010010111010010111010011011111100100100101110100100000100010011100110010001000001001111111010101010101010101011111110000000000101000111001100110000000000100000101110011001010010011001110001010100000001111010101010000111000011111010110001111100011000101011000011001000101110001111000110111100001101111100011100010010011111000000000010100101111000010010100110001100111010100111100110001100111011110001100110111000000101100100101011010011110111100111010101001111011100100001010010101110110110011011001101001010111000111001111101111001011010011110001101000111000101011001111000101110110110000000100011110111010001001110011100100010110010001100000010111011010111000010010000011011000100011011011110110110000111000111001111011111000000100110111111110110000000000111010110101100010001010100111111100100101101001111101010110001000001001111011111010111000111010010111010011011111000101011111100100101110100110001000111101110111011001011101001110101010101001001101110010000010010001100001101000011110000111111101000000101010011111101010000000000000000000000000000000000000";
+      const SIMPLE_HASH = { staff: "simpleStaff", tix: "simpleTickets", al: "simpleAlerts", p1: "simpleP1", srv: "simpleServers", cloud: "simpleCloud" };
+      const MONEY_DERIVE = { cloudMonth: 1, hwSpend: 1, storSpend: 1 };
+      const PERSONA_LABEL = { cio: "CIO", infra: "Head of Infrastructure", ops: "Head of Service / Operations" };
+      const simpleState = { staff: 80, tickets: 4000, alerts: 384, p1: 6, servers: 1800, cloudUsd: 180000 };
+      const editedSimple = {};
+      let suppressDerive = false;
 
       const $ = (id) => document.getElementById(id);
       const num = (id) => {
@@ -989,6 +1084,33 @@
         if (cur === "GBP") return sign + "£" + abs;
         if (cur === "EUR") return sign + "€" + abs;
         return sign + "AED " + abs;
+      }
+      function moneyPrefix() {
+        const cur = currency();
+        if (cur === "GBP") return "£";
+        if (cur === "EUR") return "€";
+        if (cur === "AED") return "AED ";
+        return "$";
+      }
+      function fmtCompact(usd, sig) {
+        const n = Math.abs(usd * fxRate());
+        const sign = usd < 0 ? "-" : "";
+        const p = moneyPrefix();
+        if (n === 0) return p + "0";
+        const exp = Math.floor(Math.log10(n));
+        const scale = Math.pow(10, exp - (sig - 1));
+        const rounded = Math.round(n / scale) * scale;
+        if (rounded >= 999500) {
+          const m = rounded / 1e6;
+          const t = m >= 10 || sig < 2 ? m.toFixed(0) : String(+m.toFixed(Math.max(0, sig - 1)));
+          return sign + p + t + "M";
+        }
+        if (rounded >= 950) {
+          const k = rounded / 1e3;
+          const t = k >= 100 ? k.toFixed(0) : String(+k.toFixed(k >= 10 ? 0 : 1));
+          return sign + p + t + "k";
+        }
+        return sign + p + String(Math.round(rounded));
       }
       const fmtPct = (n) => (n * 100).toFixed(0) + "%";
       const fmtMonth = (m, years) => (m == null ? "Not within " + years + " years" : "Month " + m);
@@ -1388,28 +1510,146 @@
         el.value = String(+d.toFixed(Math.abs(d) < 1000 ? 2 : 0));
       }
 
-      function renderSimpleFields() {
-        const host = $("simpleFields");
-        const want = PERSONAS[persona].fields;
-        host.innerHTML = SIMPLE_FIELDS.filter((f) => want.indexOf(f.id) >= 0).map((f) => {
-          const cur = f.money
-            ? "<select id='simpleCurrency'><option value='USD'>USD</option><option value='AED'>AED</option><option value='GBP'>GBP</option><option value='EUR'>EUR</option></select>"
-            : "";
-          return "<label class='simple-field' data-sf='" + f.id + "'><span>" + f.label + "</span>" +
-            "<span class='hint'>" + f.hint + "</span>" +
-            "<input type='range' id='" + f.key + "Range' min='" + f.min + "' max='" + f.max + "' step='" + f.step + "' value='" + f.value + "' />" +
-            "<div class='simple-row'>" +
-            (f.money ? "<input id='" + f.key + "' data-money type='number' min='0' step='" + f.step + "' value='" + f.value + "' />" + cur
-              : "<input id='" + f.key + "' type='number' min='0' step='" + f.step + "' value='" + f.value + "' />") +
-            "</div></label>";
-        }).join("") + (want.indexOf("cloud") < 0
-          ? "<label class='simple-field'><span>Currency</span><span class='hint'>Display only. Amounts stay in USD internally.</span><div class='simple-row'><select id='simpleCurrency'><option value='USD'>USD</option><option value='AED'>AED</option><option value='GBP'>GBP</option><option value='EUR'>EUR</option></select></div></label>"
-          : "");
+      function readSimpleState() {
+        const staff = num("simpleStaff");
+        const tix = num("simpleTickets");
+        const al = num("simpleAlerts");
+        const p1 = num("simpleP1");
+        const srv = num("simpleServers");
+        if ($("simpleStaff")) simpleState.staff = Number.isFinite(staff) && staff > 0 ? staff : simpleState.staff;
+        if ($("simpleTickets")) simpleState.tickets = Number.isFinite(tix) && tix > 0 ? tix : simpleState.tickets;
+        if ($("simpleAlerts")) simpleState.alerts = Number.isFinite(al) && al > 0 ? al : simpleState.alerts;
+        if ($("simpleP1")) simpleState.p1 = Number.isFinite(p1) ? p1 : simpleState.p1;
+        if ($("simpleServers")) simpleState.servers = Number.isFinite(srv) && srv > 0 ? srv : simpleState.servers;
+        if ($("simpleCloud")) simpleState.cloudUsd = moneyUsd("simpleCloud") || simpleState.cloudUsd;
+      }
+
+      function deriveMap() {
+        const staff = ($("simpleStaff") ? num("simpleStaff") : simpleState.staff) || 80;
+        const tickets = (($("simpleTickets") ? num("simpleTickets") : simpleState.tickets) || 4000) * 12;
+        const alerts = (($("simpleAlerts") ? num("simpleAlerts") : simpleState.alerts) || 384) * 365;
+        const p1v = ($("simpleP1") ? num("simpleP1") : simpleState.p1);
+        const p1 = (p1v || 0) * 12;
+        const servers = ($("simpleServers") ? num("simpleServers") : simpleState.servers) || 1800;
+        const cloud = $("simpleCloud") ? (moneyUsd("simpleCloud") || simpleState.cloudUsd) : simpleState.cloudUsd;
+        return {
+          tickets: tickets,
+          alerts: Math.round(alerts),
+          p1Count: p1,
+          tssaServers: servers,
+          cloudMonth: cloud,
+          changes: tickets * 0.05,
+          problems: tickets * 0.00375,
+          autoEvents: alerts * 0.057,
+          netAlerts: alerts * 0.43,
+          warRooms: p1 * 20 / 72,
+          kcArticles: staff * 5,
+          ifHours: staff * 5,
+          esmCases: staff * 150,
+          netDevices: staff * 31,
+          netNew: staff * 5,
+          assets: staff * 312,
+          assetUpdates: staff * 250,
+          svcModels: staff * 0.5,
+          bhcoHours: staff * 7.5,
+          vulnMonth: servers * 40 / 1800,
+          hwSpend: cloud * 12 * 0.185,
+          storSpend: cloud * 12 * 0.042
+        };
+      }
+
+      function applyDerive(skip) {
+        const d = deriveMap();
+        Object.keys(d).forEach((id) => {
+          if (skip && skip[id]) return;
+          if (MONEY_DERIVE[id]) setMoneyVal(id, d[id]);
+          else setNum(id, d[id]);
+        });
+      }
+
+      function hasAdvEdits() {
+        const d = deriveMap();
+        const spec = PERSONAS[persona];
+        if (CATALOG.some((m) => m.on !== (spec.modules.indexOf(m.id) >= 0))) return true;
+        return Object.keys(d).some((id) => {
+          const el = $(id);
+          if (!el) return false;
+          if (MONEY_DERIVE[id]) return Math.abs(moneyUsd(id) - d[id]) > 2;
+          return Math.abs(num(id) - d[id]) > 1;
+        });
+      }
+
+      function updateAdvChip() {
+        const chip = $("advChip");
+        if (!chip) return;
+        const on = uiMode === "simple" && hasAdvEdits();
+        chip.hidden = !on;
+      }
+
+      function paintSimpleMoney() {
+        const f = SIMPLE_FIELDS.find((x) => x.money);
+        const n = $(f.key);
+        const r = $(f.key + "Range");
+        if (!n || !r) return;
+        const rate = fxRate();
+        r.min = String(f.min * rate);
+        r.max = String(f.max * rate);
+        r.step = String(Math.max(1, f.step * rate));
+        const usd = n.dataset.usd != null && n.dataset.usd !== "" ? parseFloat(n.dataset.usd) : simpleState.cloudUsd;
+        const disp = usd * rate;
+        n.value = String(+disp.toFixed(disp < 1000 ? 2 : 0));
+        r.value = String(disp);
+      }
+
+      function fillSimpleFieldsFromState() {
+        SIMPLE_FIELDS.forEach((f) => {
+          const n = $(f.key);
+          const r = $(f.key + "Range");
+          if (!n || !r) return;
+          if (f.money) {
+            n.dataset.usd = String(simpleState.cloudUsd);
+            paintSimpleMoney();
+          } else {
+            const v = simpleState[f.id];
+            n.value = String(v);
+            r.min = f.min;
+            r.max = f.max;
+            r.value = String(v);
+          }
+        });
         const sc = $("simpleCurrency");
         if (sc) sc.value = currency();
       }
 
+      function renderSimpleFields() {
+        const host = $("simpleFields");
+        const want = PERSONAS[persona].fields;
+        const rate = fxRate();
+        host.innerHTML = SIMPLE_FIELDS.filter((f) => want.indexOf(f.id) >= 0).map((f) => {
+          const cur = f.money
+            ? "<select id='simpleCurrency'><option value='USD'>USD</option><option value='AED'>AED</option><option value='GBP'>GBP</option><option value='EUR'>EUR</option></select>"
+            : "";
+          const min = f.money ? f.min * rate : f.min;
+          const max = f.money ? f.max * rate : f.max;
+          const step = f.money ? Math.max(1, f.step * rate) : f.step;
+          const val = f.money ? simpleState.cloudUsd * rate : simpleState[f.id];
+          return "<label class='simple-field' data-sf='" + f.id + "'><span>" + f.label + "</span>" +
+            "<span class='hint'>" + f.hint + "</span>" +
+            "<input type='range' id='" + f.key + "Range' min='" + min + "' max='" + max + "' step='" + step + "' value='" + val + "' />" +
+            "<div class='simple-row'>" +
+            (f.money ? "<input id='" + f.key + "' data-money type='number' min='0' step='" + step + "' value='" + val + "' />" + cur
+              : "<input id='" + f.key + "' type='number' min='0' step='" + step + "' value='" + val + "' />") +
+            "</div></label>";
+        }).join("") + (want.indexOf("cloud") < 0
+          ? "<label class='simple-field'><span>Currency</span><span class='hint'>Display only. Amounts stay in USD internally.</span><div class='simple-row'><select id='simpleCurrency'><option value='USD'>USD</option><option value='AED'>AED</option><option value='GBP'>GBP</option><option value='EUR'>EUR</option></select></div></label>"
+          : "");
+        const cloud = $("simpleCloud");
+        if (cloud) cloud.dataset.usd = String(simpleState.cloudUsd);
+        fillSimpleFieldsFromState();
+      }
+
       function applyPersona(id, fromUser) {
+        if (fromUser) readSimpleState();
         persona = id;
         document.querySelectorAll(".persona").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.persona === persona)));
         const spec = PERSONAS[persona];
@@ -1417,16 +1657,8 @@
         if (fromUser && uiMode === "simple") $("horizon").value = "3";
         applying = true;
         renderSimpleFields();
-        const cloud = $("simpleCloud");
-        if (cloud && (cloud.dataset.usd == null || cloud.dataset.usd === "")) cloud.dataset.usd = "180000";
-        if (cloud) {
-          cloud.addEventListener("input", () => {
-            if (cloud.value.trim() === "") cloud.dataset.usd = "";
-            else cloud.dataset.usd = String((parseFloat(cloud.value) || 0) / fxRate());
-          });
-        }
         bindSimplePairs();
-        applyDerive();
+        if (!suppressDerive) applyDerive();
         applying = false;
         renderPicker();
         renderTabs();
@@ -1438,13 +1670,17 @@
           const r = $(f.key + "Range");
           if (!n || !r) return;
           const sync = (from) => {
-            const v = from.value;
-            if (n !== from) n.value = v;
-            if (r !== from) r.value = v;
-            if (f.money && from === n) n.dataset.usd = String((parseFloat(n.value) || 0) / fxRate());
-            if (f.money && from === r) {
-              n.value = r.value;
-              n.dataset.usd = String((parseFloat(r.value) || 0) / fxRate());
+            editedSimple[f.id] = true;
+            if (f.money) {
+              const disp = parseFloat(from.value) || 0;
+              n.dataset.usd = String(disp / fxRate());
+              simpleState.cloudUsd = disp / fxRate();
+              if (n !== from) n.value = from.value;
+              if (r !== from) r.value = from.value;
+            } else {
+              if (n !== from) n.value = from.value;
+              if (r !== from) r.value = from.value;
+              simpleState[f.id] = parseFloat(from.value) || 0;
             }
           };
           n.addEventListener("input", () => sync(n));
@@ -1460,37 +1696,15 @@
         }
       }
 
-      function applyDerive() {
-        const staff = num("simpleStaff") || 80;
-        const tickets = (num("simpleTickets") || 4000) * 12;
-        const alerts = (num("simpleAlerts") || 384) * 365;
-        const p1 = (num("simpleP1") || 6) * 12;
-        const servers = num("simpleServers") || 1800;
-        const cloudEl = $("simpleCloud");
-        const cloud = cloudEl ? moneyUsd("simpleCloud") : 180000;
-
-        setNum("tickets", tickets);
-        setNum("alerts", Math.round(alerts));
-        setNum("p1Count", p1);
-        setNum("tssaServers", servers);
-        setMoneyVal("cloudMonth", cloud);
-        setNum("changes", tickets * 0.05);
-        setNum("problems", tickets * 0.00375);
-        setNum("autoEvents", alerts * 0.057);
-        setNum("netAlerts", alerts * 0.43);
-        setNum("warRooms", p1 * 20 / 72);
-        setNum("kcArticles", staff * 5);
-        setNum("ifHours", staff * 5);
-        setNum("esmCases", staff * 150);
-        setNum("netDevices", staff * 31);
-        setNum("netNew", staff * 5);
-        setNum("assets", staff * 312);
-        setNum("assetUpdates", staff * 250);
-        setNum("svcModels", staff * 0.5);
-        setNum("bhcoHours", staff * 7.5);
-        setNum("vulnMonth", servers * 40 / 1800);
-        setMoneyVal("hwSpend", cloud * 12 * 0.185);
-        setMoneyVal("storSpend", cloud * 12 * 0.042);
+      function syncSimpleFromAdvanced() {
+        simpleState.tickets = num("tickets") / 12;
+        simpleState.alerts = num("alerts") / 365;
+        simpleState.p1 = num("p1Count") / 12;
+        simpleState.servers = num("tssaServers") || simpleState.servers;
+        simpleState.cloudUsd = moneyUsd("cloudMonth") || simpleState.cloudUsd;
+        applying = true;
+        fillSimpleFieldsFromState();
+        applying = false;
       }
 
       function paintHero() {
@@ -1505,67 +1719,132 @@
       }
 
       function setMode(mode) {
+        const fromAdvanced = uiMode === "advanced" && mode === "simple";
         const fromSimple = uiMode === "simple" && mode === "advanced";
         uiMode = mode;
         paintHero();
         if (uiMode === "simple") $("horizon").value = "3";
-        if (fromSimple) {
-          applying = true;
-          applyDerive();
-          applying = false;
-        }
+        applying = true;
+        if (fromAdvanced) syncSimpleFromAdvanced();
+        else if (fromSimple && !hasAdvEdits()) applyDerive();
+        applying = false;
         render();
+        updateAdvChip();
         writeHash();
       }
 
       function writeHash() {
         if (!hashReady) return;
-        const o = { mode: uiMode, persona: persona };
-        document.querySelectorAll("input, select").forEach((el) => {
-          if (!el.id) return;
-          o[el.id] = el.type === "checkbox" ? (el.checked ? "1" : "0") : el.value;
+        readSimpleState();
+        const parts = [
+          "m=" + (uiMode === "advanced" ? "a" : "s"),
+          "p=" + persona,
+          "c=" + encodeURIComponent(currency())
+        ];
+        parts.push("staff=" + simpleState.staff);
+        parts.push("tix=" + simpleState.tickets);
+        parts.push("al=" + simpleState.alerts);
+        parts.push("p1=" + simpleState.p1);
+        parts.push("srv=" + simpleState.servers);
+        parts.push("cloud=" + Math.round(simpleState.cloudUsd));
+        const spec = PERSONAS[persona];
+        const mods = CATALOG.filter((m) => m.on).map((m) => m.id);
+        const sameMods = mods.slice().sort().join(".") === spec.modules.slice().sort().join(".");
+        if (!sameMods) parts.push("mods=" + mods.join("."));
+        const d = deriveMap();
+        Object.keys(d).forEach((id) => {
+          const el = $(id);
+          if (!el) return;
+          const cur = MONEY_DERIVE[id] ? moneyUsd(id) : num(id);
+          if (Math.abs(cur - d[id]) > (MONEY_DERIVE[id] ? 2 : 1)) {
+            parts.push("o." + id + "=" + encodeURIComponent(MONEY_DERIVE[id] ? String(+cur.toFixed(4)) : el.value));
+          }
         });
-        o.mods = CATALOG.filter((m) => m.on).map((m) => m.id).join(".");
-        const s = encodeURIComponent(JSON.stringify(o));
+        const s = parts.join("&");
         if (history.replaceState) history.replaceState(null, "", "#" + s);
         else location.hash = s;
       }
 
-      function readHash() {
+      function parseHash() {
         const raw = location.hash.replace(/^#/, "");
         if (!raw) return null;
-        try { return JSON.parse(decodeURIComponent(raw)); } catch { return null; }
+        const dec = decodeURIComponent(raw);
+        if (dec.charAt(0) === "{") {
+          try { return { kind: "json", data: JSON.parse(dec) }; } catch { return null; }
+        }
+        const data = {};
+        raw.split("&").forEach((pair) => {
+          const i = pair.indexOf("=");
+          if (i < 0) return;
+          data[decodeURIComponent(pair.slice(0, i))] = decodeURIComponent(pair.slice(i + 1));
+        });
+        return { kind: "compact", data: data };
       }
 
-      function applyHash(o) {
-        if (!o) return;
+      function applyFieldValue(el, val) {
+        if (!el) return;
+        if (el.type === "checkbox") el.checked = val === "1" || val === true || val === "true";
+        else el.value = val;
+        if (el.hasAttribute("data-money")) {
+          if (String(el.value).trim() === "") el.dataset.usd = "";
+          else el.dataset.usd = String((parseFloat(el.value) || 0) / fxRate());
+        }
+      }
+
+      function applyHash(parsed) {
+        if (!parsed) return;
+        const o = parsed.data;
+        if (o.p && PERSONAS[o.p]) persona = o.p;
         if (o.persona && PERSONAS[o.persona]) persona = o.persona;
-        if (o.mode === "advanced" || o.mode === "simple") uiMode = o.mode;
+        if (o.m === "a" || o.mode === "advanced") uiMode = "advanced";
+        if (o.m === "s" || o.mode === "simple") uiMode = "simple";
+        if (o.c) $("currency").value = o.c;
+        if (o.currency) $("currency").value = o.currency;
+        if (o.c || o.currency) $("fxRate").value = String(FX_DEFAULT[currency()] || 1);
+        if (o.staff) simpleState.staff = parseFloat(o.staff);
+        if (o.tix) simpleState.tickets = parseFloat(o.tix);
+        if (o.simpleStaff) simpleState.staff = parseFloat(o.simpleStaff);
+        if (o.simpleTickets) simpleState.tickets = parseFloat(o.simpleTickets);
+        if (o.al) simpleState.alerts = parseFloat(o.al);
+        if (o.simpleAlerts) simpleState.alerts = parseFloat(o.simpleAlerts);
+        if (o.p1 != null && o.p1 !== "") simpleState.p1 = parseFloat(o.p1);
+        if (o.simpleP1 != null) simpleState.p1 = parseFloat(o.simpleP1);
+        if (o.srv) simpleState.servers = parseFloat(o.srv);
+        if (o.simpleServers) simpleState.servers = parseFloat(o.simpleServers);
+        if (o.cloud != null) simpleState.cloudUsd = parseFloat(o.cloud);
+        if (o.simpleCloud != null) simpleState.cloudUsd = parseFloat(o.simpleCloud) / (o.fxRate ? parseFloat(o.fxRate) : 1);
+        const skip = {};
+        if (parsed.kind === "json") {
+          Object.keys(o).forEach((k) => { if (deriveMap()[k] != null) skip[k] = true; });
+        } else {
+          Object.keys(o).forEach((k) => {
+            if (k.indexOf("o.") === 0) skip[k.slice(2)] = true;
+          });
+        }
+        suppressDerive = true;
         applyPersona(persona, false);
+        suppressDerive = false;
+        applyDerive(skip);
         if (o.mods) {
           const set = o.mods.split(".");
           CATALOG.forEach((m) => { m.on = set.indexOf(m.id) >= 0; });
         }
-        Object.keys(o).forEach((k) => {
-          if (k === "mode" || k === "persona" || k === "mods") return;
-          const el = $(k);
-          if (!el) return;
-          if (el.type === "checkbox") el.checked = o[k] === "1" || o[k] === true;
-          else el.value = o[k];
-          if (el.hasAttribute("data-money")) {
-            if (String(el.value).trim() === "") el.dataset.usd = "";
-            else el.dataset.usd = String((parseFloat(el.value) || 0) / fxRate());
-          }
-        });
-        SIMPLE_FIELDS.forEach((f) => {
-          const n = $(f.key);
-          const r = $(f.key + "Range");
-          if (n && r) r.value = n.value;
-        });
-        const sc = $("simpleCurrency");
-        if (sc) sc.value = currency();
-        document.body.classList.toggle("simple", uiMode === "simple");
-        document.body.classList.toggle("advanced", uiMode === "advanced");
+        if (parsed.kind === "json") {
+          Object.keys(o).forEach((k) => {
+            if (k === "mode" || k === "persona" || k === "mods" || /Range$/.test(k)) return;
+            applyFieldValue($(k), o[k]);
+          });
+        } else {
+          Object.keys(o).forEach((k) => {
+            if (k.indexOf("o.") !== 0) return;
+            const id = k.slice(2);
+            const el = $(id);
+            applyFieldValue(el, o[k]);
+            if (el && MONEY_DERIVE[id]) el.dataset.usd = String(parseFloat(o[k]) || 0);
+          });
+        }
+        fillSimpleFieldsFromState();
+        paintHero();
       }
 
       function packScenario(lines, real, redeploy, years, licence, services) {
@@ -1821,6 +2100,7 @@
           const fine = el.step && Number(el.step) < 1;
           el.value = String(+d.toFixed(fine || Math.abs(d) < 1000 ? 2 : 0));
         });
+        paintSimpleMoney();
       }
 
       function renderCostTable() {
@@ -1858,25 +2138,86 @@
           " · " + m.years + "-year cost " + fmtMoney(m.expected.totalCost);
       }
 
+      function drawQR(canvas) {
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        const n = QR_N;
+        const cell = canvas.width / n;
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#0b1f3a";
+        for (let y = 0; y < n; y++) {
+          for (let x = 0; x < n; x++) {
+            if (QR_BITS.charAt(y * n + x) === "1") ctx.fillRect(x * cell, y * cell, cell + 0.5, cell + 0.5);
+          }
+        }
+      }
+
+      function hourRange(h) {
+        const a = Math.round(h * REAL.conservative);
+        const b = Math.round(h * REAL.expected);
+        if (a === b) return a.toLocaleString();
+        return a.toLocaleString() + "–" + b.toLocaleString();
+      }
+
       function renderSimple(m) {
         if (!$("simpleHeadline")) return;
         const lo = m.conservative;
         const hi = m.expected;
-        $("simpleHeadline").textContent = "Estimated value: " + fmtMoney(lo.totalBenefit) + " to " + fmtMoney(hi.totalBenefit) + " over " + m.years + " years";
-        $("simpleRoi").textContent = (lo.roi == null ? "n/a" : fmtPct(lo.roi)) + " → " + (hi.roi == null ? "n/a" : fmtPct(hi.roi));
-        if (lo.pay == null && hi.pay == null) $("simplePay").textContent = "Not within " + m.years + " years";
-        else if (lo.pay && hi.pay && lo.pay !== hi.pay) $("simplePay").textContent = "Month " + hi.pay + "–" + lo.pay;
-        else $("simplePay").textContent = fmtMonth(hi.pay || lo.pay, m.years);
+        $("simpleHeadline").textContent = fmtCompact(lo.totalBenefit, 2) + "–" + fmtCompact(hi.totalBenefit, 2) + " over " + m.years + " years";
+        $("simpleRoi").textContent = (lo.roi == null ? "n/a" : fmtPct(lo.roi)) + "–" + (hi.roi == null ? "n/a" : fmtPct(hi.roi));
+        if (lo.pay == null && hi.pay == null) $("simplePay").textContent = "not within " + m.years + " years";
+        else if (hi.pay && lo.pay && hi.pay !== lo.pay) $("simplePay").textContent = "month " + hi.pay + "–" + lo.pay;
+        else $("simplePay").textContent = (hi.pay || lo.pay) == null ? "not within " + m.years + " years" : "month " + (hi.pay || lo.pay);
         const hrs = m.lines.filter((l) => l.type === "capacity").reduce((s, l) => s + (l.hours || 0), 0);
-        $("simpleHours").textContent = Math.round(hrs * REAL.conservative).toLocaleString() + " to " + Math.round(hrs * REAL.expected).toLocaleString() + " (after 50–70% realisation)";
-        const ranked = m.lines.slice().sort((a, b) => (b.annualUsd || 0) - (a.annualUsd || 0));
+        $("simpleHours").textContent = hourRange(hrs) + " after a 30–50% haircut for time that isn't truly freed up";
+        $("simpleInvest").textContent = "Based on an assumed investment of " + fmtMoney(m.expected.totalCost) + " over " + m.years + " years (licence + services), editable in See the maths.";
+        const note = $("credNote");
+        const topDriver = m.lines.slice().sort((a, b) => {
+          const va = a.type === "capacity" ? a.annualUsd * REAL.expected : a.annualUsd;
+          const vb = b.type === "capacity" ? b.annualUsd * REAL.expected : b.annualUsd;
+          return vb - va;
+        })[0];
+        const hot = (hi.roi != null && hi.roi > 1.5) || (hi.pay != null && hi.pay < 9);
+        if (hot && topDriver) {
+          note.hidden = false;
+          note.classList.add("show");
+          note.textContent = "This is high. The biggest driver is " + topDriver.name + ". Check that input with your team.";
+        } else {
+          note.hidden = true;
+          note.classList.remove("show");
+        }
+        const ranked = m.lines.slice().sort((a, b) => {
+          const va = a.type === "capacity" ? a.annualUsd * REAL.expected : a.annualUsd;
+          const vb = b.type === "capacity" ? b.annualUsd * REAL.expected : b.annualUsd;
+          return vb - va;
+        });
         const top = [];
         ranked.forEach((ln) => {
           if (top.length >= 3) return;
           const fn = DRIVER_COPY[ln.name];
-          top.push(fn ? fn(ln.hours || 0, ln.annualUsd || 0) : (ln.name + ": " + fmtMoney(ln.annualUsd) + " / yr before realisation."));
+          if (ln.type === "capacity") {
+            const raw = fn ? fn(ln.hours || 0, ln.annualUsd || 0) : ln.name + ": about 0 hours a year.";
+            top.push(raw.replace(/about [\d,]+/, "about " + hourRange(ln.hours || 0)));
+          } else {
+            top.push(fn ? fn(0, ln.annualUsd || 0) : ln.name + ": " + fmtMoney(ln.annualUsd) + " / yr.");
+          }
         });
         $("simpleDrivers").innerHTML = top.map((t) => "<li>" + t + "</li>").join("");
+        $("stickyVal").textContent = fmtCompact(lo.totalBenefit, 2) + "–" + fmtCompact(hi.totalBenefit, 2);
+        $("stickyRoi").textContent = (lo.roi == null ? "n/a" : fmtPct(lo.roi)) + "–" + (hi.roi == null ? "n/a" : fmtPct(hi.roi));
+        $("stickySum").hidden = uiMode !== "simple";
+        $("printPersona").textContent = "Persona: " + (PERSONA_LABEL[persona] || persona);
+        const rows = SIMPLE_FIELDS.filter((f) => PERSONAS[persona].fields.indexOf(f.id) >= 0).map((f) => {
+          const label = f.label;
+          const val = f.money ? fmtMoney(simpleState.cloudUsd) : (simpleState[f.id] || 0).toLocaleString();
+          return "<tr><td>" + label + "</td><td>" + val + "</td></tr>";
+        }).join("");
+        $("printInputs").innerHTML = rows + "<tr><td>Assumed 3-year investment</td><td>" + fmtMoney(m.expected.totalCost) + "</td></tr>";
+        $("printDate").textContent = "Printed " + new Date().toISOString().slice(0, 10);
+        $("printUrl").textContent = LIVE_URL;
+        drawQR($("printQR"));
+        updateAdvChip();
         const series = cumulativeSeries(hi.roiAnnual, m.years, m.services, m.licence);
         if (simpleChart) simpleChart.destroy();
         if (!window.Chart || !$("simpleChart")) return;
@@ -1950,7 +2291,23 @@
         setMode(btn.dataset.mode);
       });
       $("seeMaths").addEventListener("click", () => setMode("advanced"));
-      $("printBtn").addEventListener("click", () => window.print());
+      $("printBtn").addEventListener("click", () => { drawQR($("printQR")); window.print(); });
+      $("discMore").addEventListener("click", () => {
+        const bar = document.querySelector(".disclaimer");
+        const open = bar.classList.toggle("expanded");
+        $("discMore").textContent = open ? "less" : "more";
+        $("discMore").setAttribute("aria-expanded", String(open));
+      });
+      $("resetSimple").addEventListener("click", () => {
+        const spec = PERSONAS[persona];
+        CATALOG.forEach((m) => { m.on = spec.modules.indexOf(m.id) >= 0; });
+        applying = true;
+        applyDerive();
+        applying = false;
+        renderPicker();
+        renderTabs();
+        render();
+      });
       $("copyLinkBtn").addEventListener("click", async () => {
         writeHash();
         const url = location.href;
@@ -1990,6 +2347,7 @@
       });
       $("fxRate").addEventListener("input", () => {
         paintMoneyFields();
+        paintSimpleMoney();
         render();
       });
 
@@ -2028,7 +2386,7 @@
       initMoney();
       $("services").addEventListener("input", () => { $("services").dataset.manual = "1"; });
       $("svcPct").addEventListener("input", () => { $("services").dataset.manual = "0"; });
-      const hashed = readHash();
+      const hashed = parseHash();
       if (hashed) applyHash(hashed);
       else applyPersona("cio", true);
       paintHero();
@@ -2036,6 +2394,17 @@
       renderTabs();
       hashReady = true;
       render();
+      window.addEventListener("hashchange", () => {
+        if (applying) return;
+        const parsed = parseHash();
+        if (!parsed) return;
+        applying = true;
+        applyHash(parsed);
+        applying = false;
+        renderPicker();
+        renderTabs();
+        render();
+      });
     })();
   </script>
 </body>
