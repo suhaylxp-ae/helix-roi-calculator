@@ -2714,6 +2714,24 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
           : ("Selected year-1 SaaS licence " + fmtMoney(m.licence) + " · services " + fmtMoney(m.services) + " · " + m.years + "-year cost " + fmtMoney(m.expected.totalCost));
       }
 
+      function eachChart(fn) {
+        [simpleChart, barChart, lineChart, modChart].forEach((ch) => { if (ch) fn(ch); });
+      }
+
+      function freezeChartsForPrint() {
+        eachChart((ch) => {
+          ch.options.animation = false;
+          ch.resize();
+          ch.update("none");
+        });
+      }
+
+      function thawChartsAfterPrint() {
+        eachChart((ch) => {
+          ch.options.animation = true;
+        });
+      }
+
       function drawQR(canvas) {
         if (!canvas) return;
         const ctx = canvas.getContext("2d");
@@ -2933,7 +2951,18 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         setMode(btn.dataset.mode);
       });
       $("seeMaths").addEventListener("click", () => setMode("advanced"));
-      $("printBtn").addEventListener("click", () => { drawQR($("printQR")); window.print(); });
+      $("printBtn").addEventListener("click", () => {
+        drawQR($("printQR"));
+        freezeChartsForPrint();
+        window.print();
+      });
+      window.addEventListener("beforeprint", () => {
+        drawQR($("printQR"));
+        freezeChartsForPrint();
+      });
+      window.addEventListener("afterprint", () => {
+        thawChartsAfterPrint();
+      });
       $("discMore").addEventListener("click", () => {
         const bar = document.querySelector(".disclaimer");
         const open = bar.classList.toggle("expanded");
