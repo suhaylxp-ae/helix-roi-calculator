@@ -469,6 +469,16 @@
     .simple-row input[type="number"], .simple-row select {
       flex: 1; min-height: 2.7rem; font-size: 1rem;
     }
+    .include-outage {
+      display: flex; align-items: flex-start; gap: 0.4rem;
+      margin-top: 0.4rem; font-weight: 650; font-size: 0.82rem; color: var(--navy); cursor: pointer;
+    }
+    .include-outage input { margin-top: 0.15rem; }
+    .include-outage.is-off { color: var(--muted); cursor: not-allowed; }
+    .outage-hint { display: none; font-size: 0.72rem; color: var(--muted); font-weight: 500; margin: 0.2rem 0 0; }
+    .outage-hint.show { display: block; }
+    .roi-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; grid-column: 1 / -1; }
+    .roi-pair.hidden-pair { display: none; }
     .results-card {
       background: linear-gradient(165deg, var(--navy) 0%, #16365f 100%);
       color: #fff; border-radius: 16px; padding: 1.25rem 1.2rem 1.1rem; box-shadow: var(--shadow);
@@ -477,7 +487,9 @@
     .results-card .headline { font-size: clamp(1.35rem, 4vw, 1.85rem); font-weight: 700; margin: 0 0 0.4rem; letter-spacing: -0.03em; line-height: 1.2; }
     .outage-line { font-size: 0.88rem; color: var(--gold); margin: 0 0 0.75rem; line-height: 1.35; font-weight: 600; }
     .results-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; margin-bottom: 0.85rem; }
-    .results-meta div { background: rgba(255,255,255,0.08); border-radius: 10px; padding: 0.55rem 0.65rem; }
+    .results-meta > div { background: rgba(255,255,255,0.08); border-radius: 10px; padding: 0.55rem 0.65rem; }
+    .results-meta > .roi-pair { background: transparent; padding: 0; }
+    .roi-pair > div { background: rgba(255,255,255,0.08); border-radius: 10px; padding: 0.55rem 0.65rem; }
     .results-meta span { display: block; font-size: 0.72rem; color: #c9d6e8; }
     .results-meta b { font-family: var(--mono); font-size: 0.95rem; white-space: normal; }
     #simpleHours { font-family: var(--sans) !important; font-weight: 600; font-size: 0.88rem; line-height: 1.35; }
@@ -604,7 +616,10 @@
       .onprem-year-note, .saas-compare-note { display: none !important; }
       .results-card .headline { font-size: 1.05rem; margin: 0 0 0.25rem; }
       .results-meta { margin-bottom: 0.25rem; gap: 0.25rem; }
-      .results-meta div { background: #f5f7fb; padding: 0.25rem 0.4rem; }
+      .results-meta > div { background: #f5f7fb; padding: 0.25rem 0.4rem; }
+      .roi-pair { gap: 0.25rem; }
+      .roi-pair > div { background: #f5f7fb; padding: 0.25rem 0.4rem; }
+      body.outage-on .simple-chart { height: 128px; margin-bottom: 0.4rem; }
       .results-meta span, .drivers { color: var(--ink); }
       .cred-note { color: var(--warn); background: #fff6e8; margin: 0.15rem 0; padding: 0.25rem 0.4rem; }
       .print-only { display: block; margin-top: 0.2rem; }
@@ -690,7 +705,11 @@
         <p class="headline" id="simpleHeadline">—</p>
         <p class="outage-line" id="outageLine"></p>
         <div class="results-meta">
-          <div><span>Net ROI <i class="order-hint">cautious · likely</i></span><b id="simpleRoi">—</b></div>
+          <div id="roiSingle"><span>Net ROI <i class="order-hint">cautious · likely</i></span><b id="simpleRoi">—</b></div>
+          <div class="roi-pair hidden-pair" id="roiPair">
+            <div><span>ROI without outages <i class="order-hint">cautious · likely</i></span><b id="simpleRoiWithout">—</b></div>
+            <div><span>ROI with outages <i class="order-hint">cautious · likely</i></span><b id="simpleRoiWith">—</b></div>
+          </div>
           <div><span>Payback <i class="order-hint">likely · cautious</i></span><b id="simplePay">—</b></div>
           <div style="grid-column:1/-1"><span>Staff hours back each year</span><b id="simpleHours">—</b></div>
         </div>
@@ -718,7 +737,7 @@
         <p class="where-label">Where the value comes from</p>
         <ol class="drivers" id="simpleDrivers"></ol>
         <div class="simple-chart"><canvas id="simpleChart"></canvas></div>
-        <p class="upside-note">Outage costs are not counted. That is extra benefit (not counted).</p>
+        <p class="upside-note" id="upsideNote">Outage costs are not counted. That is extra benefit (not counted).</p>
         <div class="simple-actions no-print">
           <button type="button" id="copyLinkBtn">Copy link</button>
           <button type="button" id="printBtn">Download one page</button>
@@ -732,7 +751,7 @@
         <ul class="print-method">
           <li>Adoption grows over time: 50% in year 1, 85% in year 2, 100% after.</li>
           <li>We count only 50–70% of saved time.</li>
-          <li>Outage costs are not counted in ROI.</li>
+          <li id="printOutageMethod">Outage costs are not counted in ROI.</li>
           <li>Each saving is counted once.</li>
         </ul>
         <p class="print-sources">Defaults are cautious. They sit at or below public figures. No public source: major-outage labour cut, emergency team call cut, handle-time cut, HR/ESM self-solved tickets, on-prem cost split. These are our own careful estimates.</p>
@@ -910,10 +929,13 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
           </div>
           <div class="downtime">
             <h3>Optional outage cost <span class="tag tag-up">extra benefit (not counted)</span></h3>
-            <p>Major-outage minutes × cost per minute. Never in net ROI or payback.</p>
+            <p>Major-outage minutes × cost per minute. Not counted in ROI unless you turn on Include outage savings.</p>
             <div class="grid-2">
               <label class="field"><span class="label-row">Avg elapsed major-outage minutes <span class="assump">illustrative assumption</span></span><input id="downMins" type="number" min="0" step="1" placeholder="Leave blank" /></label>
-              <label class="field"><span class="label-row">Cost / minute of major outage <span class="tip" tabindex="0" data-tip="Leave blank to omit. Business-loss figure. Not counted in ROI.">i</span> <a class="src" href="https://uptimeinstitute.com/about-ui/press-releases/uptime-announces-annual-outage-analysis-report-2025" target="_blank" rel="noopener">source</a></span><input id="downCost" data-money type="number" min="0" step="100" placeholder="Leave blank" /></label>
+              <label class="field"><span class="label-row">Cost / minute of major outage <span class="tip" tabindex="0" data-tip="Leave blank to omit. Your own business-loss figure. Not counted in ROI unless you turn on Include outage savings.">i</span> <a class="src" href="https://uptimeinstitute.com/about-ui/press-releases/uptime-announces-annual-outage-analysis-report-2025" target="_blank" rel="noopener">source</a></span><input id="downCost" data-money type="number" min="0" step="100" placeholder="Leave blank" />
+                <label class="include-outage" id="advOutageLabel"><input id="outageInRoi" type="checkbox" /> Include outage savings</label>
+                <span class="outage-hint show" id="outageHint">Enter your own cost per minute first.</span>
+              </label>
             </div>
           </div>
           <p class="ref-note">Vendor claim (not used as a default): BMC reports 75% faster time to fix in its own AIOps work (helixops.ai).</p>
@@ -1091,7 +1113,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
     <details class="method" id="methodBox">
       <summary>How we count value</summary>
       <div class="body">
-        <p>Cash, counted staff time, and extra benefit (not counted) are kept apart. Headline ROI is cash plus counted staff time. Adoption grows over time: 50% in year 1, 85% in year 2, 100% after. We count only 50–70% of saved time. Hours cannot exceed the baseline in that area. Each saving is counted once. Outage costs are not counted in ROI.</p>
+        <p>Cash, counted staff time, and extra benefit (not counted) are kept apart. Headline ROI is cash plus counted staff time. Adoption grows over time: 50% in year 1, 85% in year 2, 100% after. We count only 50–70% of saved time. Hours cannot exceed the baseline in that area. Each saving is counted once. Outage costs are not counted in ROI unless you turn on Include outage savings. That line is tagged Outage savings (your own figure). It uses your cost per minute, grows in over time (50 / 85 / 100%), is not cut by the 50–70% time rule, and is capped at half of yearly outage cost.</p>
         <p><strong>Simple-mode ratios</strong> (illustrative; edit the derived fields here to override):</p>
         <ul>
           <li>Tickets / year = tickets per month × 12. Alerts / year = alerts per day × 365. Major outages / year = major outages per month × 12.</li>
@@ -1205,7 +1227,8 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         "Patch automation": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from faster patching."; },
         "Network false-alert suppression": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from fewer false network alerts."; },
         "Asset-record updates": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from fewer asset-record updates."; },
-        "Fewer business cases": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from fewer business cases."; }
+        "Fewer business cases": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from fewer business cases."; },
+        "Outage savings (your own figure)": function (_, usd) { return "Outage savings (your own figure): " + fmtMoney(usd) + " a year from shorter outages."; }
       };
 
       const LIVE_URL = "https://suhaylxp-ae.github.io/helix-roi-calculator/";
@@ -1351,6 +1374,82 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
 
       function isOnprem() {
         return $("deployMode") && $("deployMode").value === "onprem";
+      }
+
+      function hasOutageCost() {
+        return !blank("downCost") && moneyUsd("downCost") > 0;
+      }
+
+      function isOutageToggleOn() {
+        return $("outageInRoi") && $("outageInRoi").checked;
+      }
+
+      function isOutageInRoi() {
+        return isOutageToggleOn() && hasOutageCost();
+      }
+
+      function yearlyOutageCost() {
+        if (!hasOutageCost() || blank("downMins") || num("downMins") <= 0 || num("p1Count") <= 0) return 0;
+        return num("p1Count") * num("downMins") * moneyUsd("downCost");
+      }
+
+      function outageSavingsUsd(warnings) {
+        const yearCost = yearlyOutageCost();
+        if (yearCost <= 0) return 0;
+        const mttr = pct("mttrPct", "major-outage labour cut", warnings);
+        let raw = yearCost * mttr;
+        const cap = yearCost * 0.5;
+        if (raw > cap + 1e-9) {
+          if (warnings) warnings.push("Outage savings were capped at half of yearly outage cost so they cannot dominate.");
+          raw = cap;
+        }
+        return raw;
+      }
+
+      function syncOutageToggleUI() {
+        const ready = hasOutageCost();
+        ["outageInRoi", "simpleOutageInRoi"].forEach((id) => {
+          const el = $(id);
+          if (!el) return;
+          el.disabled = !ready;
+        });
+        if ($("simpleOutageInRoi") && $("outageInRoi")) $("simpleOutageInRoi").checked = $("outageInRoi").checked;
+        ["outageHint", "simpleOutageHint"].forEach((id) => {
+          const el = $(id);
+          if (el) el.classList.toggle("show", !ready);
+        });
+        ["advOutageLabel", "simpleOutageLabel"].forEach((id) => {
+          const el = $(id);
+          if (el) el.classList.toggle("is-off", !ready);
+        });
+        document.body.classList.toggle("outage-on", isOutageInRoi());
+      }
+
+      function withOutageScenario(base, extraAnnual, years, cost, modId) {
+        const extraH = yearly(extraAnnual, years);
+        const roiAnnual = base.roiAnnual + extraAnnual;
+        const totalBenefit = base.totalBenefit + extraH.total;
+        const net = totalBenefit - base.totalCost;
+        const roi = base.totalCost > 0 ? net / base.totalCost : null;
+        const pay = paybackMonth(roiAnnual, years, cost.upfront, cost.annualRun);
+        const addRow = (h) => ({ row: h.row.map((v, i) => v + extraH.row[i]), total: h.total + extraH.total });
+        const moduleBars = (base.moduleBars || []).map((b) => {
+          if (modId && b.id === modId) return { id: b.id, name: b.name, total: b.total + extraH.total };
+          return b;
+        });
+        return Object.assign({}, base, {
+          cashAnnual: base.cashAnnual + extraAnnual,
+          roiAnnual: roiAnnual,
+          cashH: addRow(base.cashH),
+          roiH: addRow(base.roiH),
+          totalBenefit: totalBenefit,
+          net: net,
+          roi: roi,
+          pay: pay,
+          roiWithout: base.roi,
+          payWithout: base.pay,
+          moduleBars: moduleBars
+        });
       }
 
       function setDeploy(mode, fromUser) {
@@ -1747,7 +1846,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
           capacity("Fewer emergency team calls", warSaved, "eng", c.rates),
           capacity("Service-model maintenance", modelSaved, "eng", c.rates)
         ];
-        if (!blank("downCost") && !blank("downMins") && moneyUsd("downCost") > 0 && num("downMins") > 0) {
+        if (!isOutageInRoi() && !blank("downCost") && !blank("downMins") && moneyUsd("downCost") > 0 && num("downMins") > 0) {
           lines.push(upside("Major-outage business loss (not counted)", num("p1Count") * num("downMins") * moneyUsd("downCost") * pct("mttrPct")));
         }
         return lines;
@@ -1981,7 +2080,9 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
           ? "<label class='simple-field'><span>Currency</span><span class='hint'>Display only. Amounts stay in USD internally.</span><div class='simple-row'><select id='simpleCurrency'><option value='USD'>USD</option><option value='AED'>AED</option><option value='GBP'>GBP</option><option value='EUR'>EUR</option></select></div></label>"
           : "") +
           "<label class='simple-field'><span>Avg minutes per major outage</span><span class='hint'>Optional. Leave blank if you do not want outage cost shown.</span><div class='simple-row'><input id='simpleDownMins' type='number' min='0' step='1' placeholder='Leave blank' /></div></label>" +
-          "<label class='simple-field'><span>Cost per minute of outage</span><span class='hint'>Optional. Not counted in ROI.</span><div class='simple-row'><input id='simpleDownCost' data-money type='number' min='0' step='100' placeholder='Leave blank' /></div></label>";
+          "<label class='simple-field'><span>Cost per minute of outage</span><span class='hint'>Optional. Not counted in ROI unless you turn on Include outage savings.</span><div class='simple-row'><input id='simpleDownCost' data-money type='number' min='0' step='100' placeholder='Leave blank' /></div>" +
+          "<label class='include-outage' id='simpleOutageLabel'><input id='simpleOutageInRoi' type='checkbox' /> Include outage savings</label>" +
+          "<span class='outage-hint show' id='simpleOutageHint'>Enter your own cost per minute first.</span></label>";
         const cloud = $("simpleCloud");
         if (cloud) cloud.dataset.usd = String(simpleState.cloudUsd);
         fillSimpleFieldsFromState();
@@ -1992,15 +2093,20 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         const mins = $("simpleDownMins");
         const cost = $("simpleDownCost");
         if (mins && $("downMins")) mins.value = $("downMins").value;
-        if (!cost || !$("downCost")) return;
-        if (blank("downCost")) {
-          cost.value = "";
-          cost.dataset.usd = "";
-          return;
+        if (cost && $("downCost")) {
+          if (blank("downCost")) {
+            cost.value = "";
+            cost.dataset.usd = "";
+          } else {
+            cost.dataset.usd = $("downCost").dataset.usd || String(moneyUsd("downCost"));
+            const d = moneyUsd("downCost") * fxRate();
+            cost.value = String(+d.toFixed(d < 1000 ? 2 : 0));
+          }
         }
-        cost.dataset.usd = $("downCost").dataset.usd || String(moneyUsd("downCost"));
-        const d = moneyUsd("downCost") * fxRate();
-        cost.value = String(+d.toFixed(d < 1000 ? 2 : 0));
+        if ($("simpleOutageInRoi") && $("outageInRoi")) {
+          $("simpleOutageInRoi").checked = $("outageInRoi").checked;
+        }
+        syncOutageToggleUI();
       }
 
       function syncOutageFromSimple() {
@@ -2127,6 +2233,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         }
         if (!blank("downMins")) parts.push("o.downMins=" + encodeURIComponent($("downMins").value));
         if (!blank("downCost")) parts.push("o.downCost=" + encodeURIComponent(String(+moneyUsd("downCost").toFixed(4))));
+        if (isOutageToggleOn()) parts.push("out=1");
         const ag = readAgentHash();
         if (ag) parts.push("ag=" + ag);
         const spec = PERSONAS[persona];
@@ -2246,6 +2353,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         if (o.ag) applyAgentHash(o.ag);
         if (!isPackAdvanced() && $("agTR")) $("agTR").checked = false;
         enforceExtraAgentCap(false);
+        if ($("outageInRoi")) $("outageInRoi").checked = o.out === "1";
         fillSimpleFieldsFromState();
         fillOutageSimple();
         paintHero();
@@ -2300,13 +2408,27 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
           });
         });
 
+        const outageOn = isOutageInRoi();
+        const outageAnnual = outageOn ? outageSavingsUsd(c.warnings) : 0;
+        if (outageOn && outageAnnual > 0) {
+          const line = cash("Outage savings (your own figure)", outageAnnual);
+          line.module = c.on.aiops ? "aiops" : (selected()[0] ? selected()[0].id : "aiops");
+          lines.push(line);
+        }
+
         const years = c.years;
         const cost = buildCost(years);
         const licence = cost.saasLicence;
         const services = cost.services;
 
-        const conservative = packScenario(lines, REAL.conservative, c.redeploy, years, cost);
-        const expected = packScenario(lines, REAL.expected, c.redeploy, years, cost);
+        const linesBase = outageOn ? lines.filter((ln) => ln.name !== "Outage savings (your own figure)") : lines;
+        const conservativeBase = packScenario(linesBase, REAL.conservative, c.redeploy, years, cost);
+        const expectedBase = packScenario(linesBase, REAL.expected, c.redeploy, years, cost);
+        const outageMod = c.on.aiops ? "aiops" : (selected()[0] ? selected()[0].id : "");
+        const conservative = outageOn ? withOutageScenario(conservativeBase, outageAnnual, years, cost, outageMod) : Object.assign({}, conservativeBase, { roiWithout: conservativeBase.roi, payWithout: conservativeBase.pay });
+        const expected = outageOn ? withOutageScenario(expectedBase, outageAnnual, years, cost, outageMod) : Object.assign({}, expectedBase, { roiWithout: expectedBase.roi, payWithout: expectedBase.pay });
+        conservative.showOutageSplit = outageOn;
+        expected.showOutageSplit = outageOn;
 
         ["card-en", "card-sc", "card-kc", "card-cra", "card-if", "card-tr"].forEach((id) => {
           const card = $(id);
@@ -2317,7 +2439,9 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
 
         return {
           c, years, lines, warnings: c.warnings, overlaps: c.overlaps,
-          conservative, expected, licence, services, cost
+          conservative, expected, licence, services, cost,
+          outageOn: outageOn, outageAnnual: outageAnnual,
+          conservativeBase: conservativeBase, expectedBase: expectedBase
         };
       }
 
@@ -2358,6 +2482,10 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
           "<div class='kpi'><span>Total cost</span><b>" + fmtMoney(s.totalCost) + "</b></div>" +
           "<div class='kpi'><span>Net value</span><b>" + fmtMoney(s.net) + "</b></div>" +
           "<div class='kpi hero" + neg + "'><span>Net ROI</span><b>" + (s.roi == null ? "n/a" : fmtPct(s.roi)) + "</b></div>" +
+          (s.showOutageSplit
+            ? "<div class='kpi'><span>ROI without outages</span><b>" + (s.roiWithout == null ? "n/a" : fmtPct(s.roiWithout)) + "</b></div>" +
+              "<div class='kpi'><span>ROI with outages</span><b>" + (s.roi == null ? "n/a" : fmtPct(s.roi)) + "</b></div>"
+            : "") +
           "<div class='kpi'><span>Payback</span><b>" + fmtMonth(s.pay, years) + "</b></div></div>";
       }
 
@@ -2367,7 +2495,9 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
           scenCard("Cautious · 50% of saved time", m.conservative, m.years) +
           scenCard("Likely · 70% of saved time", m.expected, m.years) +
           "</div>" +
-          "<p class='subkpi'>ROI benefit = cash + staff time we count. We count only 50–70% of saved time. Charts use the likely case.</p>";
+          "<p class='subkpi'>ROI benefit = cash + staff time we count. We count only 50–70% of saved time. Charts use the likely case." +
+          (m.outageOn ? " Outage savings (your own figure) is counted in the ROI with outages figure. It is not cut by the 50–70% time rule." : "") +
+          "</p>";
         const hot = (m.conservative.roi != null && m.conservative.roi > 5) || (m.expected.roi != null && m.expected.roi > 5);
         $("credWarn").classList.toggle("show", hot);
       }
@@ -2469,8 +2599,9 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
             "Total cost: " + fmtMoney(s.totalCost),
             "Net value: " + fmtMoney(s.net),
             "Net ROI: " + (s.roi == null ? "n/a" : fmtPct(s.roi)),
+            (m.outageOn ? ("ROI without outages: " + (s.roiWithout == null ? "n/a" : fmtPct(s.roiWithout)) + "  |  ROI with outages: " + (s.roi == null ? "n/a" : fmtPct(s.roi))) : ""),
             "Payback: " + fmtMonth(s.pay, m.years)
-          ].join("\n");
+          ].filter(Boolean).join("\n");
         }
         const lines = [
           "Helix Value Calculator — executive summary",
@@ -2579,7 +2710,10 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
           const outageMins = blank("downMins") ? 0 : num("downMins");
           const outageCpm = blank("downCost") ? 0 : moneyUsd("downCost");
           const p1Year = num("p1Count");
-          if (outageMins > 0 && outageCpm > 0 && p1Year > 0) {
+          if (m.outageOn && m.outageAnnual > 0) {
+            outageEl.classList.remove("is-empty");
+            outageEl.textContent = "Outage savings (your own figure): " + fmtMoney(m.outageAnnual) + " a year, counted in the ROI with outages figure.";
+          } else if (outageMins > 0 && outageCpm > 0 && p1Year > 0) {
             outageEl.classList.remove("is-empty");
             outageEl.textContent = "Plus avoided outage costs of up to " + fmtMoney(p1Year * outageMins * outageCpm) + " a year (not counted in ROI).";
           } else {
@@ -2587,7 +2721,22 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
             outageEl.textContent = "Add your outage cost to see this";
           }
         }
-        $("simpleRoi").textContent = (lo.roi == null ? "n/a" : fmtPct(lo.roi)) + "–" + (hi.roi == null ? "n/a" : fmtPct(hi.roi));
+        const roiText = (a, b) => (a.roi == null ? "n/a" : fmtPct(a.roi)) + "–" + (b.roi == null ? "n/a" : fmtPct(b.roi));
+        $("simpleRoi").textContent = roiText(lo, hi);
+        const pair = $("roiPair");
+        const single = $("roiSingle");
+        if (pair && single) {
+          const on = !!m.outageOn;
+          pair.classList.toggle("hidden-pair", !on);
+          pair.hidden = !on;
+          single.hidden = on;
+          if (on) {
+            const lo0 = m.conservativeBase || lo;
+            const hi0 = m.expectedBase || hi;
+            $("simpleRoiWithout").textContent = roiText(lo0, hi0);
+            $("simpleRoiWith").textContent = roiText(lo, hi);
+          }
+        }
         if (lo.pay == null && hi.pay == null) $("simplePay").textContent = "not within " + m.years + " years";
         else if (hi.pay && lo.pay && hi.pay !== lo.pay) $("simplePay").textContent = "month " + hi.pay + "–" + lo.pay;
         else $("simplePay").textContent = (hi.pay || lo.pay) == null ? "not within " + m.years + " years" : "month " + (hi.pay || lo.pay);
@@ -2644,7 +2793,20 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         $("stickyVal").textContent = fmtCompact(lo.totalBenefit, 2) + "–" + fmtCompact(hi.totalBenefit, 2);
         $("stickyRoi").textContent = (lo.roi == null ? "n/a" : fmtPct(lo.roi)) + "–" + (hi.roi == null ? "n/a" : fmtPct(hi.roi));
         $("stickySum").hidden = uiMode !== "simple";
-        $("printPersona").textContent = "Persona: " + (PERSONA_LABEL[persona] || persona) + ". How you buy Helix: " + (m.cost.mode === "onprem" ? "On-premises" : "SaaS (subscription)") + ". Package: " + packLabel() + ".";
+        $("printPersona").textContent = "Persona: " + (PERSONA_LABEL[persona] || persona) + ". How you buy Helix: " + (m.cost.mode === "onprem" ? "On-premises" : "SaaS (subscription)") + ". Package: " + packLabel() + "." +
+          (m.outageOn ? " ROI without outages: " + roiText(m.conservativeBase || lo, m.expectedBase || hi) + ". ROI with outages: " + roiText(lo, hi) + "." : "");
+        const upsideNote = $("upsideNote");
+        if (upsideNote) {
+          upsideNote.textContent = m.outageOn
+            ? "Outage savings (your own figure) are counted in the ROI with outages figure."
+            : "Outage costs are not counted. That is extra benefit (not counted).";
+        }
+        const printOut = $("printOutageMethod");
+        if (printOut) {
+          printOut.textContent = m.outageOn
+            ? "ROI is shown without outages and with outages. Outage savings (your own figure) use your cost per minute."
+            : "Outage costs are not counted in ROI.";
+        }
         const rows = SIMPLE_FIELDS.filter((f) => PERSONAS[persona].fields.indexOf(f.id) >= 0).map((f) => {
           const label = f.label;
           const val = f.money ? fmtMoney(simpleState.cloudUsd) : (simpleState[f.id] || 0).toLocaleString();
@@ -2685,6 +2847,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
       function render() {
         setDeploy(isOnprem() ? "onprem" : "saas", false);
         setPack(isPackAdvanced() ? "advanced" : "standard", false);
+        syncOutageToggleUI();
         renderCostTable();
         const m = engine();
         lastCopy = buildCopy(m);
@@ -2821,6 +2984,8 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
       });
       document.addEventListener("change", (e) => {
         if (applying) return;
+        if (e.target.id === "simpleOutageInRoi" && $("outageInRoi")) $("outageInRoi").checked = e.target.checked;
+        if (e.target.id === "outageInRoi" && $("simpleOutageInRoi")) $("simpleOutageInRoi").checked = e.target.checked;
         if (e.target.id === "currency" || e.target.id === "simpleCurrency") return;
         if (e.target && AGENT_EXTRA.indexOf(e.target.id) >= 0) {
           if (e.target.checked) {
@@ -2900,6 +3065,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
           uiMode = "simple";
           setDeploy("saas", false);
           setPack("standard", false);
+          if ($("outageInRoi")) $("outageInRoi").checked = false;
           applyPersona("cio", true);
           paintHero();
         } else {
