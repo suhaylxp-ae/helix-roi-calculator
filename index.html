@@ -159,6 +159,22 @@
       font-weight: 700;
       cursor: help;
     }
+    .tip.tip-wide:hover::after, .tip.tip-wide:focus::after { width: min(420px, 85vw); white-space: pre-wrap; }
+    .incl-box { margin: 0.55rem 0 0; font-size: 0.85rem; }
+    .incl-box summary { cursor: pointer; font-weight: 650; color: var(--navy); }
+    .incl-box .incl-body { color: var(--muted); padding: 0.45rem 0 0.2rem; }
+    .incl-box .incl-body p { margin: 0 0 0.4rem; }
+    .agent-count { font-size: 0.82rem; font-weight: 650; margin: 0 0 0.55rem; }
+    .agent-warn { font-size: 0.8rem; color: var(--warn); background: #fff6e8; border-radius: 8px; padding: 0.45rem 0.6rem; margin: 0 0 0.55rem; }
+    .agent-adv-note { font-size: 0.78rem; color: var(--muted); margin: 0.35rem 0 0; }
+    .onprem-year-note, .saas-compare-note {
+      font-size: 0.82rem; color: #d7e2f2; margin: 0.35rem 0 0.2rem; line-height: 1.4;
+    }
+    .saas-compare-note button {
+      font: inherit; font-weight: 650; margin-top: 0.35rem; display: inline-block;
+      background: #fff; color: var(--navy); border: 0; border-radius: 8px;
+      padding: 0.35rem 0.75rem; cursor: pointer; min-height: 2.2rem;
+    }
     .tip:hover::after, .tip:focus::after {
       content: attr(data-tip);
       position: absolute;
@@ -585,15 +601,17 @@
       .outage-line { margin: 0 0 0.35rem; font-size: 0.72rem; }
       .pace-note { color: var(--navy); background: #f5f7fb; border-color: var(--line); }
       .pace-note button { display: none; }
+      .onprem-year-note, .saas-compare-note { display: none !important; }
       .results-card .headline { font-size: 1.05rem; margin: 0 0 0.25rem; }
       .results-meta { margin-bottom: 0.25rem; gap: 0.25rem; }
       .results-meta div { background: #f5f7fb; padding: 0.25rem 0.4rem; }
       .results-meta span, .drivers { color: var(--ink); }
       .cred-note { color: var(--warn); background: #fff6e8; margin: 0.15rem 0; padding: 0.25rem 0.4rem; }
       .print-only { display: block; margin-top: 0.2rem; }
-      .simple-chart { height: 150px; margin: 0.15rem 0 0.1rem; padding: 0.2rem; }
+      .simple-chart { height: 150px; margin: 0.15rem 0 0.55rem; padding: 0.2rem; overflow: hidden; }
       .upside-note, .where-label, .invest-note { margin: 0.12rem 0; font-size: 0.68rem; }
-      .upside-note { margin-top: 0.4rem; }
+      .upside-note { margin-top: 0.7rem; position: relative; }
+      .outage-line.is-empty { display: none !important; }
       #simpleHours { font-size: 0.74rem !important; }
       .print-method { font-size: 0.64rem; padding-left: 0.95rem; margin: 0.12rem 0; }
       .print-method li { margin: 0.05rem 0; }
@@ -682,6 +700,16 @@
           <button type="button" data-dep="saas" aria-pressed="true">SaaS (subscription)</button>
           <button type="button" data-dep="onprem" aria-pressed="false">On-premises</button>
         </div>
+        <p class="onprem-year-note" id="onpremYearNote" hidden>On-premises has a large first-year cost, so we show 5 years. You can change this.</p>
+        <div class="buy-toggle no-print" id="simplePack" role="group" aria-label="AI Service Management">
+          <span>AI Service Management</span>
+          <button type="button" data-pack="standard" aria-pressed="true">Standard</button>
+          <button type="button" data-pack="advanced" aria-pressed="false">Advanced</button>
+        </div>
+        <p class="saas-compare-note" id="saasCompareNote" hidden>
+          For this setup, a subscription (SaaS) usually gives better value.
+          <button type="button" id="compareSaas">Compare with SaaS</button>
+        </p>
         <p id="credNote" class="cred-note" hidden></p>
         <p id="paceNote" class="pace-note" hidden>
           Value builds slowly for this setup. Most teams see it in years 3 to 5.
@@ -757,6 +785,27 @@
           </select>
         </label>
       </div>
+      <div class="grid-4" style="margin-top:0.75rem;">
+        <label class="field">
+          <span class="label-row">AI Service Management <span class="tip tip-wide" tabindex="0" aria-label="What's included" data-tip="What's included
+Standard: Employee Navigator, Insight Finder, plus 3 agents you choose. IT service management, change, knowledge, CMDB, self-service portal, live chat, case management, dashboards.
+Advanced: everything in Standard, plus all agents, Ticket Resolver, up to 10 custom agents, ready-made HR, workplace and security content, and advanced impact analysis.
+You bring your own AI model. Check your BMC contract for exact terms.">i</span></span>
+          <select id="packMode">
+            <option value="standard" selected>Standard</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </label>
+      </div>
+      <details class="incl-box">
+        <summary>What’s included</summary>
+        <div class="incl-body">
+          <p>Standard: Employee Navigator, Insight Finder, plus 3 agents you choose. IT service management, change, knowledge, CMDB, self-service portal, live chat, case management, dashboards.</p>
+          <p>Advanced: everything in Standard, plus all agents, Ticket Resolver, up to 10 custom agents, ready-made HR, workplace and security content, and advanced impact analysis.</p>
+          <p>You bring your own AI model. Check your BMC contract for exact terms.</p>
+          <p><a class="src" href="https://docs.helixops.ai/bin/Helix-Common-Services/Other/BMC-Helix-Subscriber-Information/helixsubscriber/BMC-Helix-services/BMC-Helix-AI-Service-Management-service/" target="_blank" rel="noopener">Source</a></p>
+        </div>
+      </details>
       <div class="grid-4" style="margin-top:0.75rem;">
         <label class="field adv-redeploy">
           <span class="label-row">% of saved time put to other work <span class="assump">advanced</span> <span class="tip" tabindex="0" data-tip="Default 100%. We already count only 50% or 70% of saved time. Lower this only if the team will not use the time.">i</span></span>
@@ -874,6 +923,8 @@
           <h3>Helix AI Agents <span class="tag tag-cap">staff time add-on</span></h3>
           <p class="blurb">Add-on only. Counted if ITSM and/or Change is selected. Extra self-solved tickets with ITSM are combined and capped at 40%. Each agent’s value is shown after we count only 50–70% of saved time.</p>
           <div id="agentsLock" class="agents-lock">Select ITSM and/or Change to activate AI Agents. This layer does not run on its own.</div>
+          <p class="agent-count" id="extraAgentCount">Extra agents chosen: 3 of 3</p>
+          <p class="agent-warn" id="extraAgentWarn" hidden>Standard includes 3 extra agents. Switch to Advanced to use more.</p>
           <div class="agent-card" id="card-en">
             <div class="agent-head"><label><input id="agEN" type="checkbox" checked /> <strong>Employee Navigator</strong></label><span class="agent-val" id="val-en">—</span></div>
             <p class="blurb" style="margin:0.35rem 0 0.5rem;">Extra tickets solved without the service desk. Combined with ITSM extra self-solved tickets.</p>
@@ -893,7 +944,7 @@
             </div>
           </div>
           <div class="agent-card" id="card-cra">
-            <div class="agent-head"><label><input id="agCRA" type="checkbox" checked /> <strong>Change Risk Advisor</strong></label><span class="agent-val" id="val-cra">—</span></div>
+            <div class="agent-head"><label><input id="agCRA" type="checkbox" checked /> <strong>Change Coordinator</strong></label><span class="agent-val" id="val-cra">—</span></div>
             <p class="blurb" style="margin:0.35rem 0 0.5rem;">Further cut on Change-module effort that remains after the Change effort cut. Requires Change.</p>
             <label class="field"><span class="label-row">Cut on remaining change hours % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 8%, below the Change module’s own 15% cut.">i</span></span><input id="craCutPct" type="number" min="0" max="100" step="1" value="8" /></label>
           </div>
@@ -902,6 +953,15 @@
             <div class="grid-2" style="margin-top:0.5rem;">
               <label class="field"><span class="label-row">Reporting hours / year <span class="assump">illustrative assumption</span></span><input id="ifHours" type="number" min="0" step="1" value="400" /></label>
               <label class="field"><span class="label-row">Effort cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 15%.">i</span></span><input id="ifCutPct" type="number" min="0" max="100" step="1" value="15" /></label>
+            </div>
+          </div>
+          <div class="agent-card" id="card-tr">
+            <div class="agent-head"><label><input id="agTR" type="checkbox" /> <strong>Ticket Resolver</strong></label><span class="agent-val" id="val-tr">—</span></div>
+            <p class="blurb" style="margin:0.35rem 0 0.5rem;">Works on incidents still left after Employee Navigator and Service Collaborator. Requires ITSM. Our own careful estimate.</p>
+            <p class="agent-adv-note" id="trStdNote">Available with Advanced</p>
+            <div class="grid-2" style="margin-top:0.5rem;">
+              <label class="field"><span class="label-row">Share of remaining incidents that qualify % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 10%. Our own careful estimate.">i</span></span><input id="trQualPct" type="number" min="0" max="100" step="1" value="10" /></label>
+              <label class="field"><span class="label-row">Minutes saved per qualified incident <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 5 minutes. Our own careful estimate.">i</span></span><input id="trMin" type="number" min="0" step="0.5" value="5" /></label>
             </div>
           </div>
           <p class="note">Agent values are careful examples. Check them against your own data. Combined self-solved tickets cannot exceed 40% of remaining human tickets.</p>
@@ -992,11 +1052,12 @@
 
         <div id="panel-esm" class="tab-panel" data-module="esm" role="tabpanel">
           <h3>ESM / Business Workflows <span class="tag tag-cap">staff time</span></h3>
-          <p class="blurb">HR, finance, and facilities cases. Not IT tickets. Self-solved tickets first, then rework and status-enquiry cuts on remaining cases.</p>
+          <p class="blurb">HR, finance, and facilities cases. Not IT tickets. Self-solved tickets first, then rework and status-enquiry cuts on remaining cases. Case management is in both packages.</p>
+          <p class="ref-note" id="esmStdNote">Ready-made HR content needs Advanced. Without it, expect slower results.</p>
           <div class="grid-3">
             <label class="field"><span class="label-row">Cases / year <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Do not include ITSM tickets.">i</span></span><input id="esmCases" type="number" min="0" step="100" value="12000" /></label>
             <label class="field"><span class="label-row">Handle minutes / case <span class="assump">illustrative assumption</span></span><input id="esmMin" type="number" min="0" step="0.5" value="25" /></label>
-            <label class="field"><span class="label-row">Self-solved tickets % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 8%. Our own careful estimate.">i</span></span><input id="esmDeflectPct" type="number" min="0" max="100" step="1" value="8" /></label>
+            <label class="field"><span class="label-row">Self-solved tickets % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Standard default 5%. Advanced default 8%. Our own careful estimate.">i</span></span><input id="esmDeflectPct" type="number" min="0" max="100" step="1" value="5" /></label>
             <label class="field"><span class="label-row">% of remaining cases with rework <span class="assump">illustrative assumption</span></span><input id="esmReworkPct" type="number" min="0" max="100" step="1" value="22" /></label>
             <label class="field"><span class="label-row">Rework minutes / those cases <span class="assump">illustrative assumption</span></span><input id="esmReworkMin" type="number" min="0" step="0.5" value="15" /></label>
             <label class="field"><span class="label-row">Rework cut % <span class="assump">illustrative assumption</span> <span class="tip" tabindex="0" data-tip="Default 20%.">i</span></span><input id="esmReworkCutPct" type="number" min="0" max="100" step="1" value="20" /></label>
@@ -1060,6 +1121,11 @@
           <li>Software asset management: up to 30% lower software spend in year 1. Gartner 2016. <a href="https://www.gartner.com/en/newsroom/press-releases/2016-07-19-gartner-says-organizations-can-cut-software-costs-by-30-percent-using-three-best-practices" target="_blank" rel="noopener">Gartner</a></li>
           <li>Cloud waste: 27% of cloud spend is wasted. Flexera 2025. <a href="https://resources.flexera.com/web/pdf/Flexera-State-of-the-Cloud-Report-2025.pdf" target="_blank" rel="noopener">Flexera PDF</a></li>
         </ol>
+        <p><strong>What each package includes</strong></p>
+        <ul>
+          <li>BMC Helix AI Service Management service. <a href="https://docs.helixops.ai/bin/Helix-Common-Services/Other/BMC-Helix-Subscriber-Information/helixsubscriber/BMC-Helix-services/BMC-Helix-AI-Service-Management-service/" target="_blank" rel="noopener">Helix subscriber information</a></li>
+          <li>Pre-built agents. <a href="https://docs.helixops.ai/bin/Service-Management/Employee-Digital-Workplace/BMC-HelixGPT/helixgpt263/Pre-built-agents/" target="_blank" rel="noopener">HelixGPT pre-built agents</a></li>
+        </ul>
         <p>No neutral public source: major-outage labour cut, emergency team call cut, handle-time cut, HR/ESM case deflection, on-prem cost split. These are our own careful estimates.</p>
       </div>
     </details>
@@ -1131,6 +1197,8 @@
         "Fewer emergency team calls": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from fewer emergency team calls."; },
         "Cloud right-sizing": function (_, usd) { return "You save about " + fmtMoney(usd) + " a year from cloud right-sizing."; },
         "Avoided hardware refresh": function (_, usd) { return "You save about " + fmtMoney(usd) + " a year by delaying hardware refresh."; },
+        "Change Coordinator": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from lighter change work."; },
+        "Ticket Resolver": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from tickets resolved without extra checking."; },
         "Change effort": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from lighter change work."; },
         "More self-solved tickets": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from more tickets solved without an agent."; },
         "Service Collaborator routing": function (h) { return "You get back about " + Math.round(h).toLocaleString() + " staff hours a year from smarter ticket routing."; },
@@ -1149,6 +1217,10 @@
       const simpleState = { staff: 80, tickets: 4000, alerts: 384, p1: 6, servers: 1800, cloudUsd: 180000 };
       const editedSimple = {};
       let suppressDerive = false;
+      const AGENT_EXTRA = ["agSC", "agKC", "agCRA"];
+      const AGENT_IDS = { en: "agEN", sc: "agSC", kc: "agKC", cra: "agCRA", if: "agIF", tr: "agTR" };
+      let extraAgentOrder = ["agSC", "agKC", "agCRA"];
+      let extraAgentWarnUntil = 0;
 
       const $ = (id) => document.getElementById(id);
       const num = (id) => {
@@ -1289,6 +1361,96 @@
           b.setAttribute("aria-pressed", String(b.dataset.dep === v));
         });
         if (fromUser && v === "saas" && $("perpLic")) $("perpLic").dataset.manual = "0";
+        if (fromUser && v === "onprem" && $("horizon")) $("horizon").value = "5";
+        const yearNote = $("onpremYearNote");
+        if (yearNote) {
+          yearNote.hidden = v !== "onprem";
+        }
+      }
+
+      function isPackAdvanced() {
+        return $("packMode") && $("packMode").value === "advanced";
+      }
+
+      function packLabel() {
+        return "AI Service Management " + (isPackAdvanced() ? "Advanced" : "Standard");
+      }
+
+      function setPack(mode, fromUser) {
+        const v = mode === "advanced" ? "advanced" : "standard";
+        if ($("packMode")) $("packMode").value = v;
+        document.querySelectorAll("#simplePack [data-pack]").forEach((b) => {
+          b.setAttribute("aria-pressed", String(b.dataset.pack === v));
+        });
+        const tr = $("agTR");
+        const trNote = $("trStdNote");
+        if (tr) {
+          tr.disabled = v !== "advanced";
+          if (v !== "advanced") tr.checked = false;
+        }
+        ["trQualPct", "trMin"].forEach((id) => { if ($(id)) $(id).disabled = v !== "advanced"; });
+        if (trNote) trNote.hidden = v === "advanced";
+        const esmNote = $("esmStdNote");
+        if (esmNote) esmNote.hidden = v === "advanced";
+        if ($("esmDeflectPct") && $("esmDeflectPct").dataset.manual !== "1") {
+          $("esmDeflectPct").value = v === "advanced" ? "8" : "5";
+        }
+        if (fromUser) enforceExtraAgentCap(true);
+        syncPackUI();
+      }
+
+      function extraChecked() {
+        return AGENT_EXTRA.filter((id) => $(id) && $(id).checked);
+      }
+
+      function enforceExtraAgentCap(showWarn) {
+        if (isPackAdvanced()) {
+          const warn = $("extraAgentWarn");
+          if (warn) warn.hidden = true;
+          syncPackUI();
+          return;
+        }
+        let extras = extraChecked();
+        while (extras.length > 3) {
+          const oldest = extraAgentOrder.find((id) => extras.indexOf(id) >= 0);
+          if (!oldest || !$(oldest)) break;
+          $(oldest).checked = false;
+          extraAgentOrder = extraAgentOrder.filter((id) => id !== oldest);
+          extras = extraChecked();
+          if (showWarn) extraAgentWarnUntil = Date.now() + 5000;
+        }
+        syncPackUI();
+      }
+
+      function syncPackUI() {
+        const n = extraChecked().length;
+        const count = $("extraAgentCount");
+        if (count) {
+          count.hidden = isPackAdvanced();
+          count.textContent = "Extra agents chosen: " + n + " of 3";
+        }
+        const warn = $("extraAgentWarn");
+        if (warn) warn.hidden = !(extraAgentWarnUntil > Date.now());
+        const trCard = $("card-tr");
+        if (trCard) trCard.classList.toggle("dim", !isPackAdvanced() || !($("agTR") && $("agTR").checked));
+      }
+
+      function readAgentHash() {
+        return Object.keys(AGENT_IDS).filter((k) => {
+          const el = $(AGENT_IDS[k]);
+          return el && el.checked;
+        }).join(".");
+      }
+
+      function applyAgentHash(raw) {
+        if (!raw) return;
+        const set = raw.split(".");
+        Object.keys(AGENT_IDS).forEach((k) => {
+          const el = $(AGENT_IDS[k]);
+          if (!el) return;
+          el.checked = set.indexOf(k) >= 0;
+        });
+        extraAgentOrder = AGENT_EXTRA.filter((id) => $(id) && $(id).checked);
       }
 
       function buildCost(years) {
@@ -1458,7 +1620,7 @@
         const lock = $("agentsLock");
         const active = c.on.itsm || c.on.change;
         if (lock) lock.classList.toggle("show", !active);
-        ["val-en", "val-sc", "val-kc", "val-cra", "val-if"].forEach((id) => { const el = $(id); if (el) el.textContent = "—"; });
+        ["val-en", "val-sc", "val-kc", "val-cra", "val-if", "val-tr"].forEach((id) => { const el = $(id); if (el) el.textContent = "—"; });
         if (!active) {
           w.push("Helix AI Agents is an add-on: select ITSM and/or Change to count agent value.");
           return [];
@@ -1514,14 +1676,14 @@
 
         if (craOn && c.on.change) {
           const base = s.changeHoursAfterCut || 0;
-          const saved = cutHrs(base, pct("craCutPct", "Change Risk Advisor cut", w), "Change Risk Advisor", w);
+          const saved = cutHrs(base, pct("craCutPct", "Change Coordinator cut", w), "Change Coordinator", w);
           s.changeHoursAfterCut = Math.max(0, base - saved);
-          const line = capacity("Change Risk Advisor", saved, "eng", c.rates);
+          const line = capacity("Change Coordinator", saved, "eng", c.rates);
           lines.push(line);
           showAgent("val-cra", line.annualUsd, true);
         } else {
           showAgent("val-cra", 0, false);
-          if (craOn && !c.on.change) w.push("Change Risk Advisor needs the Change module; it was skipped.");
+          if (craOn && !c.on.change) w.push("Change Coordinator needs the Change module; it was skipped.");
         }
 
         if (ifOn) {
@@ -1531,6 +1693,22 @@
           lines.push(line);
           showAgent("val-if", line.annualUsd, true);
         } else showAgent("val-if", 0, false);
+
+        const trOn = isPackAdvanced() && $("agTR") && $("agTR").checked;
+        if (trOn && c.on.itsm) {
+          const ticketsLeft = s.remainingTickets || 0;
+          const qualify = pct("trQualPct", "Ticket Resolver qualify %", w);
+          const rawHrs = ticketsLeft * qualify * (num("trMin") / 60);
+          const capBase = s.remainHandleAfterHt || 0;
+          const saved = capHours(rawHrs, capBase, "Ticket Resolver", w);
+          s.remainHandleAfterHt = Math.max(0, capBase - saved);
+          const line = capacity("Ticket Resolver", saved, "desk", c.rates);
+          lines.push(line);
+          showAgent("val-tr", line.annualUsd, true);
+        } else {
+          showAgent("val-tr", 0, false);
+          if (trOn && !c.on.itsm) w.push("Ticket Resolver needs remaining ITSM tickets; it was skipped.");
+        }
 
         return lines;
       };
@@ -1848,7 +2026,7 @@
         document.querySelectorAll(".persona").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.persona === persona)));
         const spec = PERSONAS[persona];
         CATALOG.forEach((m) => { m.on = spec.modules.indexOf(m.id) >= 0; });
-        if (fromUser && uiMode === "simple") $("horizon").value = "3";
+        if (fromUser && uiMode === "simple") $("horizon").value = isOnprem() ? "5" : "3";
         applying = true;
         renderSimpleFields();
         bindSimplePairs();
@@ -1934,7 +2112,9 @@
           "m=" + (uiMode === "advanced" ? "a" : "s"),
           "p=" + persona,
           "c=" + encodeURIComponent(currency()),
-          "dep=" + (isOnprem() ? "o" : "s")
+          "dep=" + (isOnprem() ? "o" : "s"),
+          "lic=" + (isPackAdvanced() ? "a" : "s"),
+          "y=" + (parseInt($("horizon").value, 10) || 3)
         ];
         parts.push("staff=" + simpleState.staff);
         parts.push("tix=" + simpleState.tickets);
@@ -1947,6 +2127,8 @@
         }
         if (!blank("downMins")) parts.push("o.downMins=" + encodeURIComponent($("downMins").value));
         if (!blank("downCost")) parts.push("o.downCost=" + encodeURIComponent(String(+moneyUsd("downCost").toFixed(4))));
+        const ag = readAgentHash();
+        if (ag) parts.push("ag=" + ag);
         const spec = PERSONAS[persona];
         const mods = CATALOG.filter((m) => m.on).map((m) => m.id);
         const sameMods = mods.slice().sort().join(".") === spec.modules.slice().sort().join(".");
@@ -2010,6 +2192,10 @@
         if (o.m === "s" || o.mode === "simple") uiMode = "simple";
         if (o.dep === "o" || o.deployMode === "onprem") setDeploy("onprem", false);
         else if (o.dep === "s" || o.deployMode === "saas") setDeploy("saas", false);
+        if (o.lic === "a" || o.packMode === "advanced") setPack("advanced", false);
+        else setPack("standard", false);
+        if (o.y === "5" || o.y === "3") $("horizon").value = o.y;
+        else $("horizon").value = isOnprem() ? "5" : "3";
         if (o.c) $("currency").value = o.c;
         if (o.currency) $("currency").value = o.currency;
         if (o.c || o.currency) $("fxRate").value = String(FX_DEFAULT[currency()] || 1);
@@ -2054,8 +2240,12 @@
             applyFieldValue(el, o[k]);
             if (el && (MONEY_DERIVE[id] || id === "downCost")) el.dataset.usd = String(parseFloat(o[k]) || 0);
             if (id === "perpLic" && el) el.dataset.manual = "1";
+            if (id === "esmDeflectPct" && el) el.dataset.manual = "1";
           });
         }
+        if (o.ag) applyAgentHash(o.ag);
+        if (!isPackAdvanced() && $("agTR")) $("agTR").checked = false;
+        enforceExtraAgentCap(false);
         fillSimpleFieldsFromState();
         fillOutageSimple();
         paintHero();
@@ -2118,11 +2308,12 @@
         const conservative = packScenario(lines, REAL.conservative, c.redeploy, years, cost);
         const expected = packScenario(lines, REAL.expected, c.redeploy, years, cost);
 
-        ["card-en", "card-sc", "card-kc", "card-cra", "card-if"].forEach((id) => {
+        ["card-en", "card-sc", "card-kc", "card-cra", "card-if", "card-tr"].forEach((id) => {
           const card = $(id);
           const cb = card && card.querySelector("input[type=checkbox]");
-          if (card && cb) card.classList.toggle("dim", !cb.checked);
+          if (card && cb) card.classList.toggle("dim", !cb.checked || (id === "card-tr" && !isPackAdvanced()));
         });
+        syncPackUI();
 
         return {
           c, years, lines, warnings: c.warnings, overlaps: c.overlaps,
@@ -2286,6 +2477,7 @@
           "Independent work by Suhayl Patel. Not a BMC tool. Not a quote. Not a customer result.",
           "",
           "How you buy Helix: " + (m.cost.mode === "onprem" ? "On-premises" : "SaaS (subscription)"),
+          "Package: " + packLabel(),
           "Products: " + (selected().map((x) => x.name).join(", ") || "none"),
           "Currency: " + currency() + " @ " + fxRate() + " per USD  |  Horizon: " + m.years + " years",
           m.cost.mode === "onprem"
@@ -2388,8 +2580,10 @@
           const outageCpm = blank("downCost") ? 0 : moneyUsd("downCost");
           const p1Year = num("p1Count");
           if (outageMins > 0 && outageCpm > 0 && p1Year > 0) {
+            outageEl.classList.remove("is-empty");
             outageEl.textContent = "Plus avoided outage costs of up to " + fmtMoney(p1Year * outageMins * outageCpm) + " a year (not counted in ROI).";
           } else {
+            outageEl.classList.add("is-empty");
             outageEl.textContent = "Add your outage cost to see this";
           }
         }
@@ -2398,7 +2592,7 @@
         else if (hi.pay && lo.pay && hi.pay !== lo.pay) $("simplePay").textContent = "month " + hi.pay + "–" + lo.pay;
         else $("simplePay").textContent = (hi.pay || lo.pay) == null ? "not within " + m.years + " years" : "month " + (hi.pay || lo.pay);
         const hrs = m.lines.filter((l) => l.type === "capacity").reduce((s, l) => s + (l.hours || 0), 0);
-        $("simpleHours").textContent = hourRange(hrs) + " staff hours back each year. We count only 50–70% of saved time, because not every saved hour turns into useful work.";
+        $("simpleHours").textContent = hourRange(hrs) + ". We count only 50–70% of saved time, because not every saved hour turns into useful work.";
         $("simpleInvest").textContent = m.cost.mode === "onprem"
           ? ("Based on an on-premises investment of " + fmtMoney(m.expected.totalCost) + " over " + m.years + " years (licence, maintenance, hosting, admin, services).")
           : ("Based on a SaaS investment of " + fmtMoney(m.expected.totalCost) + " over " + m.years + " years (licence and services).");
@@ -2425,6 +2619,11 @@
           const fiveBtn = $("tryFive");
           if (fiveBtn) fiveBtn.hidden = m.years >= 5;
         }
+        const cmp = $("saasCompareNote");
+        if (cmp) {
+          const showCmp = isOnprem() && m.years >= 5 && hi.roi != null && hi.roi < 0;
+          cmp.hidden = !showCmp;
+        }
         const ranked = m.lines.slice().sort((a, b) => {
           const va = a.type === "capacity" ? a.annualUsd * REAL.expected : a.annualUsd;
           const vb = b.type === "capacity" ? b.annualUsd * REAL.expected : b.annualUsd;
@@ -2445,7 +2644,7 @@
         $("stickyVal").textContent = fmtCompact(lo.totalBenefit, 2) + "–" + fmtCompact(hi.totalBenefit, 2);
         $("stickyRoi").textContent = (lo.roi == null ? "n/a" : fmtPct(lo.roi)) + "–" + (hi.roi == null ? "n/a" : fmtPct(hi.roi));
         $("stickySum").hidden = uiMode !== "simple";
-        $("printPersona").textContent = "Persona: " + (PERSONA_LABEL[persona] || persona) + ". How you buy Helix: " + (m.cost.mode === "onprem" ? "On-premises" : "SaaS (subscription)") + ".";
+        $("printPersona").textContent = "Persona: " + (PERSONA_LABEL[persona] || persona) + ". How you buy Helix: " + (m.cost.mode === "onprem" ? "On-premises" : "SaaS (subscription)") + ". Package: " + packLabel() + ".";
         const rows = SIMPLE_FIELDS.filter((f) => PERSONAS[persona].fields.indexOf(f.id) >= 0).map((f) => {
           const label = f.label;
           const val = f.money ? fmtMoney(simpleState.cloudUsd) : (simpleState[f.id] || 0).toLocaleString();
@@ -2485,6 +2684,7 @@
 
       function render() {
         setDeploy(isOnprem() ? "onprem" : "saas", false);
+        setPack(isPackAdvanced() ? "advanced" : "standard", false);
         renderCostTable();
         const m = engine();
         lastCopy = buildCopy(m);
@@ -2622,6 +2822,15 @@
       document.addEventListener("change", (e) => {
         if (applying) return;
         if (e.target.id === "currency" || e.target.id === "simpleCurrency") return;
+        if (e.target && AGENT_EXTRA.indexOf(e.target.id) >= 0) {
+          if (e.target.checked) {
+            extraAgentOrder = extraAgentOrder.filter((id) => id !== e.target.id);
+            extraAgentOrder.push(e.target.id);
+            enforceExtraAgentCap(true);
+          } else {
+            extraAgentOrder = extraAgentOrder.filter((id) => id !== e.target.id);
+          }
+        }
         render();
       });
 
@@ -2639,8 +2848,19 @@
           render();
         });
       }
+      if ($("simplePack")) {
+        $("simplePack").addEventListener("click", (e) => {
+          const btn = e.target.closest("[data-pack]");
+          if (!btn) return;
+          setPack(btn.dataset.pack, true);
+          render();
+        });
+      }
       if ($("deployMode")) {
         $("deployMode").addEventListener("change", () => setDeploy($("deployMode").value, true));
+      }
+      if ($("packMode")) {
+        $("packMode").addEventListener("change", () => setPack($("packMode").value, true));
       }
       if ($("tryFive")) {
         $("tryFive").addEventListener("click", () => {
@@ -2648,12 +2868,22 @@
           render();
         });
       }
+      if ($("compareSaas")) {
+        $("compareSaas").addEventListener("click", () => {
+          setDeploy("saas", true);
+          render();
+        });
+      }
+      if ($("esmDeflectPct")) {
+        $("esmDeflectPct").addEventListener("input", () => { $("esmDeflectPct").dataset.manual = "1"; });
+      }
       const hashed = parseHash();
       if (hashed) applyHash(hashed);
       else {
         uiMode = "simple";
         $("horizon").value = "3";
         setDeploy("saas", false);
+        setPack("standard", false);
         applyPersona("cio", true);
       }
       paintHero();
@@ -2669,6 +2899,7 @@
           persona = "cio";
           uiMode = "simple";
           setDeploy("saas", false);
+          setPack("standard", false);
           applyPersona("cio", true);
           paintHero();
         } else {
