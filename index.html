@@ -526,13 +526,20 @@
     .biz-bullets { margin: 0.4rem 0 0.6rem; padding-left: 1.1rem; }
     .biz-bullets li { margin: 0.25rem 0; }
     .biz-meta { font-size: 0.88rem; margin: 0.2rem 0; }
-    .biz-chart { height: 220px; background: #fff; }
+    .biz-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem; margin: 0.45rem 0 0.7rem; }
+    .biz-kpis > div { background: #f5f7fb; border: 1px solid var(--line); border-radius: 10px; padding: 0.45rem 0.55rem; }
+    .biz-kpis span { display: block; font-size: 0.68rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+    .biz-kpis b { display: block; font-size: 1.15rem; color: var(--navy); margin-top: 0.12rem; line-height: 1.2; }
+    .biz-chart { height: 220px; background: #fff; margin: 0 0 1rem; }
     .biz-mods { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
     .biz-mods td, .biz-mods th { padding: 0.28rem 0.4rem; border-bottom: 1px solid var(--line); text-align: left; }
     .biz-inputs { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
     .biz-inputs td { padding: 0.15rem 0.35rem; border-bottom: 1px solid var(--line); }
     .biz-inputs td:nth-child(odd) { color: var(--muted); width: 22%; }
     .biz-inputs td:nth-child(even) { width: 28%; }
+    .biz-inputs tr { break-inside: avoid; page-break-inside: avoid; }
+    .biz-sources { font-size: 0.68rem; color: var(--muted); margin: 0.45rem 0 0.35rem; padding-left: 1.1rem; }
+    .biz-sources li { margin: 0.12rem 0; break-inside: avoid; page-break-inside: avoid; }
     .simple-chart { height: 210px; background: #fff; border-radius: 10px; padding: 0.5rem; margin-top: 0.85rem; }
     .simple-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.9rem; }
     .simple-actions button, #printBtn {
@@ -704,23 +711,30 @@
         break-after: page;
         page-break-after: always;
         padding: 0 2mm;
-        overflow: hidden;
       }
       body.bizcase .biz-page:last-child { break-after: auto; page-break-after: auto; }
-      body.bizcase .biz-page h2 { font-size: 0.95rem; margin: 0 0 0.35rem; }
-      body.bizcase .biz-page h3 { font-size: 0.78rem; margin: 0.45rem 0 0.25rem; }
-      body.bizcase .biz-meta { font-size: 0.78rem; margin: 0.12rem 0; }
-      body.bizcase .biz-chart { height: 168px; }
-      body.bizcase .biz-mods, body.bizcase .ba-table { font-size: 0.68rem; }
+      body.bizcase .biz-page h2 { font-size: 0.95rem; margin: 0 0 0.3rem; }
+      body.bizcase .biz-page h3 { font-size: 0.76rem; margin: 0.4rem 0 0.2rem; }
+      body.bizcase .biz-meta { font-size: 0.74rem; margin: 0.1rem 0; }
+      body.bizcase .biz-kpis { gap: 0.3rem; margin: 0.3rem 0 0.45rem; }
+      body.bizcase .biz-kpis > div { padding: 0.32rem 0.45rem; }
+      body.bizcase .biz-kpis b { font-size: 1.05rem; }
+      body.bizcase .biz-bullets { margin: 0.2rem 0 0.4rem; font-size: 0.74rem; }
+      body.bizcase .biz-chart { height: 190px; margin: 0 0 0.85rem; }
+      body.bizcase .biz-mods, body.bizcase .ba-table { font-size: 0.66rem; }
       body.bizcase .biz-mods td, body.bizcase .biz-mods th,
-      body.bizcase .ba-table th, body.bizcase .ba-table td { padding: 0.12rem 0.28rem; }
+      body.bizcase .ba-table th, body.bizcase .ba-table td { padding: 0.1rem 0.25rem; }
       body.bizcase .out-tiles { grid-template-columns: repeat(3, 1fr); gap: 0.3rem; }
       body.bizcase .out-tile { padding: 0.28rem 0.35rem; }
       body.bizcase .out-tile b { font-size: 0.78rem; }
-      body.bizcase .biz-inputs { font-size: 0.58rem; width: 100%; }
-      body.bizcase .biz-inputs td { padding: 0.06rem 0.25rem; }
-      body.bizcase .print-foot { margin-top: 0.6rem; }
-      body.bizcase #bizQR { width: 72px; height: 72px; }
+      body.bizcase .biz-inputs { font-size: 0.5rem; width: 100%; }
+      body.bizcase .biz-inputs td { padding: 0.05rem 0.2rem; }
+      body.bizcase .biz-inputs tr { break-inside: avoid; page-break-inside: avoid; }
+      body.bizcase .biz-sources { font-size: 0.5rem; margin: 0.3rem 0 0.25rem; padding-left: 0.95rem; }
+      body.bizcase .biz-sources li { margin: 0.04rem 0; }
+      body.bizcase .print-foot { margin-top: 0.4rem; }
+      body.bizcase #bizQR { width: 64px; height: 64px; }
+      body.bizcase .print-disc { font-size: 0.52rem; }
     }
   </style>
 </head>
@@ -869,12 +883,17 @@
     <section class="biz-page" id="bizPage1">
       <h2>Executive summary</h2>
       <p class="biz-meta" id="bizSetup"></p>
+      <div class="biz-kpis">
+        <div><span>Net ROI</span><b id="bizRoi"></b></div>
+        <div><span>Payback</span><b id="bizPay"></b></div>
+        <div><span>People freed</span><b id="bizPeople"></b></div>
+        <div><span>Staff-time value</span><b id="bizWorth"></b></div>
+      </div>
       <p class="biz-meta" id="bizHeadline"></p>
-      <p class="biz-meta" id="bizRoi"></p>
-      <p class="biz-meta" id="bizPay"></p>
-      <p class="biz-meta" id="bizFte"></p>
       <h3>What this means</h3>
       <ul class="biz-bullets" id="bizTake"></ul>
+      <h3>Before and after</h3>
+      <div class="ba-wrap"><table class="ba-table" id="bizBaTable"></table></div>
       <div class="print-foot">
         <div>
           <p id="bizDate"></p>
@@ -888,8 +907,6 @@
       <div class="biz-chart"><canvas id="bizChart"></canvas></div>
       <h3>Value by product</h3>
       <table class="biz-mods" id="bizMods"></table>
-      <h3>Before and after</h3>
-      <div class="ba-wrap"><table class="ba-table" id="bizBaTable"></table></div>
       <h3>Business outcomes (not counted in ROI)</h3>
       <div class="out-tiles" id="bizTiles"></div>
     </section>
@@ -899,7 +916,21 @@
       <p class="biz-meta" id="bizNotCounted"></p>
       <h3>Inputs used</h3>
       <table class="biz-inputs" id="bizInputs"></table>
-      <p class="print-sources" id="bizSources">Defaults are cautious. They sit at or below public figures. No public source: major-outage labour cut, emergency team call cut, handle-time cut, HR/ESM self-solved tickets, on-prem cost split. These are our own careful estimates.</p>
+      <h3>Sources</h3>
+      <p class="biz-meta">Defaults are cautious. They sit at or below public figures.</p>
+      <ol class="biz-sources" id="bizSources">
+        <li>Self-service rate: worldwide average 8.9% (range 0–48%). MetricNet via HDI.</li>
+        <li>Shift-left planning: 30% of Level 1 tickets to self-help. HDI.</li>
+        <li>Ticket handle time: 8.6 minutes on average. MetricNet via HDI.</li>
+        <li>Cost per ticket: about $16–17 in North America (2021). MetricNet via HDI.</li>
+        <li>Alert noise reduction: median event compression 87% (vendor data). BigPanda.</li>
+        <li>Outage cost: 54% of serious outages cost over $100,000. Uptime Institute 2025.</li>
+        <li>Change failure rate: 5% to 40% by team group. DORA 2024.</li>
+        <li>Patching: 16 days on average to patch critical issues. Ponemon 2019.</li>
+        <li>Software asset management: up to 30% lower software spend in year 1. Gartner 2016.</li>
+        <li>Cloud waste: 27% of cloud spend is wasted. Flexera 2025.</li>
+      </ol>
+      <p class="print-sources">No public source: major-outage labour cut, emergency team call cut, handle-time cut, HR/ESM self-solved tickets, on-prem cost split. These are our own careful estimates.</p>
       <p class="print-disc">Independent work by Suhayl Patel. Not a BMC tool. Not a quote. Not a customer result. Default numbers are careful examples.</p>
     </section>
   </div>
@@ -2651,6 +2682,17 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         return sign + p.toFixed(0) + "%";
       }
 
+      function chgPts(today, after) {
+        if (!Number.isFinite(today) || !Number.isFinite(after)) return "n/a";
+        const p = after - today;
+        const sign = p > 0.05 ? "+" : "";
+        return sign + p.toFixed(0) + " pts";
+      }
+
+      function cautiousVal(today, fullAfter) {
+        return today + REAL.conservative * (fullAfter - today);
+      }
+
       function opsMetrics(c) {
         const on = c.on;
         const s = c.shared || {};
@@ -2663,61 +2705,58 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
           const human = s.humanTickets != null ? s.humanTickets : tixY * (1 - pct("ssNowPct"));
           const remain = s.remainingTickets != null ? s.remainingTickets : human;
           const todayDeskM = human / 12;
-          const afterDeskM = remain / 12;
+          const fullDeskM = remain / 12;
+          const cautDeskM = cautiousVal(todayDeskM, fullDeskM);
           rows.push({
             label: "Tickets the desk handles each month",
             today: fmtCount(todayDeskM, 0),
-            after: fmtCount(afterDeskM, 0),
-            chg: chgPct(todayDeskM, afterDeskM),
-            better: afterDeskM <= todayDeskM ? "good" : "bad"
+            after: fmtCount(cautDeskM, 0),
+            chg: chgPct(todayDeskM, cautDeskM),
+            better: cautDeskM <= todayDeskM ? "good" : "bad"
           });
           const ssNow = pct("ssNowPct") * 100;
-          const ssAfter = tixY > 0 ? (1 - remain / tixY) * 100 : ssNow;
+          const ssFull = tixY > 0 ? (1 - remain / tixY) * 100 : ssNow;
+          const ssCaut = cautiousVal(ssNow, ssFull);
           rows.push({
             label: "Self-service share of requests",
             today: ssNow.toFixed(0) + "%",
-            after: ssAfter.toFixed(0) + "%",
-            chg: chgPct(ssNow, ssAfter),
-            better: ssAfter >= ssNow ? "good" : "bad"
+            after: ssCaut.toFixed(0) + "%",
+            chg: chgPts(ssNow, ssCaut),
+            better: ssCaut >= ssNow ? "good" : "bad"
           });
           const todayHrs = human * mix;
-          const afterHrs = s.remainHandleAfterHt != null ? s.remainHandleAfterHt : todayHrs;
+          const fullHrs = s.remainHandleAfterHt != null ? s.remainHandleAfterHt : todayHrs;
+          const cautHrs = cautiousVal(todayHrs, fullHrs);
           rows.push({
-            label: "Staff on the service desk (FTE)",
+            label: "Desk handling time (FTE)",
             today: fmtPeople(todayHrs / FTE_YEAR),
-            after: fmtPeople(afterHrs / FTE_YEAR),
-            chg: chgPct(todayHrs, afterHrs),
-            better: afterHrs <= todayHrs ? "good" : "bad"
+            after: fmtPeople(cautHrs / FTE_YEAR),
+            chg: chgPct(todayHrs, cautHrs),
+            better: cautHrs <= todayHrs ? "good" : "bad"
           });
           if (human > 0 && deskRate > 0) {
             const cptT = mix * deskRate;
-            const cptA = remain > 0 ? (afterHrs / remain) * deskRate : 0;
+            const cptFull = remain > 0 ? (fullHrs / remain) * deskRate : 0;
+            const cptCaut = cautiousVal(cptT, cptFull);
             rows.push({
-              label: "Cost per ticket",
-              today: fmtMoney(cptT),
-              after: fmtMoney(cptA),
-              chg: chgPct(cptT, cptA),
-              better: cptA <= cptT ? "good" : "bad"
+              label: "Desk labour cost per ticket",
+              today: fmtCompact(cptT, 2),
+              after: fmtCompact(cptCaut, 2),
+              chg: chgPct(cptT, cptCaut),
+              better: cptCaut <= cptT ? "good" : "bad"
             });
           }
-          const incRed = human > 0 ? Math.max(0, (human - remain) / human) : 0;
-          tiles.push({ label: "Incident reduction", value: (incRed * 100).toFixed(0) + "%" });
-          tiles.push({ label: "Self-service adoption", value: ssNow.toFixed(0) + "% → " + ssAfter.toFixed(0) + "%" });
+          const solved = human > 0 ? Math.max(0, (human - remain) / human) * REAL.conservative : 0;
+          tiles.push({ label: "Tickets solved without the desk", value: (solved * 100).toFixed(0) + "%" });
+          tiles.push({ label: "Self-service adoption", value: ssNow.toFixed(0) + "% → " + ssCaut.toFixed(0) + "% (" + chgPts(ssNow, ssCaut) + ")" });
           const fcr0 = Math.min(100, Math.max(0, num("fcrNowPct") || 70));
-          const kcOn = on.agents && $("agKC") && $("agKC").checked;
-          const scOn = on.agents && $("agSC") && $("agSC").checked;
-          const ht = num("itsmHtCutPct") || 0;
-          const kc = kcOn ? (num("kcCutPct") || 0) : 0;
-          const sc = scOn ? (num("scCutPct") || 0) : 0;
-          const uplift = Math.min(10, ht + kc + sc);
-          const fcr1 = Math.min(100, fcr0 + uplift);
-          tiles.push({ label: "First-contact resolution", value: fcr0.toFixed(0) + "% → " + fcr1.toFixed(0) + "%" });
+          tiles.push({ label: "First-contact resolution", value: fcr0.toFixed(0) + "%", csat: true, note: "Likely to improve" });
         }
         if (on.aiops) {
           const cut = pct("mttrPct");
           if (num("p1Hours") > 0) {
             const t = num("p1Hours");
-            const a = t * (1 - cut);
+            const a = cautiousVal(t, t * (1 - cut));
             rows.push({
               label: "Average time to fix P1 incidents (MTTR)",
               today: fmtCount(t, 1) + " h",
@@ -2726,14 +2765,14 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
               better: a <= t ? "good" : "bad"
             });
           }
-          tiles.push({ label: "MTTR improvement", value: (cut * 100).toFixed(0) + "%" });
+          tiles.push({ label: "MTTR improvement", value: (cut * REAL.conservative * 100).toFixed(0) + "%" });
         }
         if (on.change) {
           const n = s.changeCount != null ? s.changeCount : num("changes");
           const fail = pct("failRatePct");
           const fcut = pct("failCutPct");
           const tFail = n * fail;
-          const aFail = tFail * (1 - fcut);
+          const aFail = cautiousVal(tFail, tFail * (1 - fcut));
           rows.push({
             label: "Failed changes per year",
             today: fmtCount(tFail, 0),
@@ -2742,8 +2781,8 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
             better: aFail <= tFail ? "good" : "bad"
           });
           const tOk = (1 - fail) * 100;
-          const aOk = (1 - fail * (1 - fcut)) * 100;
-          tiles.push({ label: "Change success rate", value: tOk.toFixed(0) + "% → " + aOk.toFixed(0) + "%" });
+          const aOk = cautiousVal(tOk, (1 - fail * (1 - fcut)) * 100);
+          tiles.push({ label: "Change success rate", value: tOk.toFixed(0) + "% → " + aOk.toFixed(0) + "% (" + chgPts(tOk, aOk) + ")" });
         }
         tiles.push({ label: "Customer satisfaction", value: "Expected to improve ↑", csat: true, note: "We do not put a cash value on satisfaction." });
         return { rows: rows, tiles: tiles };
@@ -3001,7 +3040,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         }
       }
 
-      function fteSentence(m) {
+      function fteParts(m) {
         const hrs = m.lines.filter((l) => l.type === "capacity").reduce((s, l) => s + (l.hours || 0), 0);
         const capUsd = m.lines.filter((l) => l.type === "capacity").reduce((s, l) => s + (l.annualUsd || 0), 0);
         const fteLo = (hrs * REAL.conservative) / FTE_YEAR;
@@ -3009,13 +3048,18 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         const valLo = capUsd * REAL.conservative;
         const valHi = capUsd * REAL.expected;
         const people = fteLo === fteHi ? fmtPeople(fteHi) : fmtPeople(fteLo) + "–" + fmtPeople(fteHi);
-        const worth = valLo === valHi ? fmtMoney(valHi) : fmtMoney(valLo) + "–" + fmtMoney(valHi);
-        return "Frees about " + people + " people a year, worth about " + worth + ".";
+        const worth = valLo === valHi ? fmtCompact(valHi, 2) : fmtCompact(valLo, 2) + "–" + fmtCompact(valHi, 2);
+        return { people: people, worth: worth, fteLo: fteLo, fteHi: fteHi, valLo: valLo, valHi: valHi };
+      }
+
+      function fteSentence(m) {
+        const p = fteParts(m);
+        return "Frees about " + p.people + " people a year, worth about " + p.worth + ".";
       }
 
       function baTableHtml(rows) {
         if (!rows || !rows.length) return "<tbody><tr><td>No before-and-after rows for this product mix.</td></tr></tbody>";
-        return "<thead><tr><th></th><th>Today</th><th>With Helix (year 3)</th><th>Change</th></tr></thead><tbody>" +
+        return "<thead><tr><th></th><th>Today</th><th>With Helix (year 3, cautious)</th><th>Change</th></tr></thead><tbody>" +
           rows.map((r) => "<tr><td>" + r.label + "</td><td class='num'>" + r.today + "</td><td class='num'>" + r.after +
             "</td><td class='num chg-" + (r.better || "good") + "'>" + r.chg + "</td></tr>").join("") + "</tbody>";
       }
@@ -3035,35 +3079,81 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         if ($("bizTiles")) $("bizTiles").innerHTML = tilesHtml(ops.tiles);
       }
 
+      function cleanFieldLabel(lab) {
+        const row = lab.querySelector(".label-row") || lab;
+        const clone = row.cloneNode(true);
+        clone.querySelectorAll(".tip, .assump, a.src").forEach((n) => n.remove());
+        return clone.textContent.replace(/\s+/g, " ").replace(/\s+i$/, "").trim();
+      }
+
+      function fmtInputNumber(inp) {
+        if (inp.hasAttribute("data-money")) return fmtCompact(moneyUsd(inp.id), 2);
+        if (inp.tagName === "SELECT") return inp.options[inp.selectedIndex].text;
+        const n = parseFloat(String(inp.value).replace(/,/g, ""));
+        if (!Number.isFinite(n) || inp.type === "checkbox") return inp.value;
+        const dp = (inp.step && Number(inp.step) < 1 && n % 1 !== 0) ? 2 : 0;
+        return n.toLocaleString(undefined, { maximumFractionDigits: dp, minimumFractionDigits: 0 });
+      }
+
+      function fieldChanged(el) {
+        if (!el || !el.id) return false;
+        if (el.type === "checkbox" || el.type === "hidden") return false;
+        const d = deriveMap();
+        if (d[el.id] != null) {
+          const cur = MONEY_DERIVE[el.id] ? moneyUsd(el.id) : num(el.id);
+          return Math.abs(cur - d[el.id]) > (MONEY_DERIVE[el.id] ? 2 : 1);
+        }
+        const def = FIELD_DEFAULTS[el.id];
+        if (def == null) return false;
+        if (el.hasAttribute("data-money")) {
+          if (blank(el.id)) return false;
+          const defUsd = parseFloat(def);
+          if (!Number.isFinite(defUsd)) return true;
+          return Math.abs(moneyUsd(el.id) - defUsd) > 0.02;
+        }
+        return String(el.value) !== String(def);
+      }
+
       function usedInputRows() {
         const rows = [];
-        const add = (label, val) => { if (val != null && String(val).trim() !== "") rows.push([label, val]); };
-        add("Persona", PERSONA_LABEL[persona] || persona);
-        add("How you buy Helix", isOnprem() ? "On-premises" : "SaaS (subscription)");
-        add("Package", packLabel());
-        add("Time horizon", (parseInt($("horizon").value, 10) || 3) + " years");
-        add("Currency", currency());
+        const seen = {};
+        const add = (label, val) => {
+          if (val == null || String(val).trim() === "") return;
+          if (seen[label]) return;
+          seen[label] = 1;
+          rows.push([label, val]);
+        };
         SIMPLE_FIELDS.forEach((f) => {
           if (PERSONAS[persona].fields.indexOf(f.id) < 0) return;
-          add(f.label, f.money ? fmtMoney(simpleState.cloudUsd) : (simpleState[f.id] || 0).toLocaleString());
+          add(f.label, f.money ? fmtCompact(simpleState.cloudUsd, 2) : (simpleState[f.id] || 0).toLocaleString());
         });
-        selected().forEach((m) => add("Product on", m.name));
+        const spec = PERSONAS[persona];
+        const mods = CATALOG.filter((m) => m.on).map((m) => m.id);
+        const sameMods = mods.slice().sort().join(".") === spec.modules.slice().sort().join(".");
+        if (!sameMods) add("Products on", selected().map((m) => m.name).join(", "));
+        if (isOutageToggleOn()) add("Include outage savings", "On");
         document.querySelectorAll("#advanced label.field").forEach((lab) => {
           const inp = lab.querySelector("input, select");
           if (!inp || !inp.id || inp.disabled) return;
+          if (/^(currency|fxRate|horizon|deployMode|packMode|outageInRoi|svcPct)$/.test(inp.id)) return;
+          if (inp.id === "services" && inp.dataset.manual !== "1") return;
+          if (inp.id === "perpLic" && inp.dataset.manual !== "1") return;
+          if (inp.id === "esmDeflectPct" && inp.dataset.manual !== "1") return;
+          if (inp.id.indexOf("simple") === 0) return;
           const panel = lab.closest(".tab-panel");
           if (panel) {
             const mod = panel.getAttribute("data-module");
             if (mod && !CATALOG.some((x) => x.id === mod && x.on)) return;
           }
           if (lab.closest(".onprem-box") && !isOnprem()) return;
-          const name = (lab.querySelector(".label-row") || lab).textContent.replace(/\s+/g, " ").replace(/ i$| source$/i, "").trim();
+          if (!fieldChanged(inp)) return;
           if (inp.type === "checkbox") return;
           if (blank(inp.id) && inp.hasAttribute("data-money")) return;
-          const val = inp.hasAttribute("data-money") ? fmtMoney(moneyUsd(inp.id)) : inp.tagName === "SELECT" ? inp.options[inp.selectedIndex].text : inp.value;
-          add(name, val);
+          add(cleanFieldLabel(lab), fmtInputNumber(inp));
         });
-        if ($("fcrNowPct")) add("First-contact resolution today %", $("fcrNowPct").value);
+        if ($("fcrNowPct") && String($("fcrNowPct").value) !== "70") {
+          add("First-contact resolution today %", $("fcrNowPct").value);
+        }
         return rows;
       }
 
@@ -3071,18 +3161,21 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         const lo = m.conservative;
         const hi = m.expected;
         const roiText = (a, b) => (a.roi == null ? "n/a" : fmtPct(a.roi)) + "–" + (b.roi == null ? "n/a" : fmtPct(b.roi));
+        const fte = fteParts(m);
         if ($("bizSetup")) {
           $("bizSetup").textContent = (PERSONA_LABEL[persona] || persona) + ". " +
-            (m.cost.mode === "onprem" ? "On-premises" : "SaaS (subscription)") + ". " + packLabel() + ". " + m.years + " years.";
+            (m.cost.mode === "onprem" ? "On-premises" : "SaaS (subscription)") + ". " + packLabel() + ". " +
+            m.years + " years. " + currency() + ".";
         }
         if ($("bizHeadline")) $("bizHeadline").textContent = "Value: " + fmtCompact(lo.totalBenefit, 2) + "–" + fmtCompact(hi.totalBenefit, 2) + " over " + m.years + " years.";
-        if ($("bizRoi")) $("bizRoi").textContent = "Net ROI: " + roiText(lo, hi) + " (cautious · likely).";
+        if ($("bizRoi")) $("bizRoi").textContent = roiText(lo, hi);
         let pay = "";
         if (lo.pay == null && hi.pay == null) pay = "not within " + m.years + " years";
         else if (hi.pay && lo.pay && hi.pay !== lo.pay) pay = "month " + hi.pay + "–" + lo.pay;
         else pay = "month " + (hi.pay || lo.pay);
-        if ($("bizPay")) $("bizPay").textContent = "Payback: " + pay + ".";
-        if ($("bizFte")) $("bizFte").textContent = fteSentence(m);
+        if ($("bizPay")) $("bizPay").textContent = pay;
+        if ($("bizPeople")) $("bizPeople").textContent = fte.people;
+        if ($("bizWorth")) $("bizWorth").textContent = fte.worth;
         const ranked = m.lines.slice().sort((a, b) => {
           const va = a.type === "capacity" ? a.annualUsd * REAL.expected : a.annualUsd;
           const vb = b.type === "capacity" ? b.annualUsd * REAL.expected : b.annualUsd;
@@ -3093,9 +3186,8 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
         takes.push(fteSentence(m) + " Freed time becomes cash only if roles move to other work or are not backfilled.");
         const top = ranked[0];
         if (top) {
-          const fn = DRIVER_COPY[top.name];
-          if (top.type === "capacity") takes.push(fn ? fn(top.hours || 0, top.annualUsd || 0) : top.name + " is the largest staff-time gain.");
-          else takes.push(fn ? fn(0, top.annualUsd || 0) : top.name + " is the largest cash gain.");
+          if (top.type === "capacity") takes.push((DRIVER_COPY[top.name] ? DRIVER_COPY[top.name](top.hours || 0, top.annualUsd || 0) : top.name) + " That is the largest staff-time gain.");
+          else takes.push(top.name + " is the largest cash gain, about " + fmtCompact(top.annualUsd, 2) + " a year.");
         }
         if ($("bizTake")) $("bizTake").innerHTML = takes.slice(0, 3).map((t) => "<li>" + t + "</li>").join("");
         if ($("bizDate")) $("bizDate").textContent = "Printed " + new Date().toISOString().slice(0, 10);
@@ -3106,7 +3198,7 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
           $("bizMods").innerHTML = "<thead><tr><th>Product</th><th>Cautious</th><th>Likely</th></tr></thead><tbody>" +
             mods.map((x) => {
               const l = loMods.filter((z) => z.id === x.id)[0];
-              return "<tr><td>" + x.name + "</td><td>" + fmtMoney(l ? l.total : 0) + "</td><td>" + fmtMoney(x.total) + "</td></tr>";
+              return "<tr><td>" + x.name + "</td><td>" + fmtCompact(l ? l.total : 0, 2) + "</td><td>" + fmtCompact(x.total, 2) + "</td></tr>";
             }).join("") + "</tbody>";
         }
         if ($("bizNotCounted")) {
@@ -3148,9 +3240,10 @@ You bring your own AI model. Check your BMC contract for exact terms.">i</span><
             responsive: true,
             maintainAspectRatio: false,
             plugins: { legend: { position: "top", labels: { boxWidth: 8, font: { size: 9 }, padding: 6 } } },
+            layout: { padding: { bottom: 12, top: 4 } },
             scales: {
-              x: { title: { display: true, text: "Month", font: { size: 9 } } },
-              y: { ticks: { callback: (v) => fmtMoney(v), font: { size: 9 } } }
+              x: { title: { display: true, text: "Month", font: { size: 9 } }, ticks: { font: { size: 9 } } },
+              y: { ticks: { callback: (v) => fmtCompact(v, 2), font: { size: 9 } } }
             }
           }
         });
