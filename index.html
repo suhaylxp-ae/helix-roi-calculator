@@ -128,13 +128,12 @@
     }
     .pick[aria-pressed="true"] span { color: #c9d6e8; }
 
-    .grid-6, .grid-5, .grid-4, .grid-3, .grid-2 { display: grid; gap: 0.7rem; }
-    .grid-6 { grid-template-columns: repeat(6, 1fr); }
-    .grid-5 { grid-template-columns: repeat(5, 1fr); }
-    .grid-4 { grid-template-columns: repeat(4, 1fr); }
-    .grid-3 { grid-template-columns: repeat(3, 1fr); }
-    .grid-2 { grid-template-columns: 1fr 1fr; }
-    .roles { grid-template-columns: repeat(5, 1fr); }
+    .grid-6, .grid-5, .grid-4, .grid-3, .grid-2, .roles {
+      display: grid;
+      gap: 0.7rem 0.85rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      align-items: stretch;
+    }
 
     label.field {
       display: flex;
@@ -143,8 +142,44 @@
       font-size: 0.82rem;
       color: var(--navy);
       font-weight: 600;
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
-    .label-row { display: flex; align-items: center; gap: 0.35rem; }
+    label.field > input,
+    label.field > select {
+      order: 3;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      margin-top: auto;
+      box-sizing: border-box;
+    }
+    label.field > .assump,
+    label.field > .tip,
+    label.field > a.src {
+      order: 2;
+    }
+    .label-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.18rem 0.35rem;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      max-width: 100%;
+    }
+    .label-row:has(.assump, .tip, a.src)::after {
+      content: "";
+      flex: 1 0 100%;
+      order: 1;
+      height: 0;
+    }
+    .label-row > .assump,
+    .label-row > .tip,
+    .label-row > a.src {
+      order: 2;
+      flex: 0 1 auto;
+    }
     .tip {
       position: relative;
       display: inline-flex;
@@ -152,6 +187,7 @@
       justify-content: center;
       width: 15px;
       height: 15px;
+      flex: 0 0 15px;
       border-radius: 50%;
       background: #e7eef8;
       color: var(--accent-2);
@@ -220,6 +256,8 @@
       align-items: start;
       margin: 1rem auto 2rem;
     }
+    .layout > * { min-width: 0; }
+    .tab-panel { min-width: 0; }
     .panel {
       background: var(--white);
       border: 1px solid var(--line);
@@ -262,6 +300,12 @@
       border-radius: 999px;
       padding: 0.1rem 0.38rem;
       white-space: nowrap;
+    }
+    label.field .assump,
+    .label-row .assump {
+      white-space: normal;
+      overflow-wrap: anywhere;
+      max-width: 100%;
     }
     .tag {
       font-size: 0.62rem;
@@ -609,21 +653,20 @@
     .buy-toggle button[aria-pressed="true"] { background: #fff; color: var(--navy); }
     .onprem-box { display: none; margin-top: 0.75rem; padding-top: 0.65rem; border-top: 1px solid var(--line); }
     body.dep-onprem .onprem-box { display: block; }
-    a.src { font-size: 0.62rem; font-weight: 700; margin-left: 0.3rem; color: var(--accent-2); }
+    a.src { font-size: 0.62rem; font-weight: 700; margin-left: 0; color: var(--accent-2); overflow-wrap: anywhere; }
     #simpleHours { font-family: var(--sans); font-weight: 600; white-space: normal; line-height: 1.35; }
     .results-meta b { white-space: normal; }
 
     @media (max-width: 980px) {
       .layout { grid-template-columns: 1fr; }
       .outputs { position: static; max-height: none; }
-      .grid-6, .grid-5, .grid-4, .roles { grid-template-columns: 1fr 1fr; }
       .persona-grid { grid-template-columns: 1fr; }
       .simple-fields { grid-template-columns: 1fr; }
       .cost-table { display: block; overflow-x: auto; }
     }
     @media (max-width: 640px) {
       :root { --disclaimer-h: 2.35rem; }
-      .grid-6, .grid-5, .grid-4, .grid-3, .grid-2, .roles, .scenario-grid, .results-meta { grid-template-columns: 1fr; }
+      .scenario-grid, .results-meta { grid-template-columns: 1fr; }
       .out-tiles { grid-template-columns: 1fr 1fr; }
       .agent-table { display: block; overflow-x: auto; }
       header h1 { font-size: 1.35rem; }
